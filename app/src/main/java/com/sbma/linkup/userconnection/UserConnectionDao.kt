@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.sbma.linkup.user.User
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
@@ -23,6 +24,6 @@ interface UserConnectionDao {
     @Query("SELECT * from UserConnection WHERE id = :id")
     fun getItem(id: String): Flow<UserConnection?>
 
-    @Query("SELECT * from UserConnection where userId = :userId")
-    fun getUserItems(userId: UUID): Flow<List<UserConnection>>
+    @Query("SELECT * from UserConnection JOIN User ON user.id = UserConnection.connectedUserId where userId = :userId")
+    fun getUserItems(userId: UUID): Flow<Map<UserConnection, User>>
 }
