@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
+import com.sbma.linkup.navigation.NavigationView
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import java.util.UUID
 
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
             val navController: NavHostController = rememberNavController()
 
             LinkUpTheme {
+
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") { backStackEntry ->
                         // A surface container using the 'background' color from the theme
@@ -44,6 +46,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                     }
+
+                // A surface container using the 'background' color from the theme
+                //Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                 //   NavigationView()
 
                 }
 
