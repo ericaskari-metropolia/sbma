@@ -23,6 +23,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.user.UserViewModel
+import com.sbma.linkup.usercard.UserCardViewModel
+import com.sbma.linkup.userconnection.UserConnectionViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire app
@@ -34,11 +36,16 @@ object AppViewModelProvider {
                 repository = MyApplication().container.userRepository,
             )
         }
-//        addInitializer(AppBluetoothConnectViewModel::class) {
-//            AppBluetoothConnectViewModel(
-//                MyApplication().appBluetoothGattService
-//            )
-//        }
+        addInitializer(UserCardViewModel::class) {
+            UserCardViewModel(
+                MyApplication().container.userCardRepository
+            )
+        }
+        addInitializer(UserConnectionViewModel::class) {
+            UserConnectionViewModel(
+                MyApplication().container.userConnectionRepository
+            )
+        }
     }
 }
 

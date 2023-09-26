@@ -6,7 +6,6 @@ import java.util.UUID
 
 
 /**
- * @author Mohammad Askari
  * Convert Dates to string unix when saving to db and convert to Date when retrieving.
  */
 class Converters {
