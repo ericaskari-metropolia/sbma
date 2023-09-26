@@ -21,6 +21,8 @@ import com.sbma.linkup.navigation.NavigationView
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import java.util.UUID
 
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,30 +30,31 @@ class MainActivity : ComponentActivity() {
             val navController: NavHostController = rememberNavController()
 
             LinkUpTheme {
+                NavigationView()
 
-                NavHost(navController = navController, startDestination = "home") {
-                    composable("home") { backStackEntry ->
-                        // A surface container using the 'background' color from the theme
-                        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                            Greeting("Android")
-                        }
-                    }
-                    composable(
-                        "users/{userId}/contacts",
-                        arguments = listOf(navArgument("userId") { type = NavType.StringType }),
-                    ) { backStackEntry ->
-                        backStackEntry.arguments?.getString("userId")?.let {
-                            UserConnectionsScreenProvider(
-                                userId = UUID.fromString(it))
-                        }
-
-                    }
-
-                // A surface container using the 'background' color from the theme
-                //Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                 //   NavigationView()
-
-                }
+//                NavHost(navController = navController, startDestination = "home") {
+//                    composable("home") { backStackEntry ->
+//                        // A surface container using the 'background' color from the theme
+//                        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+//                            Greeting("Android")
+//                        }
+//                    }
+//                    composable(
+//                        "users/{userId}/contacts",
+//                        arguments = listOf(navArgument("userId") { type = NavType.StringType }),
+//                    ) { backStackEntry ->
+//                        backStackEntry.arguments?.getString("userId")?.let {
+//                            UserConnectionsScreenProvider(
+//                                userId = UUID.fromString(it))
+//                        }
+//
+//                    }
+//
+//                // A surface container using the 'background' color from the theme
+//                //Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+//                 //   NavigationView()
+//
+//                }
 
 
             }

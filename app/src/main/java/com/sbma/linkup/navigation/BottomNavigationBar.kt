@@ -16,9 +16,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.material.*
-
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -43,15 +45,16 @@ fun BottomNavigationBar(navController: NavController) {
             shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp), // Apply rounded corners
             color = Color.White
         ) {
-            BottomNavigation(
-                backgroundColor = Color.White,
+            NavigationBar(
+                // backgroundColor = Color.White,
                 contentColor = Color.Black,
                 modifier = Modifier.padding(5.dp)
             ) {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
-                items.forEach { item ->
-                    BottomNavigationItem(
+                // val navBackStackEntry by navController.currentBackStackEntryAsState()
+                // val currentRoute = navBackStackEntry?.destination?.route
+                var selectedItem by remember { mutableIntStateOf(0) }
+                items.forEachIndexed { index, item ->
+                    NavigationBarItem(
                         icon = {
                             Icon(
                                 painterResource(id = item.icon),
@@ -64,10 +67,11 @@ fun BottomNavigationBar(navController: NavController) {
                                 fontSize = 9.sp
                             )
                         },
-                        selectedContentColor = Color.Black,
-                        unselectedContentColor = Color.Black.copy(0.4f),
+                        // selectedContentColor = Color.Black,
+                        // unselectedContentColor = Color.Black.copy(0.4f),
+                        selected = selectedItem == index,
                         alwaysShowLabel = true,
-                        selected = currentRoute == item.screen_route,
+                        // selected = currentRoute == item.screen_route,
                         onClick = {
                             navController.navigate(item.screen_route) {
 
