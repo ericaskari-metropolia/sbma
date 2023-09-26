@@ -77,15 +77,12 @@ dependencies {
     implementation("androidx.room:room-ktx:2.5.2")
 
     //Navigation
-    implementation("androidx.navigation:navigation-compose:2.5.1")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
 
 
     //Material
     implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
-
-    implementation ("com.google.android.material:material:1.9.0")
-    implementation ("androidx.compose.material:material-icons-extended:1.5.1")
 
     //ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")

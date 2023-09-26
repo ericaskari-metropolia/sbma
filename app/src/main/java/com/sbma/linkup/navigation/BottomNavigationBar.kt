@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
@@ -52,7 +52,7 @@ fun BottomNavigationBar(navController: NavController) {
             ) {
                 // val navBackStackEntry by navController.currentBackStackEntryAsState()
                 // val currentRoute = navBackStackEntry?.destination?.route
-                var selectedItem by remember { mutableIntStateOf(0) }
+                var selectedItem by remember { mutableStateOf(0) }
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
                         icon = {
