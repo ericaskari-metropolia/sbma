@@ -8,9 +8,6 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
-/**
- * @author Mohammad Askari
- */
 @Dao
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

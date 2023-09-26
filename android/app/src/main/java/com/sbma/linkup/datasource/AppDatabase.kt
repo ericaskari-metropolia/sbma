@@ -8,21 +8,25 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserDao
+import com.sbma.linkup.usercard.UserCard
+import com.sbma.linkup.usercard.UserCardDao
+import com.sbma.linkup.userconnection.UserConnection
+import com.sbma.linkup.userconnection.UserConnectionDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/**
- * @author Mohammad Askari
- */
 @Database(
-    entities = [User::class],
-    version = 1,
+    entities = [User::class, UserCard::class, UserConnection::class],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun userCardDao(): UserCardDao
+    abstract fun userConnectionDao(): UserConnectionDao
+
 
     companion object {
         private var DB_NAME: String = "linkup"
