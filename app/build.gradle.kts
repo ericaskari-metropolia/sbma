@@ -76,6 +76,11 @@ dependencies {
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
 
+    //Datastore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //implementation("androidx.datastore:datastore:1.0.0")
+
+
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
