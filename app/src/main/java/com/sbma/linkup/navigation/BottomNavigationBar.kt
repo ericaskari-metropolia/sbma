@@ -28,7 +28,7 @@ fun BottomNavigationBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem.QRCode,
-        BottomNavItem.MyCards,
+        BottomNavItem.MyContacts,
         BottomNavItem.Profile,
         BottomNavItem.Camera,
         BottomNavItem.Setting

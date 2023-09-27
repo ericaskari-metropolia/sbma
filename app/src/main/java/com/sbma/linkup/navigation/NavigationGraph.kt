@@ -1,35 +1,28 @@
 package com.sbma.linkup.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sbma.linkup.R
+import com.sbma.linkup.presentation.screens.ProfileScreen
+import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
+import com.sbma.linkup.user.User
 
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(
+    navController: NavHostController,
+    user: User,
+) {
     NavHost(navController, startDestination = BottomNavItem.Profile.screen_route) {
         composable(BottomNavItem.QRCode.screen_route) {
             QRCodeScreen()
         }
-        composable(BottomNavItem.MyCards.screen_route) {
-            MyCardsScreen()
+        composable(BottomNavItem.MyContacts.screen_route) {
+            UserConnectionsScreenProvider(user)
         }
         composable(BottomNavItem.Profile.screen_route) {
-            ProfileScreen()
+            ProfileScreen(user)
         }
         composable(BottomNavItem.Camera.screen_route) {
             CameraScreen()

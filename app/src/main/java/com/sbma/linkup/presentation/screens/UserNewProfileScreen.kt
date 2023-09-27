@@ -24,10 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sbma.linkup.presentation.screenstates.UserNewProfileScreenState
 import com.sbma.linkup.ui.theme.LinkUpTheme
 
 @Composable
-fun NewProfileScreen() {
+fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
@@ -154,7 +155,21 @@ fun NewProfileScreen() {
             }
             item {
                 Button(
-                    onClick = { /* Do something! */ },
+                    onClick = {
+                        onSubmit(
+                            UserNewProfileScreenState(
+                                username = username,
+                                email = email,
+                                phoneNumber = phoneNumber,
+                                address = address,
+                                description = description,
+                                instagramLink = instagramLink,
+                                twitterLink = twitterLink,
+                                facebookLink = facebookLink,
+                                linkedinLink = linkedinLink
+                            )
+                        )
+                    },
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -178,6 +193,8 @@ fun NewProfileScreen() {
 @Composable
 fun NewProfileScreenPreview() {
     LinkUpTheme {
-        NewProfileScreen()
+        NewProfileScreen {
+
+        }
     }
 }
