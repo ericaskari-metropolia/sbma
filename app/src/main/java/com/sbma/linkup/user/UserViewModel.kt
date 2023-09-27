@@ -17,6 +17,9 @@ class UserViewModel(
     val allItemsStream = repository.getAllItemsStream()
     fun getItemStream(id: UUID) = repository.getItemStream(id)
 
+    /**
+     * combines two flows together. here it combines userId and list of users and returns the user with that id.
+     */
     val getLoggedInUserProfile: Flow<User?> = dataStore.getUserId.combine(repository.getAllItemsStream()) { userId, users ->
         userId?.let { id -> users.find { it.id == id } }
     }
