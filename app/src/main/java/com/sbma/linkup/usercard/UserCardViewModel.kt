@@ -8,5 +8,6 @@ class UserCardViewModel(
 ) : ViewModel() {
     fun allItemsStream(userId: UUID) = repository.getUserItemsStream(userId)
     fun getItemStream(id: UUID) = repository.getItemStream(id)
+    suspend fun insertItem(item: UserCard) = repository.insertItem(item)
 
 }
