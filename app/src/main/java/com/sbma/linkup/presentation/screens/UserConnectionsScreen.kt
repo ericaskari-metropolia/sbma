@@ -29,11 +29,11 @@ import java.util.UUID
 
 @Composable
 fun UserConnectionsScreenProvider(
-    userId: UUID,
+    user: User,
 ) {
     val userConnectionViewModel: UserConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userItems = userConnectionViewModel
-        .allItemsStream(userId)
+        .allItemsStream(user.id)
         .collectAsState(initial = mapOf())
 
     val state = remember {
@@ -41,11 +41,21 @@ fun UserConnectionsScreenProvider(
             contacts = userItems.value.values.toList()
         )
     }
-    UserConnectionsScreen(state) {
-        // TODO: What happens when clicking on list item.
-    }
 
+    if (state.contacts.isEmpty()) {
+        EmptyUserConnectionsScreen()
+    } else {
+        UserConnectionsScreen(state) {
+            // TODO: What happens when clicking on list item.
+        }
+    }
 }
+
+@Composable
+fun EmptyUserConnectionsScreen() {
+    Text(text = "Contact list is empty!")
+}
+
 @Composable
 fun UserConnectionsScreen(
     state: UserConnectionsScreenState,
@@ -66,16 +76,16 @@ fun UserConnectionsScreen(
                 ),
                 headlineContent = { Text(contact.name) },
                 supportingContent = {
-                                    Column {
-                                        Text(contact.description)
-                                        Row {
-                                            Icon(
-                                                Icons.Filled.Phone,
-                                                contentDescription = "Localized description",
-                                            )
-                                            Text("+358 1234567890")
-                                        }
-                                    }
+                    Column {
+                        Text(contact.description)
+                        Row {
+                            Icon(
+                                Icons.Filled.Phone,
+                                contentDescription = "Localized description",
+                            )
+                            Text("+358 1234567890")
+                        }
+                    }
                 },
                 leadingContent = {
                     Icon(

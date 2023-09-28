@@ -35,65 +35,6 @@ fun QRCodeScreen() {
 }
 
 @Composable
-fun MyCardsScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "My Cards Screen",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
-
-@Composable
-fun ProfileScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Profile Screen",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
-
-
-@Composable
-fun CameraScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Camera Screen",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-    }
-}
-
-
-@Composable
 fun SettingScreen() {
     Column(
         modifier = Modifier

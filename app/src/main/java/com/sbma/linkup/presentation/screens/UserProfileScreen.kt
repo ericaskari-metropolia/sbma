@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
@@ -23,6 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,20 +38,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.R
+import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.user.User
+import com.sbma.linkup.usercard.UserCard
+import com.sbma.linkup.usercard.UserCardViewModel
+import java.util.UUID
 
 @Composable
-fun ProfileScreen() {
-    ScreenTitle()
+fun UserProfileScreenProvider(user: User) {
+    val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
+    UserProfileScreen(user, userCards.value)
+}
+
+@Composable
+fun UserProfileScreen(user: User, userCards: List<UserCard>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column{
+        ScreenTitle()
+        Column {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -74,9 +94,9 @@ fun ProfileScreen() {
                         .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Sebubebu", fontSize = 30.sp)
+                    Text(text = user.name, fontSize = 30.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "UX/UI Designer", fontSize = 15.sp)
+                    Text(text = user.description, fontSize = 15.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Card(
                         modifier = Modifier
@@ -87,9 +107,11 @@ fun ProfileScreen() {
                                 .fillMaxSize()
                                 .padding(16.dp)
                         ) {
-                            Text(text = "About Me",
+                            Text(
+                                text = "About Me",
                                 fontSize = 20.sp,
-                                style = MaterialTheme.typography.labelLarge,)
+                                style = MaterialTheme.typography.labelLarge,
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "Sebubebu is a results-driven Marketing Manager with a passion " +
@@ -112,9 +134,11 @@ fun ProfileScreen() {
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Contact Details",
+                        Text(
+                            text = "Contact Details",
                             fontSize = 20.sp,
-                            style = MaterialTheme.typography.labelLarge,)
+                            style = MaterialTheme.typography.labelLarge,
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         ContactInfoRow(
                             icon = Icons.Filled.Call,
@@ -132,7 +156,7 @@ fun ProfileScreen() {
                         )
                     }
                 }
-
+                UserCardsList(userCards, withLazyColumn = false)
             }
         }
     }
@@ -188,8 +212,15 @@ fun ScreenTitle() {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
+    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer")) }
+    val cards = remember {
+        mutableListOf(
+            UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
+            UserCard(UUID.randomUUID(), user.value.id, "Instagram", "https://instagram.com/something"),
+        )
+    }
     LinkUpTheme {
-        ProfileScreen()
+        UserProfileScreen(user.value, cards)
     }
 }
 

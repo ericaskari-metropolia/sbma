@@ -30,6 +30,11 @@
          devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
+    <!-- Needed only if your app uses camera to scan or click QR code. -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".application.MyApplication"

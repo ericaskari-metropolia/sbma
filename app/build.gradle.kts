@@ -76,6 +76,11 @@ dependencies {
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
 
+    //Datastore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //implementation("androidx.datastore:datastore:1.0.0")
+
+
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
@@ -89,5 +94,13 @@ dependencies {
 
     //Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.25.0")
+
+    // CameraX
+    implementation ("androidx.camera:camera-camera2:1.0.2")
+    implementation ("androidx.camera:camera-lifecycle:1.0.2")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
+
+    // Zxing
+    implementation ("com.google.zxing:core:3.3.3")
 
 }
