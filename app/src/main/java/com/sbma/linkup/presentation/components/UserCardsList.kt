@@ -1,36 +1,29 @@
 package com.sbma.linkup.presentation.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sbma.linkup.presentation.screens.ContactInfoRow
+import com.sbma.linkup.R
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.usercard.UserCard
-import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.UUID
 
 @Composable
@@ -38,6 +31,43 @@ fun UserCardsListItem(userCard: UserCard) {
     ListItem(
         overlineContent = { Text(userCard.name) },
         headlineContent = { Text(userCard.value) },
+
+        leadingContent = {
+            when (userCard.name) {
+                "Facebook" -> Image(
+                    painterResource(R.drawable.facebook),
+                    contentDescription = "Edit",
+                    contentScale = ContentScale.Crop,
+                )
+
+                "Instagram" -> Image(
+                    painterResource(R.drawable.instagram),
+                    contentDescription = "Edit",
+                    contentScale = ContentScale.Crop,
+                )
+
+                "Linkedin" -> Image(
+                    painterResource(R.drawable.linkedin),
+                    contentDescription = "Edit",
+                    contentScale = ContentScale.Crop,
+                )
+
+                "Twitter" -> Image(
+                    painterResource(R.drawable.twitter),
+                    contentDescription = "Edit",
+                    contentScale = ContentScale.Crop,
+                )
+
+                else -> Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.AccountCircle,
+                        contentDescription = "AccountCircle",
+                    )
+                }
+            }
+        }
     )
 }
 
@@ -67,6 +97,8 @@ fun UserCardsListPreview() {
         mutableListOf(
             UserCard(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something"),
             UserCard(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something"),
+            UserCard(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something"),
+            UserCard(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something"),
         )
     }
     LinkUpTheme {
