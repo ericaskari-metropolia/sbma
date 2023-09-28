@@ -131,6 +131,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                         painterResource(R.drawable.instagram),
                         contentDescription = "New",
                         contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(40.dp)
                     )
                     TextField(
                         value = instagramLink,
@@ -155,6 +156,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                         painterResource(R.drawable.twitter),
                         contentDescription = "New",
                         contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(40.dp)
                     )
                     TextField(
                         value = twitterLink,
@@ -179,6 +181,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                         painterResource(R.drawable.facebook),
                         contentDescription = "New",
                         contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(40.dp)
                     )
                     TextField(
                         value = facebookLink,
@@ -201,6 +204,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                         painterResource(R.drawable.linkedin),
                         contentDescription = "New",
                         contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(40.dp)
                     )
                     TextField(
                         value = linkedinLink,
