@@ -13,6 +13,8 @@ import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.NewProfileScreen
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
+import com.sbma.linkup.usercard.UserCard
+import com.sbma.linkup.usercard.UserCardViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -20,6 +22,7 @@ import java.util.UUID
 @Composable
 fun NavigationView(
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val composableScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -39,6 +42,18 @@ fun NavigationView(
                 val userId = UUID.randomUUID()
                 userViewModel.insertItem(User(userId, it.username, it.description))
                 userViewModel.setLoggedInUserId(userId)
+                if (it.facebookLink.isNotBlank()) {
+                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Facebook", it.facebookLink))
+                }
+                if (it.instagramLink.isNotBlank()) {
+                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Instagram", it.instagramLink))
+                }
+                if (it.linkedinLink.isNotBlank()) {
+                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "LinkedIn", it.linkedinLink))
+                }
+                if (it.twitterLink.isNotBlank()) {
+                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Twitter", it.twitterLink))
+                }
                 Toast.makeText(context, "Profile Created!", Toast.LENGTH_SHORT).show()
             }
         }

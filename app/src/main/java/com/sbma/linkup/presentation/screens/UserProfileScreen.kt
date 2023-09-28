@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,18 +38,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.R
+import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
+import com.sbma.linkup.usercard.UserCard
+import com.sbma.linkup.usercard.UserCardViewModel
 import java.util.UUID
 
 @Composable
-fun ProfileScreen(user: User) {
+fun UserProfileScreenProvider(user: User) {
+    val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
+    UserProfileScreen(user, userCards.value)
+}
+
+@Composable
+fun UserProfileScreen(user: User, userCards: List<UserCard>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(10.dp),
+            .padding(10.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -143,7 +156,7 @@ fun ProfileScreen(user: User) {
                         )
                     }
                 }
-
+                UserCardsList(userCards, withLazyColumn = false)
             }
         }
     }
@@ -200,8 +213,14 @@ fun ScreenTitle() {
 @Composable
 fun ProfileScreenPreview() {
     val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer")) }
+    val cards = remember {
+        mutableListOf(
+            UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
+            UserCard(UUID.randomUUID(), user.value.id, "Instagram", "https://instagram.com/something"),
+        )
+    }
     LinkUpTheme {
-        ProfileScreen(user.value)
+        UserProfileScreen(user.value, cards)
     }
 }
 
