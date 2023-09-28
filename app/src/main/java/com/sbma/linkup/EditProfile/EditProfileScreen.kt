@@ -74,7 +74,6 @@ fun EditProfileScreen() {
             Icon(
                 Icons.Rounded.KeyboardArrowLeft,
                 contentDescription = "Back",
-//                modifier = Modifier.padding(end = 5.dp)
             )
             Box(
                 modifier = Modifier
@@ -91,7 +90,6 @@ fun EditProfileScreen() {
             }
 
         }
-
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -234,6 +232,7 @@ fun EditProfileScreen() {
                     painterResource(R.drawable.instagram),
                     contentDescription = "Edit",
                     contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
                 )
                 TextField(
                     value = instagram,
@@ -257,6 +256,7 @@ fun EditProfileScreen() {
                     painterResource(R.drawable.twitter),
                     contentDescription = "Edit",
                     contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
                 )
                 TextField(
                     value = twitter,
@@ -280,6 +280,7 @@ fun EditProfileScreen() {
                     painterResource(R.drawable.linkedin),
                     contentDescription = "Edit",
                     contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
                 )
                 TextField(
                     value = linkedIn,
@@ -288,7 +289,6 @@ fun EditProfileScreen() {
                         containerColor = Color.Transparent
                     )
                 )
-
             }
 
             //Facebook
@@ -303,6 +303,7 @@ fun EditProfileScreen() {
                     painterResource(R.drawable.facebook),
                     contentDescription = "Edit",
                     contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
                 )
                 TextField(
                     value = facebook,
@@ -311,7 +312,6 @@ fun EditProfileScreen() {
                         containerColor = Color.Transparent
                     )
                 )
-
             }
         }
         Column(
