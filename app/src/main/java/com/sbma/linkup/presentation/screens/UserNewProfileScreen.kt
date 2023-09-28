@@ -1,5 +1,8 @@
 package com.sbma.linkup.presentation.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,10 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sbma.linkup.presentation.screenstates.UserNewProfileScreenState
+import com.sbma.linkup.R
 import com.sbma.linkup.ui.theme.LinkUpTheme
 
 @Composable
@@ -114,44 +120,98 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 )
             }
             item {
-                TextField(
-                    value = instagramLink,
-                    onValueChange = { instagramLink = it },
-                    label = { Text("Instagram") },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                )
+                        .padding(start = 4.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painterResource(R.drawable.instagram),
+                        contentDescription = "New",
+                        contentScale = ContentScale.Crop,
+                    )
+                    TextField(
+                        value = instagramLink,
+                        onValueChange = { instagramLink = it },
+                        label = { Text("Instagram") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    )
+                }
+
             }
             item {
-                TextField(
-                    value = twitterLink,
-                    onValueChange = { twitterLink = it },
-                    label = { Text("Twitter") },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                )
+                        .padding(start = 4.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painterResource(R.drawable.twitter),
+                        contentDescription = "New",
+                        contentScale = ContentScale.Crop,
+                    )
+                    TextField(
+                        value = twitterLink,
+                        onValueChange = { twitterLink = it },
+                        label = { Text("Twitter") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    )
+                }
+
             }
             item {
-                TextField(
-                    value = facebookLink,
-                    onValueChange = { facebookLink = it },
-                    label = { Text("Facebook") },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                )
+                        .padding(start = 4.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painterResource(R.drawable.facebook),
+                        contentDescription = "New",
+                        contentScale = ContentScale.Crop,
+                    )
+                    TextField(
+                        value = facebookLink,
+                        onValueChange = { facebookLink = it },
+                        label = { Text("Facebook") },
+                        modifier = Modifier
+                            .padding(20.dp)
+                    )
+                }
             }
             item {
-                TextField(
-                    value = linkedinLink,
-                    onValueChange = { linkedinLink = it },
-                    label = { Text("Linkedin") },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                )
+                        .padding(start = 4.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painterResource(R.drawable.linkedin),
+                        contentDescription = "New",
+                        contentScale = ContentScale.Crop,
+                    )
+                    TextField(
+                        value = linkedinLink,
+                        onValueChange = { linkedinLink = it },
+                        label = { Text("Linkedin") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    )
+                }
+
             }
             item {
                 Button(
