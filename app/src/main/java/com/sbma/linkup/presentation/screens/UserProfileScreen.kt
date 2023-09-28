@@ -2,6 +2,7 @@ package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,14 +51,14 @@ import com.sbma.linkup.usercard.UserCardViewModel
 import java.util.UUID
 
 @Composable
-fun UserProfileScreenProvider(user: User) {
+fun UserProfileScreenProvider(user: User, onShareClick: () -> Unit, onEditClick: () -> Unit) {
     val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
-    UserProfileScreen(user, userCards.value)
+    UserProfileScreen(user, userCards.value, onEditClick = onEditClick, onShareClick = onShareClick)
 }
 
 @Composable
-fun UserProfileScreen(user: User, userCards: List<UserCard>) {
+fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () -> Unit, onEditClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +67,10 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ScreenTitle()
+        ScreenTitle(
+            onEditClick = onEditClick,
+            onShareClick = onShareClick
+        )
         Column {
             Column(
                 modifier = Modifier
@@ -185,7 +190,7 @@ fun ContactInfoRow(icon: ImageVector, text: String) {
 }
 
 @Composable
-fun ScreenTitle() {
+fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -200,12 +205,29 @@ fun ScreenTitle() {
             modifier = Modifier
 
         )
-        Icon(
-            Icons.Filled.Edit,
-            contentDescription = "Edit",
-            modifier = Modifier
-                .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-        )
+        Row {
+
+            Icon(
+                Icons.Filled.Edit,
+                contentDescription = "Edit",
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
+                    .clickable {
+                        onEditClick()
+                    }
+            )
+            Icon(
+                Icons.Filled.Share,
+                contentDescription = "Edit",
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
+                    .clickable {
+                        onShareClick()
+                    }
+            )
+        }
     }
 }
 
@@ -220,7 +242,12 @@ fun ProfileScreenPreview() {
         )
     }
     LinkUpTheme {
-        UserProfileScreen(user.value, cards)
+        UserProfileScreen(
+            user.value,
+            cards,
+            onShareClick = {},
+            onEditClick = {}
+        )
     }
 }
 
