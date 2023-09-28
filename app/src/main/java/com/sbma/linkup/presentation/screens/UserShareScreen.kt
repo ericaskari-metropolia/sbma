@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -22,23 +21,54 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.user.User
+import com.sbma.linkup.usercard.UserCard
+import com.sbma.linkup.usercard.UserCardViewModel
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 @Composable
-fun InfoShareScreen() {
+fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
+    val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = null)
+    val composableScope = rememberCoroutineScope()
+
+    userCards.value?.let {
+        UserShareScreen(it, onShareClick = {cardsToShare ->
+            composableScope.launch {
+                val jsonToShare: String = Gson().toJson(cardsToShare)
+                println(jsonToShare)
+                userCardViewModel.setJsonToShare(jsonToShare)
+                onShareClick()
+            }
+        })
+    }
+}
+
+
+@Composable
+fun UserShareScreen(userCards: List<UserCard>, onShareClick: (userCards: List<UserCard>) -> Unit) {
+    val input = remember {
+        mutableStateOf(userCards.map { Pair(it, false) })
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(10.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -53,29 +83,25 @@ fun InfoShareScreen() {
             fontSize = 20.sp
         )
 
-        // Sample data for the list
-        val media = remember { mutableListOf("About Me", "Phone Number", "Description", "Email", "Instagram", "Facebook", "Twitter", "LinkedIn") }
-
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                items(media) { mediaItem ->
-                    InfoListItem(mediaItem) {
-                        // item click
-                    }
+        LazyColumn {
+            itemsIndexed(input.value) { index, mediaItem ->
+                InfoListItem(mediaItem) {
+                    val copy = input.value.toMutableList()
+                    val newEl = mediaItem.copy(second = !mediaItem.second)
+                    copy[index] = newEl
+                    input.value = copy
                 }
             }
         }
 
         Button(
-            onClick = { /* Do something! */ },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+            onClick = {
+                onShareClick(
+                    input.value
+                        .filter { pair -> pair.second }
+                        .map { it.first }
+                )
+            },
         ) {
             Icon(
                 Icons.Filled.Share,
@@ -89,11 +115,8 @@ fun InfoShareScreen() {
 }
 
 
-
-
 @Composable
-fun InfoListItem(mediaName: String, onItemClick: () -> Unit) {
-    var isChecked by remember { mutableStateOf(false) }
+fun InfoListItem(item: Pair<UserCard, Boolean>, onItemClick: () -> Unit) {
 
     Card(
         modifier = Modifier
@@ -105,14 +128,11 @@ fun InfoListItem(mediaName: String, onItemClick: () -> Unit) {
             modifier = Modifier.padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = mediaName, style = MaterialTheme.typography.bodyLarge)
+            Text(text = item.first.name, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.weight(1f))
             Switch(
-                checked = isChecked,
-                onCheckedChange = {
-                    isChecked = it
-                    // switch state change
-                }
+                checked = item.second,
+                onCheckedChange = { onItemClick() }
             )
         }
     }
@@ -121,8 +141,18 @@ fun InfoListItem(mediaName: String, onItemClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun ShareScreenPreview() {
+fun UserShareScreenPreview() {
+    val userId = UUID.randomUUID()
+    val cards = remember {
+        mutableListOf(
+            UserCard(UUID.randomUUID(), userId, "Facebook", "facebook.com/something"),
+            UserCard(UUID.randomUUID(), userId, "Instagram", "instagram.com/something"),
+            UserCard(UUID.randomUUID(), userId, "Twitter", "twitter.com/something")
+        )
+    }
     LinkUpTheme {
-        InfoShareScreen()
+        UserShareScreen(cards) {
+
+        }
     }
 }

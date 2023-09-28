@@ -39,7 +39,8 @@ object AppViewModelProvider {
         }
         addInitializer(UserCardViewModel::class) {
             UserCardViewModel(
-                MyApplication().container.userCardRepository
+                MyApplication().container.userCardRepository,
+                MyApplication().dataStore
             )
         }
         addInitializer(UserConnectionViewModel::class) {
