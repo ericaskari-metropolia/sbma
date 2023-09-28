@@ -34,6 +34,7 @@ object AppViewModelProvider {
         initializer {
             UserViewModel(
                 repository = MyApplication().container.userRepository,
+                dataStore = MyApplication().dataStore
             )
         }
         addInitializer(UserCardViewModel::class) {
