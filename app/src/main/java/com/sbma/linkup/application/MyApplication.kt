@@ -7,6 +7,7 @@ import com.sbma.linkup.application.connectivity.AppConnectivityManager
 import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.application.data.AppContainer
 import com.sbma.linkup.application.data.AppDataContainer
+import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +31,9 @@ class MyApplication : Application() {
      * AppContainer instance used by the rest of classes to obtain dependencies
      */
 
+    // Service to save key value format data
+    lateinit var dataStore: DataStore
+
     // Service to check internet connection
     lateinit var appConnectivityManager: AppConnectivityManager
 
@@ -41,6 +45,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        dataStore = DataStore(this)
 
         appConnectivityManager = AppConnectivityManager(this) {
             println("$TAG[AppConnectivityManager] ${it.toTitle()}")

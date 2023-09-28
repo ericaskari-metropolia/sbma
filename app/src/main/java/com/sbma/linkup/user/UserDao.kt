@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface UserDao {
@@ -20,7 +21,7 @@ interface UserDao {
     suspend fun delete(item: User)
 
     @Query("SELECT * from User WHERE id = :id")
-    fun getItem(id: String): Flow<User?>
+    fun getItem(id: UUID): Flow<User?>
 
     @Query("SELECT * from User ORDER BY name DESC")
     fun getAllItems(): Flow<List<User>>
