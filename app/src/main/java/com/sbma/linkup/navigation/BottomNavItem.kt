@@ -6,7 +6,7 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen_route: S
 
     object QRCode : BottomNavItem("My QR", R.drawable.qr_icon, "qr_code_route")
     object MyContacts : BottomNavItem("My Contacts", R.drawable.card_icon, "my_contacts_route")
-    object Profile : BottomNavItem("Profile", R.drawable.profile_icon, "profile")
+    object Profile : BottomNavItem("Profile", R.drawable.user_icon, "profile")
     object Camera : BottomNavItem("Camera", R.drawable.camera_icon, "camera_route")
-    object Setting : BottomNavItem("Setting", R.drawable.settings_icon, "setting_route")
+    object Setting : BottomNavItem("Setting", R.drawable.setting_icon, "setting_route")
 }
