@@ -25,6 +25,18 @@ class DataStore(private val context: Context) {
         .map { it?.let { UUID.fromString(it) } }
 
     /**
+     * Getter for access token
+     */
+    val getAccessToken: Flow<String?> = context.dataStore.data
+        .map { it[ACCESSTOKEN_KEY] }
+
+    /**
+     * Getter for access token expires at
+     */
+    val getAccessTokenExpiresAt: Flow<String?> = context.dataStore.data
+        .map { it[ACCESSTOKEN_EXPIRES_KEY] }
+
+    /**
      * Getter for saved Json string.
      */
     val getJsonToShare: Flow<String?> = context.dataStore.data
@@ -33,20 +45,58 @@ class DataStore(private val context: Context) {
     /**
      * Setter for logged in user id
      */
-    suspend fun setUserId(userId: UUID) {
-        context.dataStore.edit { it[USERID_KEY] = userId.toString() }
+    private suspend fun setUserId(value: UUID) {
+        context.dataStore.edit { it[USERID_KEY] = value.toString() }
     }
 
     /**
      * Setter for logged in user cards json string
      */
-    suspend fun setJsonToShare(json: String) {
-        context.dataStore.edit { it[JSONTOSHARE_KEY] = json }
+    suspend fun setJsonToShare(value: String) {
+        context.dataStore.edit { it[JSONTOSHARE_KEY] = value }
     }
+
+    /**
+     * Setter for access token string
+     */
+    private suspend fun setAccessToken(value: String) {
+        context.dataStore.edit { it[ACCESSTOKEN_KEY] = value }
+    }
+
+    /**
+     * Setter for access token string
+     */
+    private suspend fun setAccessTokenExpiresAt(value: String) {
+        context.dataStore.edit { it[ACCESSTOKEN_KEY] = value }
+    }
+
+    /**
+     * Setter for login data when logging in
+     */
+    suspend fun saveLoginData(accessToken: String, expiresAt: String, userId: UUID) {
+        setAccessToken(accessToken)
+        setAccessTokenExpiresAt(expiresAt)
+        setUserId(userId)
+    }
+
+    /**
+     * Setter for login data when logging out
+     */
+    suspend fun deleteLoginData() {
+        context.dataStore.edit {
+            it.remove(USERID_KEY)
+            it.remove(ACCESSTOKEN_KEY)
+            it.remove(ACCESSTOKEN_EXPIRES_KEY)
+            it.remove(JSONTOSHARE_KEY)
+        }
+    }
+
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userId")
         val USERID_KEY = stringPreferencesKey("user_id")
         val JSONTOSHARE_KEY = stringPreferencesKey("json_to_share")
+        val ACCESSTOKEN_KEY = stringPreferencesKey("access_token")
+        val ACCESSTOKEN_EXPIRES_KEY = stringPreferencesKey("access_token_expires")
     }
 }
