@@ -15,3 +15,6 @@ node_modules
 .externalNativeBuild
 .cxx
 local.properties
+deployment.injected.yml
+.env
+api/dist
