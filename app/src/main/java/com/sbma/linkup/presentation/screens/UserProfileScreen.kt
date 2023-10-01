@@ -1,6 +1,5 @@
 package com.sbma.linkup.presentation.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -41,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.components.UserCardsList
@@ -85,13 +84,12 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
-                    Image(
-                        painter = painterResource(R.drawable.profile_photo),
+                    AsyncImage(
+                        model = user.picture ?: painterResource(R.drawable.profile_photo),
                         contentDescription = "profile photo",
                         modifier = Modifier
                             .size(150.dp)
                             .clip(RoundedCornerShape(50.dp))
-                            .scale(2f)
                     )
                 }
                 Column(
@@ -234,7 +232,7 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer")) }
+    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer", picture = null)) }
     val cards = remember {
         mutableListOf(
             UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),

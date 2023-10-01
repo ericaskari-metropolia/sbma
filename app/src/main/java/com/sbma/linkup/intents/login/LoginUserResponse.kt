@@ -12,6 +12,6 @@ data class LoginUserResponse(
     ) {
 
     fun toUser(): User {
-        return User(UUID.fromString(id), name ?: "", description ?: "")
+        return User(UUID.fromString(id), name ?: "", description ?: "", picture = googleProfile.picture)
     }
 }
