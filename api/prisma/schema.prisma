@@ -13,17 +13,9 @@ model User {
   email               String            @unique
   name                String
   cards               Card[]
-  googleProfile       UserGoogleProfile?
   connections         Connection[]      @relation("Connection_user")
   connectedUsers      Connection[]      @relation("Connection_connectedUser")
   connects            Connect[]
-  userGoogleProfileId String
-}
-
-model UserGoogleProfile {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
 }
 
 model Card {
@@ -38,8 +30,6 @@ model Card {
 
 model Connection {
   id              String           @id @default(uuid())
-  title           String
-  value           String
   user            User             @relation("Connection_user", fields: [userId], references: [id])
   userId          String
   connectedUser   User             @relation("Connection_connectedUser", fields: [connectedUserId], references: [id])

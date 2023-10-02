@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/express-session": "^1.17.8",
     "@types/jsonwebtoken": "^9.0.3",
+    "@types/node": "^20.8.0",
     "@types/passport": "^1.0.13",
     "@types/passport-google-oauth2": "^0.1.6",
     "@types/passport-jwt": "^3.0.10",

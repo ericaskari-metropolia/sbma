@@ -2,10 +2,10 @@ import passport, { AuthenticateCallback } from 'passport';
 
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions, VerifiedCallback } from 'passport-jwt';
 import jsonwebtoken from 'jsonwebtoken';
-import { UserModel } from '../interfaces/userModel.js';
-import { UserDatabase } from '../databases/userDatabase.js';
+import { prisma } from '../databases/userDatabase.js';
 import { environment } from '../configurations/environment.js';
 import * as express from 'express';
+import { User } from '@prisma/client';
 
 export function config() {
     const opts: StrategyOptions = {
@@ -16,9 +16,28 @@ export function config() {
         passReqToCallback: true,
     };
     passport.use(
-        new JwtStrategy(opts, function (req: express.Request, payload: any, done: VerifiedCallback) {
+        new JwtStrategy(opts, async function (req: express.Request, payload: any, done: VerifiedCallback) {
             console.log({ payload });
-            const user = UserDatabase.findById(payload.sub);
+            const user = await prisma.user.findFirst({
+                where: {
+                    id: payload.sub,
+                },
+                include: {
+                    cards: true,
+                    connections: {
+                        include: {
+                            connectionCards: true,
+                        },
+                    },
+                    connectedUsers: true,
+                    connects: {
+                        include: {
+                            tags: true,
+                            cards: true,
+                        },
+                    },
+                },
+            });
             if (user) {
                 return done(null, user);
             } else {
@@ -29,7 +48,7 @@ export function config() {
     );
 }
 
-export function generateAccessToken(user: UserModel, expiresInSeconds = 3600) {
+export function generateAccessToken(user: User, expiresInSeconds = 3600) {
     const payload = { sub: user.id, type: 'USER_LOGIN_TOKEN' };
 
     const accessToken = jsonwebtoken.sign(payload, environment.APP_JWT_SECRET, {

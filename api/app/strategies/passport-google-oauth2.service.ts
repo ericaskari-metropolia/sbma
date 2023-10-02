@@ -42,13 +42,13 @@ export function config() {
 export function configRoutes(app: Express) {
     app.get('/auth/google', passport.authenticate('google'));
 
-    app.get('/auth/google/callback', passport.authenticate('google'), (req: any, res: any) => {
-        const user = UserDatabase.syncUserByGoogleProfile(req.user);
+    app.get('/auth/google/callback', passport.authenticate('google'), async (req: any, res: any) => {
+        const user = await UserDatabase.syncUserByGoogleProfile(req.user);
         const token = generateAccessToken(user);
         const params = new URLSearchParams();
         params.set('token', JSON.stringify(token));
         params.set('user', JSON.stringify(user));
-        console.log(token);
+        console.log({ token, user });
         const template = continueWithAppTemplate.replace('[launchLink]', `/android/auth/login?${params.toString()}`);
         res.send(template);
     });
