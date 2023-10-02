@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
 import { UserModel } from '../interfaces/userModel.js';
 import { GoogleProfile } from '../interfaces/googleProfile.js';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+prisma.user.findMany().then((data) => {
+    console.log(data);
+});
 const users: Map<string, UserModel> = new Map();
 
 function syncUserByGoogleProfile(googleProfile: GoogleProfile) {

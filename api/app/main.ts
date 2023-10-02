@@ -11,6 +11,7 @@ import { configParsers } from './configurations/configParsers.js';
 import { environment } from './configurations/environment.js';
 import passport from 'passport';
 import { randomUUID } from 'crypto';
+import { UserModel } from './interfaces/userModel.js';
 // Express App
 const app = express();
 
@@ -41,7 +42,7 @@ app.get('/.well-known/assetlinks.json', (req: any, res: any) => {
             target: {
                 namespace: 'android_app',
                 package_name: 'com.sbma.linkup',
-                sha256_cert_fingerprints: [environment.APP_ANDROID_SHA256_CERT_FINGERPRINT],
+                sha256_cert_fingerprints: environment.APP_ANDROID_SHA256_CERT_FINGERPRINT.split(','),
             },
         },
     ]);
@@ -50,6 +51,8 @@ app.get('/.well-known/assetlinks.json', (req: any, res: any) => {
 const data = new Map();
 
 app.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const { user } = req as unknown as { user: UserModel | null };
+
     const id = randomUUID();
     const { body } = req;
     data.set(id, body ?? {});
@@ -57,7 +60,7 @@ app.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 });
 
 app.get('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-    const { user } = req;
+    const { user } = req as unknown as { user: UserModel | null };
     console.log(user);
     const { id } = req.params;
     res.send({ data: data.get(id) ?? null });

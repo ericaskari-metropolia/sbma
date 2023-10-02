@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("APP_DATABASE_URL")
+  shadowDatabaseUrl      = "postgresql://postgres:sbma-local@localhost:5433/postgres?schema=public"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  String            @id @default(uuid())
+  email               String            @unique
+  name                String
+  cards               Card[]
+  googleProfile       UserGoogleProfile?
+  connections         Connection[]      @relation("Connection_user")
+  connectedUsers      Connection[]      @relation("Connection_connectedUser")
+  connects            Connect[]
+  userGoogleProfileId String
+}
+
+model UserGoogleProfile {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+model Card {
+  id              String           @id @default(uuid())
+  title           String
+  value           String
+  owner           User             @relation(fields: [ownerId], references: [id])
+  ownerId         String
+  connectionCards ConnectionCard[]
+  connectCards    ConnectCard[]
+}
+
+model Connection {
+  id              String           @id @default(uuid())
+  title           String
+  value           String
+  user            User             @relation("Connection_user", fields: [userId], references: [id])
+  userId          String
+  connectedUser   User             @relation("Connection_connectedUser", fields: [connectedUserId], references: [id])
+  connectedUserId String
+  connectionCards ConnectionCard[]
+
+  @@unique([userId, connectedUserId])
+}
+
+model ConnectionCard {
+  id           String     @id @default(uuid())
+  card         Card       @relation(fields: [cardId], references: [id])
+  cardId       String
+  connection   Connection @relation(fields: [connectionId], references: [id])
+  connectionId String
+
+  @@unique([cardId, connectionId])
+}
+
+model Connect {
+  id     String        @id @default(uuid())
+  user   User          @relation(fields: [userId], references: [id])
+  userId String
+  cards  ConnectCard[]
+  tags   Tag[]
+}
+
+model ConnectCard {
+  id        String  @id @default(uuid())
+  connect   Connect @relation(fields: [connectId], references: [id])
+  connectId String
+  card      Card    @relation(fields: [cardId], references: [id])
+  cardId    String
+
+  @@unique([cardId, connectId])
+}
+
+model Tag {
+  id        String  @id @default(uuid())
+  connect   Connect @relation(fields: [connectId], references: [id])
+  connectId String
+  tagId     String  @unique
+
+  @@unique([connectId, tagId])
+}

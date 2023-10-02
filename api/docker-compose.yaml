@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  sbma--postgres:
+    container_name: sbma--postgres
+    restart: 'no'
+    image: bitnami/postgresql
+    volumes:
+      - sbma--postgres1:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: sbma-local
+      POSTGRES_PASSWORD: sbma-local
+      POSTGRESQL_PASSWORD: sbma-local
+      POSTGRES_DB: sbma-local
+volumes:
+  sbma--postgres1:
