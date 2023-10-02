@@ -10,6 +10,7 @@ import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
 import com.sbma.linkup.presentation.screens.UserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.UserShareScreenProvider
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
+import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
 import com.sbma.linkup.user.User
 
 
@@ -86,6 +87,10 @@ fun NavigationGraph(
          */
         composable("profile/share/bluetooth") {
             ShareViaBluetoothScreenProvider()
+        }
+
+        composable("profile/share/nfc") {
+            NfcScanScreen()
         }
     }
 }

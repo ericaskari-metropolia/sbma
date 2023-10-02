@@ -3,11 +3,14 @@ package com.sbma.linkup.application
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
+import android.nfc.NfcAdapter
+import androidx.activity.ComponentActivity
 import com.sbma.linkup.application.connectivity.AppConnectivityManager
 import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.application.data.AppContainer
 import com.sbma.linkup.application.data.AppDataContainer
 import com.sbma.linkup.datasource.DataStore
+import com.sbma.linkup.nfc.AppNfcManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,6 +42,8 @@ class MyApplication : Application() {
 
     lateinit var bluetoothManager: BluetoothManager
     lateinit var bluetoothAdapter: BluetoothAdapter
+    lateinit var appNfcManager: AppNfcManager
+    lateinit var nfcAdapter: NfcAdapter
 
     // Container of repositories
     lateinit var container: AppContainer
@@ -59,6 +64,9 @@ class MyApplication : Application() {
 
         bluetoothAdapter = bluetoothManager.adapter
 
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+
+
 
         coroutineScope.launch {
             val state = internetConnectionState.first()
@@ -69,5 +77,12 @@ class MyApplication : Application() {
             }
         }
 
+
     }
+
+    fun initAppNfcManager(activity: ComponentActivity): AppNfcManager {
+        appNfcManager = AppNfcManager(this, activity, nfcAdapter)
+        return appNfcManager
+    }
+
 }

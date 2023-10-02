@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
 import com.sbma.linkup.navigation.NavigationView
 import com.sbma.linkup.ui.theme.LinkUpTheme
@@ -26,11 +27,14 @@ import java.util.UUID
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.lifecycle.addObserver((application as MyApplication).initAppNfcManager(this))
+
         setContent {
             val navController: NavHostController = rememberNavController()
 
             LinkUpTheme {
                 NavigationView()
+
 
 //                NavHost(navController = navController, startDestination = "home") {
 //                    composable("home") { backStackEntry ->
