@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sbma.linkup.application.MyApplication
+import com.sbma.linkup.nfc.NFCViewModel
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.usercard.UserCardViewModel
 import com.sbma.linkup.userconnection.UserConnectionViewModel
@@ -35,6 +36,11 @@ object AppViewModelProvider {
             UserViewModel(
                 repository = MyApplication().container.userRepository,
                 dataStore = MyApplication().dataStore
+            )
+        }
+        addInitializer(NFCViewModel::class) {
+            NFCViewModel(
+                MyApplication().appNfcManager
             )
         }
         addInitializer(UserCardViewModel::class) {
