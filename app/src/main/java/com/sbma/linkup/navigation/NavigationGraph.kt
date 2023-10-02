@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
+import com.sbma.linkup.presentation.screens.QRCodeScreen
+import com.sbma.linkup.presentation.screens.SettingScreen
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
 import com.sbma.linkup.presentation.screens.UserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.UserShareScreenProvider

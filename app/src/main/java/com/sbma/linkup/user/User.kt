@@ -10,6 +10,7 @@ data class User(
     @PrimaryKey val id: UUID,
     @ColumnInfo val name: String,
     @ColumnInfo val description: String,
+    @ColumnInfo val picture: String?,
 ) {
 
     companion object {

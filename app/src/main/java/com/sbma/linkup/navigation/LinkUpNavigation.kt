@@ -1,62 +1,79 @@
 package com.sbma.linkup.navigation
 
 import android.annotation.SuppressLint
-import android.widget.Toast
+import android.content.Intent
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.screens.NewProfileScreen
-import com.sbma.linkup.user.User
+import com.sbma.linkup.intents.login.LoginResponseToken
+import com.sbma.linkup.intents.login.LoginUserResponse
+import com.sbma.linkup.presentation.screens.LoadingScreen
+import com.sbma.linkup.presentation.screens.LoginScreen
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.usercard.UserCard
-import com.sbma.linkup.usercard.UserCardViewModel
-import kotlinx.coroutines.launch
-import java.util.UUID
+import kotlinx.coroutines.delay
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NavigationView(
-    userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    intent: Intent,
+    userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val composableScope = rememberCoroutineScope()
-    val context = LocalContext.current
-
     val navController = rememberNavController()
     val loggedInUser = userViewModel.getLoggedInUserProfile.collectAsState(initial = null)
 
-    loggedInUser.value?.let { user ->
-        Scaffold(
-            bottomBar = { BottomNavigationBar(navController) }
-        ) {
-            NavigationGraph(navController, user)
-        }
-    } ?: Scaffold {
-        NewProfileScreen {
-            composableScope.launch {
-                val userId = UUID.randomUUID()
-                userViewModel.insertItem(User(userId, it.username, it.description))
-                userViewModel.setLoggedInUserId(userId)
-                if (it.facebookLink.isNotBlank()) {
-                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Facebook", it.facebookLink))
+    // show loading screen at first if there is an intent
+    val isLoading = remember { mutableStateOf(intent.action != null && intent.data != null) }
+
+    LaunchedEffect(true) {
+        // Check if there is an intent action
+        intent.action?.let { action ->
+            // Check if there is an intent data
+            intent.data?.let { data ->
+
+                val path = data.path ?: ""
+
+                println("intent.action: $action")
+                println("intent.data: $data")
+                println("intent.path: $path")
+
+                // Check if it is a login intent
+                if (path == "/android/auth/login") {
+                    val tokenQuery = data.getQueryParameter("token")
+                    val userQuery = data.getQueryParameter("user")
+                    val token = Gson().fromJson(tokenQuery, LoginResponseToken::class.java)
+                    val loginUserResponse = Gson().fromJson(userQuery, LoginUserResponse::class.java)
+                    val user = loginUserResponse.toUser()
+                    userViewModel.insertItem(user)
+                    userViewModel.saveLoginData(
+                        accessToken = token.accessToken,
+                        expiresAt = token.expiresAt,
+                        userId = user.id
+                    )
+                    delay(1000)
                 }
-                if (it.instagramLink.isNotBlank()) {
-                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Instagram", it.instagramLink))
-                }
-                if (it.linkedinLink.isNotBlank()) {
-                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "LinkedIn", it.linkedinLink))
-                }
-                if (it.twitterLink.isNotBlank()) {
-                    userCardViewModel.insertItem(UserCard(UUID.randomUUID(), userId, "Twitter", it.twitterLink))
-                }
-                Toast.makeText(context, "Profile Created!", Toast.LENGTH_SHORT).show()
+
+                isLoading.value = false
             }
         }
     }
 
+    if (loggedInUser.value == null || isLoading.value) {
+        LoadingScreen()
+    } else if (loggedInUser.value!!.isEmpty()) {
+        LoginScreen()
+    } else {
+        Scaffold(
+            bottomBar = { BottomNavigationBar(navController) }
+        ) {
+            NavigationGraph(navController, loggedInUser.value!!.first())
+        }
+    }
 }
