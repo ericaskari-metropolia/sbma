@@ -1,7 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("APP_DATABASE_URL")
-  shadowDatabaseUrl      = "postgresql://postgres:sbma-local@localhost:5433/postgres?schema=public"
+  provider          = "postgresql"
+  url               = env("APP_DATABASE_URL")
+  shadowDatabaseUrl = "postgresql://postgres:sbma-local@localhost:5433/postgres?schema=public"
 }
 
 generator client {
@@ -9,13 +9,13 @@ generator client {
 }
 
 model User {
-  id                  String            @id @default(uuid())
-  email               String            @unique
-  name                String
-  cards               Card[]
-  connections         Connection[]      @relation("Connection_user")
-  connectedUsers      Connection[]      @relation("Connection_connectedUser")
-  connects            Connect[]
+  id             String       @id @default(uuid())
+  email          String       @unique
+  name           String
+  cards          Card[]
+  connections    Connection[] @relation("Connection_user")
+  connectedUsers Connection[] @relation("Connection_connectedUser")
+  shares         Share[]
 }
 
 model Card {
@@ -25,7 +25,7 @@ model Card {
   owner           User             @relation(fields: [ownerId], references: [id])
   ownerId         String
   connectionCards ConnectionCard[]
-  connectCards    ConnectCard[]
+  shareCards      ShareCard[]
 }
 
 model Connection {
@@ -49,29 +49,29 @@ model ConnectionCard {
   @@unique([cardId, connectionId])
 }
 
-model Connect {
-  id     String        @id @default(uuid())
-  user   User          @relation(fields: [userId], references: [id])
+model Share {
+  id     String      @id @default(uuid())
+  user   User        @relation(fields: [userId], references: [id])
   userId String
-  cards  ConnectCard[]
+  cards  ShareCard[]
   tags   Tag[]
 }
 
-model ConnectCard {
-  id        String  @id @default(uuid())
-  connect   Connect @relation(fields: [connectId], references: [id])
-  connectId String
-  card      Card    @relation(fields: [cardId], references: [id])
-  cardId    String
+model ShareCard {
+  id      String @id @default(uuid())
+  share   Share  @relation(fields: [shareId], references: [id])
+  shareId String
+  card    Card   @relation(fields: [cardId], references: [id])
+  cardId  String
 
-  @@unique([cardId, connectId])
+  @@unique([cardId, shareId])
 }
 
 model Tag {
-  id        String  @id @default(uuid())
-  connect   Connect @relation(fields: [connectId], references: [id])
-  connectId String
-  tagId     String  @unique
+  id      String @id @default(uuid())
+  share   Share  @relation(fields: [shareId], references: [id])
+  shareId String
+  tagId   String @unique
 
-  @@unique([connectId, tagId])
+  @@unique([shareId, tagId])
 }
