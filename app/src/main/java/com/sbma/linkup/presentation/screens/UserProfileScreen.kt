@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.components.UserCardsList
@@ -85,8 +86,8 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
-                    Image(
-                        painter = painterResource(R.drawable.profile_photo),
+                    AsyncImage(
+                        model = user.picture,
                         contentDescription = "profile photo",
                         modifier = Modifier
                             .size(150.dp)
@@ -234,7 +235,7 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer")) }
+    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer", null)) }
     val cards = remember {
         mutableListOf(
             UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
