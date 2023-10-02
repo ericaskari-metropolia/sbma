@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.navigation.NavigationView
 import com.sbma.linkup.ui.theme.LinkUpTheme
 

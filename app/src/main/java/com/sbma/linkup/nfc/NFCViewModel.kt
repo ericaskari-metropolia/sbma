@@ -1,6 +1,5 @@
 package com.sbma.linkup.nfc
 
-import android.app.Application
 import android.content.ContentValues
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -8,10 +7,8 @@ import android.nfc.tech.MifareClassic
 import android.nfc.tech.MifareUltralight
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sbma.linkup.application.MyApplication
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,7 +33,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
 
     //region Toast Methods
     private fun updateToast(message: String) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             liveToast.emit(message)
         }
     }
@@ -67,19 +64,21 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
 
     //region NFC Methods
     public fun onCheckNFC(isChecked: Boolean) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             Log.d(TAG, "onCheckNFC(${isChecked})")
             if (isChecked) {
                 postNFCStatus(NFCStatus.Tap)
+                appNfcManager.enableReaderMode(getNFCFlags(), getExtras())
             } else {
                 postNFCStatus(NFCStatus.NoOperation)
                 postToast("NFC is Disabled, Please Toggle On!")
+                appNfcManager.disableReaderMode()
             }
         }
     }
 
     public fun readTag(tag: Tag?) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             Log.d(TAG, "readTag(${tag} ${tag?.getTechList()})")
             postNFCStatus(NFCStatus.Process)
             val stringBuilder: StringBuilder = StringBuilder()
@@ -128,7 +127,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     }
 
     public fun updateNFCStatus(status: NFCStatus) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             postNFCStatus(status)
         }
     }

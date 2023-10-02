@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
+import com.sbma.linkup.util.toHex
 
 public class AppNfcManager(
 
@@ -57,7 +58,7 @@ public class AppNfcManager(
 
     override fun onTagDiscovered(tag: Tag?) {
         if (tag != null) {
-            println("OnTagDiscovered: ${tag.id}")
+            println("OnTagDiscovered: ${tag.id.toHex()}")
         }
     }
 }
