@@ -43,7 +43,8 @@ class MyApplication : Application() {
     lateinit var bluetoothManager: BluetoothManager
     lateinit var bluetoothAdapter: BluetoothAdapter
     lateinit var appNfcManager: AppNfcManager
-    lateinit var nfcAdapter: NfcAdapter
+    var nfcAdapter: NfcAdapter? = null
+
 
     // Container of repositories
     lateinit var container: AppContainer
@@ -63,10 +64,8 @@ class MyApplication : Application() {
         bluetoothManager = getSystemService(BluetoothManager::class.java)
 
         bluetoothAdapter = bluetoothManager.adapter
-
+        println(this)
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-
-
 
         coroutineScope.launch {
             val state = internetConnectionState.first()

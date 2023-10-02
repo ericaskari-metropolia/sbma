@@ -11,11 +11,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.sbma.linkup.util.toHex
 
-public class AppNfcManager(
-
+ class AppNfcManager(
     val context: Context,
     val activity: Activity,
-    val nfcAdapter: NfcAdapter
+    val nfcAdapter: NfcAdapter?
 ) :
     DefaultLifecycleObserver, NfcAdapter.ReaderCallback {
 
@@ -26,30 +25,32 @@ public class AppNfcManager(
         flags: Int,
         extras: Bundle
     ) {
-        try {
-            nfcAdapter.enableReaderMode(activity, this, flags, extras)
-        } catch (ex: UnsupportedOperationException) {
-            Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+        nfcAdapter?.let {
+            try {
+                it.enableReaderMode(activity, this, flags, extras)
+            } catch (ex: UnsupportedOperationException) {
+                Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     public fun disableReaderMode() {
-        try {
-            nfcAdapter.disableReaderMode(activity)
-        } catch (ex: UnsupportedOperationException) {
-            Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+        nfcAdapter?.let {
+            try {
+                nfcAdapter.disableReaderMode(activity)
+            } catch (ex: UnsupportedOperationException) {
+                Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+            }
         }
     }
 
     fun isSupported(): Boolean {
-//        val nfcAdapter = nfcAdapter.getDefaultAdapter(context)
-//        return nfcAdapter != null
-        return true
+        return nfcAdapter != null
     }
 
     fun isEnabled(): Boolean {
-        return nfcAdapter.isEnabled
+        return nfcAdapter?.isEnabled ?: false
     }
 
     public fun isSupportedAndEnabled(): Boolean {
