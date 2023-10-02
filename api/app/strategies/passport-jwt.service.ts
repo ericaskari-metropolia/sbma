@@ -2,10 +2,10 @@ import passport, { AuthenticateCallback } from 'passport';
 
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions, VerifiedCallback } from 'passport-jwt';
 import jsonwebtoken from 'jsonwebtoken';
-import { UserModel } from '../interfaces/userModel.js';
-import { UserDatabase } from '../databases/userDatabase.js';
+import { prisma } from '../databases/userDatabase.js';
 import { environment } from '../configurations/environment.js';
 import * as express from 'express';
+import { User } from '@prisma/client';
 
 export function config() {
     const opts: StrategyOptions = {
@@ -16,9 +16,14 @@ export function config() {
         passReqToCallback: true,
     };
     passport.use(
-        new JwtStrategy(opts, function (req: express.Request, payload: any, done: VerifiedCallback) {
-            console.log({ payload });
-            const user = UserDatabase.findById(payload.sub);
+        new JwtStrategy(opts, async function (req: express.Request, payload: any, done: VerifiedCallback) {
+            const user = await prisma.user.findFirst({
+                where: {
+                    id: payload.sub,
+                },
+            });
+            console.log({ payload, user });
+
             if (user) {
                 return done(null, user);
             } else {
@@ -29,16 +34,16 @@ export function config() {
     );
 }
 
-export function generateAccessToken(user: UserModel, expiresInSeconds = 3600) {
+export function generateAccessToken(user: User) {
     const payload = { sub: user.id, type: 'USER_LOGIN_TOKEN' };
 
     const accessToken = jsonwebtoken.sign(payload, environment.APP_JWT_SECRET, {
-        expiresIn: expiresInSeconds,
+        expiresIn: '30d',
         audience: environment.APP_JWT_AUDIENCE,
         issuer: environment.APP_JWT_ISSUER,
     });
 
-    const expiresAt = Date.now() + expiresInSeconds * 1000;
+    const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
 
     return {
         accessToken,

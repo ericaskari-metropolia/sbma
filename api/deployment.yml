@@ -39,6 +39,8 @@ spec:
               value: op://Metropolia/deployment-sbma-linkup-$APP_ENV/infra/APP_JWT_ISSUER
             - name: APP_JWT_AUDIENCE
               value: op://Metropolia/deployment-sbma-linkup-$APP_ENV/infra/APP_JWT_AUDIENCE
+            - name: APP_DATABASE_URL
+              value: op://Metropolia/deployment-sbma-linkup-$APP_ENV/infra/APP_DATABASE_URL
 ---
 apiVersion: v1
 kind: Service
