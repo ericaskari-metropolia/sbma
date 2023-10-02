@@ -118,6 +118,7 @@ fun ScreenPreview() {
                         name = "Shayne",
                         description = "Mobile developer",
                         picture = null
+
                     ),
                     User(
                         id = UUID.randomUUID(),
