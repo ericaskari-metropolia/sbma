@@ -17,27 +17,13 @@ export function config() {
     };
     passport.use(
         new JwtStrategy(opts, async function (req: express.Request, payload: any, done: VerifiedCallback) {
-            console.log({ payload });
             const user = await prisma.user.findFirst({
                 where: {
                     id: payload.sub,
                 },
-                include: {
-                    cards: true,
-                    connections: {
-                        include: {
-                            connectionCards: true,
-                        },
-                    },
-                    connectedUsers: true,
-                    connects: {
-                        include: {
-                            tags: true,
-                            cards: true,
-                        },
-                    },
-                },
             });
+            console.log({ payload, user });
+
             if (user) {
                 return done(null, user);
             } else {
