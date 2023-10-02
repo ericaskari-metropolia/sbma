@@ -12,6 +12,7 @@ import { environment } from './configurations/environment.js';
 import passport from 'passport';
 import { Card, ConnectionCard, Tag, User } from '@prisma/client';
 import { prisma } from './databases/userDatabase.js';
+import { ErrorRequestHandler } from 'express-serve-static-core';
 // Express App
 const app = express();
 
@@ -61,7 +62,7 @@ app.get('/profile', passport.authenticate('jwt', { session: false }), async (req
                 },
             },
             connectedUsers: true,
-            connects: {
+            shares: {
                 include: {
                     tags: true,
                     cards: true,
@@ -109,12 +110,12 @@ app.post('/share', passport.authenticate('jwt', { session: false }), async (req,
     const user: User = req.user as User;
     const body: string[] = req.body as string[];
 
-    const connect = await prisma.connect.create({
+    const share = await prisma.share.create({
         data: {
             userId: user.id,
         },
     });
-    const connectCards = await Promise.all(
+    const shareCards = await Promise.all(
         body.map(async (cardId) => {
             // Only user's own card
             await prisma.card.findFirstOrThrow({
@@ -123,38 +124,38 @@ app.post('/share', passport.authenticate('jwt', { session: false }), async (req,
                     ownerId: user.id,
                 },
             });
-            return prisma.connectCard.create({
+            return prisma.shareCard.create({
                 data: {
                     cardId: cardId,
-                    connectId: connect.id,
+                    shareId: share.id,
                 },
             });
         }),
     );
 
     res.status(200).send({
-        connect,
-        connectCards,
+        share: share,
+        shareCards: shareCards,
     });
     return;
 });
 
-async function onScan(user: User, connectId: string, res: Response) {
-    const connect = await prisma.connect.findFirstOrThrow({
+async function onScan(user: User, shareId: string, res: Response) {
+    const share = await prisma.share.findFirstOrThrow({
         where: {
-            id: connectId,
+            id: shareId,
         },
         include: {
             tags: true,
             cards: true,
         },
     });
-    const connectCards = await prisma.connectCard.findMany({
+    const shareCards = await prisma.shareCard.findMany({
         where: {
-            connectId: connect.id,
+            shareId: share.id,
         },
     });
-    if (connect.userId === user.id) {
+    if (share.userId === user.id) {
         res.status(400).send({
             message:
                 "Looks like you've fallen into a QR code loop! We'll break the cycle for you - scan someone else's code to escape the matrix!",
@@ -163,7 +164,7 @@ async function onScan(user: User, connectId: string, res: Response) {
     }
     const existingConnection = await prisma.connection.findFirst({
         where: {
-            userId: connect.userId,
+            userId: share.userId,
             connectedUserId: user.id,
         },
     });
@@ -171,13 +172,13 @@ async function onScan(user: User, connectId: string, res: Response) {
         existingConnection ??
         (await prisma.connection.create({
             data: {
-                userId: connect.userId,
+                userId: share.userId,
                 connectedUserId: user.id,
             },
         }));
 
     const connectionCards = await Promise.all(
-        connectCards.map(async (connectCard) => {
+        shareCards.map(async (connectCard) => {
             const card: ConnectionCard | null = await prisma.connectionCard.findFirst({
                 where: {
                     cardId: connectCard.cardId,
@@ -200,10 +201,10 @@ async function onScan(user: User, connectId: string, res: Response) {
     });
 }
 
-app.post('/connect/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/share/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const user: User = req.user as User;
-    const connectId = req.params.id;
-    await onScan(user, connectId, res);
+    const shareId = req.params.id;
+    await onScan(user, shareId, res);
 });
 
 app.post('/tag', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -211,13 +212,14 @@ app.post('/tag', passport.authenticate('jwt', { session: false }), async (req, r
     const body: Tag = req.body as Tag;
     const response = await prisma.tag.create({
         data: {
-            connectId: body.connectId,
+            shareId: body.shareId,
             tagId: body.tagId,
         },
     });
     res.status(200).send(response);
     return;
 });
+
 app.post('/tag/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const user: User = req.user as User;
     const tagId = req.params.id;
@@ -227,7 +229,7 @@ app.post('/tag/:id/scan', passport.authenticate('jwt', { session: false }), asyn
             tagId,
         },
     });
-    await onScan(user, response.connectId, res);
+    await onScan(user, response.shareId, res);
 });
 
 app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -240,10 +242,10 @@ app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (
             id: id,
         },
         include: {
-            connect: true,
+            share: true,
         },
     });
-    if (tag.connect.userId !== user.id) {
+    if (tag.share.userId !== user.id) {
         res.status(400).send({
             message: 'This tag is not available.',
         });
@@ -258,6 +260,21 @@ app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (
     res.status(200).send(response);
     return;
 });
+
+// Define a global error handler middleware
+app.use(((err, req, res, next) => {
+    // Handle the error here
+    console.error(err);
+
+    // Set an appropriate status code for the error
+    res.status(500);
+
+    // Send a JSON response with the error message
+    res.json({
+        error: 'Internal Server Error',
+        message: err.message,
+    });
+}) as ErrorRequestHandler<any>);
 
 app.listen(8000, '0.0.0.0', () => {
     console.log('Started listening on port 8000');
