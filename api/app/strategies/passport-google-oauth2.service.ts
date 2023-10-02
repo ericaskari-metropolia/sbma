@@ -48,8 +48,10 @@ export function configRoutes(app: Express) {
         const params = new URLSearchParams();
         params.set('token', JSON.stringify(token));
         params.set('user', JSON.stringify(user));
-        console.log({ token, user });
-        const template = continueWithAppTemplate.replace('[launchLink]', `/android/auth/login?${params.toString()}`);
+        const template = continueWithAppTemplate
+            .replace('[launchLink]', `/android/auth/login?${params.toString()}`)
+            .replace('[accessToken]', token.accessToken);
+
         res.send(template);
     });
 
