@@ -34,16 +34,16 @@ export function config() {
     );
 }
 
-export function generateAccessToken(user: User, expiresInSeconds = 3600) {
+export function generateAccessToken(user: User) {
     const payload = { sub: user.id, type: 'USER_LOGIN_TOKEN' };
 
     const accessToken = jsonwebtoken.sign(payload, environment.APP_JWT_SECRET, {
-        expiresIn: expiresInSeconds,
+        expiresIn: '30d',
         audience: environment.APP_JWT_AUDIENCE,
         issuer: environment.APP_JWT_ISSUER,
     });
 
-    const expiresAt = Date.now() + expiresInSeconds * 1000;
+    const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
 
     return {
         accessToken,

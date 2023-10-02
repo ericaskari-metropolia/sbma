@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 
 import {
     config as configGoogleOAuth2,
@@ -10,7 +10,7 @@ import { configSession } from './configurations/configSession.js';
 import { configParsers } from './configurations/configParsers.js';
 import { environment } from './configurations/environment.js';
 import passport from 'passport';
-import { Card, ConnectCard, User } from '@prisma/client';
+import { Card, ConnectionCard, Tag, User } from '@prisma/client';
 import { prisma } from './databases/userDatabase.js';
 // Express App
 const app = express();
@@ -73,6 +73,24 @@ app.get('/profile', passport.authenticate('jwt', { session: false }), async (req
     return;
 });
 
+app.put('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user: User = req.user as User;
+    const body: User = req.body as User;
+    const response = await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            ...user,
+            ...body,
+            id: user.id,
+        },
+    });
+
+    res.status(200).send(response);
+    return;
+});
+
 app.post('/card', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const user: User = req.user as User;
     const body: Card = req.body as Card;
@@ -87,49 +105,41 @@ app.post('/card', passport.authenticate('jwt', { session: false }), async (req, 
     return;
 });
 
-app.post('/connect', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/share', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const user: User = req.user as User;
-    const response = await prisma.connect.create({
+    const body: string[] = req.body as string[];
+
+    const connect = await prisma.connect.create({
         data: {
             userId: user.id,
         },
     });
-    res.status(200).send(response);
-    return;
-});
-app.post('/connect-card', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const user: User = req.user as User;
-    const body: ConnectCard = req.body as ConnectCard;
-    const card = await prisma.card.findFirstOrThrow({
-        where: {
-            id: body.cardId,
-        },
-    });
-    const connect = await prisma.connect.findFirstOrThrow({
-        where: {
-            id: body.connectId,
-        },
-    });
-    if (connect.userId !== user.id || card.ownerId !== user.id) {
-        res.status(401).send();
-        return;
-    }
+    const connectCards = await Promise.all(
+        body.map(async (cardId) => {
+            // Only user's own card
+            await prisma.card.findFirstOrThrow({
+                where: {
+                    id: cardId,
+                    ownerId: user.id,
+                },
+            });
+            return prisma.connectCard.create({
+                data: {
+                    cardId: cardId,
+                    connectId: connect.id,
+                },
+            });
+        }),
+    );
 
-    const response = await prisma.connectCard.create({
-        data: {
-            cardId: body.cardId,
-            connectId: body.connectId,
-        },
+    res.status(200).send({
+        connect,
+        connectCards,
     });
-
-    res.status(200).send(response);
     return;
 });
 
-app.post('/connect/:connectId/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const user: User = req.user as User;
-    const connectId = req.params.connectId;
-
+async function onScan(user: User, connectId: string, res: Response) {
     const connect = await prisma.connect.findFirstOrThrow({
         where: {
             id: connectId,
@@ -146,32 +156,106 @@ app.post('/connect/:connectId/scan', passport.authenticate('jwt', { session: fal
     });
     if (connect.userId === user.id) {
         res.status(400).send({
-            message: "Don't scan your code :)",
+            message:
+                "Looks like you've fallen into a QR code loop! We'll break the cycle for you - scan someone else's code to escape the matrix!",
         });
         return;
     }
-    const connection = await prisma.connection.create({
-        data: {
+    const existingConnection = await prisma.connection.findFirst({
+        where: {
             userId: connect.userId,
             connectedUserId: user.id,
         },
     });
-    console.log({ connection, connectCards });
+    const connection =
+        existingConnection ??
+        (await prisma.connection.create({
+            data: {
+                userId: connect.userId,
+                connectedUserId: user.id,
+            },
+        }));
 
     const connectionCards = await Promise.all(
-        connectCards.map((connectCard) =>
-            prisma.connectionCard.create({
-                data: {
+        connectCards.map(async (connectCard) => {
+            const card: ConnectionCard | null = await prisma.connectionCard.findFirst({
+                where: {
                     cardId: connectCard.cardId,
                     connectionId: connection.id,
                 },
-            }),
-        ),
+            });
+            return card
+                ? new Promise<ConnectionCard>((resolve) => resolve(card))
+                : prisma.connectionCard.create({
+                      data: {
+                          cardId: connectCard.cardId,
+                          connectionId: connection.id,
+                      },
+                  });
+        }),
     );
     res.status(200).send({
         connection,
         connectionCards,
     });
+}
+
+app.post('/connect/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user: User = req.user as User;
+    const connectId = req.params.id;
+    await onScan(user, connectId, res);
+});
+
+app.post('/tag', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user: User = req.user as User;
+    const body: Tag = req.body as Tag;
+    const response = await prisma.tag.create({
+        data: {
+            connectId: body.connectId,
+            tagId: body.tagId,
+        },
+    });
+    res.status(200).send(response);
+    return;
+});
+app.post('/tag/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user: User = req.user as User;
+    const tagId = req.params.id;
+
+    const response = await prisma.tag.findFirstOrThrow({
+        where: {
+            tagId,
+        },
+    });
+    await onScan(user, response.connectId, res);
+});
+
+app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const user: User = req.user as User;
+    const id = req.params.id;
+    const body: Tag = req.body as Tag;
+
+    const tag = await prisma.tag.findFirstOrThrow({
+        where: {
+            id: id,
+        },
+        include: {
+            connect: true,
+        },
+    });
+    if (tag.connect.userId !== user.id) {
+        res.status(400).send({
+            message: 'This tag is not available.',
+        });
+        return;
+    }
+
+    const response = await prisma.tag.delete({
+        where: {
+            id,
+        },
+    });
+    res.status(200).send(response);
     return;
 });
 
