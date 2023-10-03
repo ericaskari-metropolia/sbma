@@ -31,6 +31,13 @@ class DataStore(private val context: Context) {
         .map { it[ACCESSTOKEN_KEY] }
 
     /**
+     * Getter for access token but with prepended "Bearer $token"
+     */
+    val getAuthorizationHeaderValue: Flow<String?> = getAccessToken.map {
+        if(it != null) "Bearer $it" else null
+    }
+
+    /**
      * Getter for access token expires at
      */
     val getAccessTokenExpiresAt: Flow<String?> = context.dataStore.data
@@ -67,7 +74,7 @@ class DataStore(private val context: Context) {
      * Setter for access token string
      */
     private suspend fun setAccessTokenExpiresAt(value: String) {
-        context.dataStore.edit { it[ACCESSTOKEN_KEY] = value }
+        context.dataStore.edit { it[ACCESSTOKEN_EXPIRES_KEY] = value }
     }
 
     /**

@@ -1,7 +1,7 @@
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import passport from 'passport';
 import { generateAccessToken } from './passport-jwt.service.js';
-import { GoogleProfileFromApi, normalizeGoogleProfile } from '../interfaces/googleProfile.js';
+import { GoogleProfile, GoogleProfileFromApi, normalizeGoogleProfile } from '../interfaces/googleProfile.js';
 import { UserDatabase } from '../databases/userDatabase.js';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -43,11 +43,12 @@ export function configRoutes(app: Express) {
     app.get('/auth/google', passport.authenticate('google'));
 
     app.get('/auth/google/callback', passport.authenticate('google'), async (req: any, res: any) => {
-        const user = await UserDatabase.syncUserByGoogleProfile(req.user);
+        const googleProfile = req.user as GoogleProfile;
+        const user = await UserDatabase.syncUserByGoogleProfile(googleProfile);
         const token = generateAccessToken(user);
         const params = new URLSearchParams();
         params.set('token', JSON.stringify(token));
-        params.set('user', JSON.stringify(user));
+        params.set('user', JSON.stringify({ ...user, googleProfile }));
         const template = continueWithAppTemplate
             .replace('[launchLink]', `/android/auth/login?${params.toString()}`)
             .replace('[accessToken]', token.accessToken);

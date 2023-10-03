@@ -1,15 +1,37 @@
 package com.sbma.linkup.user
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.sbma.linkup.api.ApiService
 import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class UserViewModel(
     private val repository: IUserRepository,
+    private val apiService: ApiService,
     private val dataStore: DataStore
 ) : ViewModel() {
+
+    init {
+        // Example code of how Api works.
+        viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.getProfile(authorization)
+                    .onSuccess { call ->
+                        println("getProfile")
+                        println(call)
+                    }.onFailure {
+                        println(it)
+                    }
+
+            }
+        }
+    }
 
     val loggedInUserId = dataStore.getUserId
     val getAccessToken = dataStore.getAccessToken
