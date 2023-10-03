@@ -6,6 +6,10 @@ import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
+
+/**
+ * https://blog.canopas.com/retrofit-effective-error-handling-with-kotlin-coroutine-and-result-api-405217e9a73d
+ */
 class ResultCallAdapterFactory : CallAdapter.Factory() {
 
     override fun get(

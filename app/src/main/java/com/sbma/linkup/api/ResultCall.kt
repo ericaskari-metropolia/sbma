@@ -9,6 +9,9 @@ import retrofit2.Response
 import java.io.IOException
 
 
+/**
+ * https://blog.canopas.com/retrofit-effective-error-handling-with-kotlin-coroutine-and-result-api-405217e9a73d
+ */
 class ResultCall<T>(val delegate: Call<T>) :
     Call<Result<T>> {
 
