@@ -9,6 +9,7 @@ object RetrofitFactory {
         return Retrofit.Builder()
             .baseUrl("https://sbma.ericaskari.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(ResultCallAdapterFactory())
             .build().create(ApiService::class.java)
     }
 }

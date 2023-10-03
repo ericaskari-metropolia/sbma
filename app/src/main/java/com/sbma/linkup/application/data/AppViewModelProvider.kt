@@ -35,7 +35,8 @@ object AppViewModelProvider {
         initializer {
             UserViewModel(
                 repository = MyApplication().container.userRepository,
-                dataStore = MyApplication().dataStore
+                dataStore = MyApplication().dataStore,
+                apiService = MyApplication().container.apiService
             )
         }
         addInitializer(NFCViewModel::class) {
