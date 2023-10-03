@@ -3,6 +3,7 @@ package com.sbma.linkup.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
+import com.sbma.linkup.api.apimodels.AssignTagRequest
 import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -13,7 +14,7 @@ import java.util.UUID
 class UserViewModel(
     private val repository: IUserRepository,
     private val apiService: ApiService,
-    private val dataStore: DataStore
+    private val dataStore: DataStore,
 ) : ViewModel() {
 
     init {
@@ -47,16 +48,17 @@ class UserViewModel(
      * cannot know user status.
      * (Empty list) = there is no user with this id or id is null
      */
-    val getLoggedInUserProfile: Flow<List<User>> = dataStore.getUserId.combine(repository.getAllItemsStream()) { userId, users ->
-        userId?.let { id ->
-            val user = users.find { it.id == id }
-            if (user == null) {
-                listOf<User>()
-            } else {
-                listOf<User>(user)
-            }
-        } ?: listOf<User>()
-    }
+    val getLoggedInUserProfile: Flow<List<User>> =
+        dataStore.getUserId.combine(repository.getAllItemsStream()) { userId, users ->
+            userId?.let { id ->
+                val user = users.find { it.id == id }
+                if (user == null) {
+                    listOf<User>()
+                } else {
+                    listOf<User>(user)
+                }
+            } ?: listOf<User>()
+        }
 
     suspend fun insertItem(user: User) = repository.insertItem(user)
 
@@ -64,4 +66,45 @@ class UserViewModel(
         dataStore.saveLoginData(accessToken = accessToken, expiresAt = expiresAt, userId = userId)
 
     suspend fun deleteLoginData() = dataStore.deleteLoginData()
+
+    suspend fun shareCards(cardIDs: List<String>) {
+        // Example code of how Api works.
+        viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.share(
+                    authorization,
+                    cardIDs
+                )
+                    .onSuccess { response ->
+                        println("share new Card")
+                        println(response)
+                        dataStore.setJsonToShare(response.id)
+                    }.onFailure {
+                        println(it)
+                    }
+            }
+        }
+    }
+
+    suspend fun assignTag(id: String) {
+        viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                dataStore.getJsonToShare.first()?.let { shareId ->
+                    apiService.assignTag(
+                        authorization,
+                        AssignTagRequest(shareId, id)
+                    )
+                        .onSuccess { response ->
+                            println("assignTag")
+                            println(response)
+                        }.onFailure {
+                            println(it)
+                        }
+                }
+            }
+        }
+    }
+
 }

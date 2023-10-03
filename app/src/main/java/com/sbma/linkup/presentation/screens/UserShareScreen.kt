@@ -36,6 +36,7 @@ import com.google.gson.GsonBuilder
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
+import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.usercard.UserCard
 import com.sbma.linkup.usercard.UserCardViewModel
 import kotlinx.coroutines.launch
@@ -44,15 +45,14 @@ import java.util.UUID
 @Composable
 fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
     val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = null)
     val composableScope = rememberCoroutineScope()
 
     userCards.value?.let {
         UserShareScreen(it, onShareClick = {cardsToShare ->
             composableScope.launch {
-                val jsonToShare: String = Gson().toJson(cardsToShare)
-                println(jsonToShare)
-                userCardViewModel.setJsonToShare(jsonToShare)
+                userViewModel.shareCards(it.map { card -> card.id.toString() })
                 onShareClick()
             }
         })

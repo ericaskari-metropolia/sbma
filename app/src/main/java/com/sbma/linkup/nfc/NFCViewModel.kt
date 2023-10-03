@@ -2,9 +2,6 @@ package com.sbma.linkup.nfc
 
 import android.content.ContentValues
 import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.MifareClassic
-import android.nfc.tech.MifareUltralight
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -29,14 +26,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
 
     private val liveNFC: MutableStateFlow<NFCStatus?> = MutableStateFlow(null)
     private val liveToast: MutableSharedFlow<String?> = MutableSharedFlow()
-    private val liveTag: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    //region Toast Methods
-    private fun updateToast(message: String) {
-        viewModelScope.launch {
-            liveToast.emit(message)
-        }
-    }
 
     private suspend fun postToast(message: String) {
         Log.d(TAG, "postToast(${message})")
@@ -77,61 +67,6 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
         }
     }
 
-    public fun readTag(tag: Tag?) {
-        viewModelScope.launch {
-            Log.d(TAG, "readTag(${tag} ${tag?.getTechList()})")
-            postNFCStatus(NFCStatus.Process)
-            val stringBuilder: StringBuilder = StringBuilder()
-            val id: ByteArray? = tag?.getId()
-            stringBuilder.append("Tag ID (hex): ${getHex(id!!)} \n")
-            stringBuilder.append("Tag ID (dec): ${getDec(id)} \n")
-            stringBuilder.append("Tag ID (reversed): ${getReversed(id)} \n")
-            stringBuilder.append("Technologies: ")
-            tag.getTechList().forEach { tech ->
-                stringBuilder.append(tech.substring(prefix.length))
-                stringBuilder.append(", ")
-            }
-            stringBuilder.delete(stringBuilder.length - 2, stringBuilder.length)
-            tag.getTechList().forEach { tech ->
-                if (tech.equals(MifareClassic::class.java.getName())) {
-                    stringBuilder.append('\n')
-                    val mifareTag: MifareClassic = MifareClassic.get(tag)
-                    val type: String
-                    if (mifareTag.getType() == MifareClassic.TYPE_CLASSIC) type = "Classic"
-                    else if (mifareTag.getType() == MifareClassic.TYPE_PLUS) type = "Plus"
-                    else if (mifareTag.getType() == MifareClassic.TYPE_PRO) type = "Pro"
-                    else type = "Unknown"
-                    stringBuilder.append("Mifare Classic type: $type \n")
-                    stringBuilder.append("Mifare size: ${mifareTag.getSize()} bytes \n")
-                    stringBuilder.append("Mifare sectors: ${mifareTag.getSectorCount()} \n")
-                    stringBuilder.append("Mifare blocks: ${mifareTag.getBlockCount()}")
-                }
-                if (tech.equals(MifareUltralight::class.java.getName())) {
-                    stringBuilder.append('\n');
-                    val mifareUlTag: MifareUltralight = MifareUltralight.get(tag);
-                    val type: String
-                    if (mifareUlTag.getType() == MifareUltralight.TYPE_ULTRALIGHT) type =
-                        "Ultralight"
-                    else if (mifareUlTag.getType() == MifareUltralight.TYPE_ULTRALIGHT_C) type =
-                        "Ultralight C"
-                    else type = "Unkown"
-                    stringBuilder.append("Mifare Ultralight type: ");
-                    stringBuilder.append(type)
-                }
-            }
-            Log.d(TAG, "Datum: $stringBuilder")
-            Log.d(ContentValues.TAG, "dumpTagData Return \n $stringBuilder")
-            postNFCStatus(NFCStatus.Read)
-            liveTag.emit("${getDateTimeNow()} \n ${stringBuilder}")
-        }
-    }
-
-    public fun updateNFCStatus(status: NFCStatus) {
-        viewModelScope.launch {
-            postNFCStatus(status)
-        }
-    }
-
     private suspend fun postNFCStatus(status: NFCStatus) {
         Log.d(TAG, "postNFCStatus(${status})")
         if (appNfcManager.isSupported()) {
@@ -139,16 +74,9 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
         } else if (!appNfcManager.isEnabled()) {
             liveNFC.emit(NFCStatus.NotEnabled)
             postToast("Please Enable your NFC!")
-            liveTag.emit("Please Enable your NFC!")
         } else if (!appNfcManager.isSupported()) {
             liveNFC.emit(NFCStatus.NotSupported)
             postToast("NFC Not Supported!")
-            liveTag.emit("NFC Not Supported!")
-        }
-        if (appNfcManager.isSupportedAndEnabled() && status == NFCStatus.Tap) {
-            liveTag.emit("Please Tap Now!")
-        } else {
-            liveTag.emit(null)
         }
     }
 
@@ -203,7 +131,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     }
 
     public fun observeTag(): StateFlow<String?> {
-        return liveTag.asStateFlow()
+        return appNfcManager.liveTag.asStateFlow()
     }
     //endregion
 }

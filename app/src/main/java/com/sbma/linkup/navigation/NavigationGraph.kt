@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.sbma.linkup.EditProfile.EditProfileScreen
 import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
 import com.sbma.linkup.presentation.screens.QRCodeScreen
@@ -55,7 +56,7 @@ fun NavigationGraph(
             UserProfileScreenProvider(
                 user,
                 onShareClick = { navController.navigate("profile/share") },
-                onEditClick = {},
+                onEditClick = { navController.navigate("profile/edit") },
             )
         }
         /**
@@ -66,6 +67,15 @@ fun NavigationGraph(
             UserShareScreenProvider(user) {
                 navController.navigate("profile/share/choosemethod")
             }
+        }
+        /**
+         *  Edit profile screen
+         *  After user presses save button it will navigate back to profile route.
+         */
+        composable("profile/edit") {
+            EditProfileScreen(onSave = {
+                navController.navigate("profile")
+            })
         }
         /**
          * Simple page with three buttons and three callbacks which we can navigate to the wanted route.

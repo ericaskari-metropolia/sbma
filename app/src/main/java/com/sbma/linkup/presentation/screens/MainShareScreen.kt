@@ -18,15 +18,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.sbma.linkup.R
 import com.sbma.linkup.ui.theme.LinkUpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainShareScreen(onQrCodeClick: () -> Unit, onNfcClick: () -> Unit, onBluetoothClick: () -> Unit) {
+fun MainShareScreen(
+    onQrCodeClick: () -> Unit,
+    onNfcClick: () -> Unit,
+    onBluetoothClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(20.dp),
@@ -73,29 +79,6 @@ fun MainShareScreen(onQrCodeClick: () -> Unit, onNfcClick: () -> Unit, onBluetoo
         }
         Spacer(modifier = Modifier.height(20.dp))
         Card(
-            onClick = { onNfcClick() },
-            modifier = Modifier.size(width = 150.dp, height = 150.dp),
-            shape = MaterialTheme.shapes.medium.copy(all = CornerSize(0.dp)),
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    "NFC", modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(20.dp)
-                )
-                Image(
-                    painterResource(R.drawable.nfc_icon),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(70.dp)
-                )
-            }
-
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Card(
             onClick = { onBluetoothClick() },
             modifier = Modifier.size(width = 150.dp, height = 150.dp),
             shape = MaterialTheme.shapes.medium.copy(all = CornerSize(0.dp)),
@@ -118,6 +101,34 @@ fun MainShareScreen(onQrCodeClick: () -> Unit, onNfcClick: () -> Unit, onBluetoo
                 )
             }
         }
+        Spacer(modifier = Modifier.height(30.dp))
+        Text(
+            text = "Or would you like to assign a card or tag",
+            textAlign = TextAlign.Center,
+            fontSize = 25.sp,
+            lineHeight = 1.5.em,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier
+                .padding(5.dp)
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Card(
+            onClick = { onNfcClick() },
+            modifier = Modifier.size(width = 150.dp, height = 150.dp),
+            shape = MaterialTheme.shapes.medium.copy(all = CornerSize(0.dp)),
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(
+                    painterResource(R.drawable.nfcphone),
+                    contentDescription = "Edit",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(150.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }
 
