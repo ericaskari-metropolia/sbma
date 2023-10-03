@@ -10,8 +10,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.sbma.linkup.util.toHex
+import kotlinx.coroutines.flow.MutableStateFlow
 
- class AppNfcManager(
+class AppNfcManager(
     val context: Context,
     val activity: Activity,
     val nfcAdapter: NfcAdapter?
@@ -19,6 +20,8 @@ import com.sbma.linkup.util.toHex
     DefaultLifecycleObserver, NfcAdapter.ReaderCallback {
 
     private val TAG = AppNfcManager::class.java.getSimpleName()
+    val liveTag: MutableStateFlow<String?> = MutableStateFlow(null)
+
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     public fun enableReaderMode(
@@ -60,6 +63,7 @@ import com.sbma.linkup.util.toHex
     override fun onTagDiscovered(tag: Tag?) {
         if (tag != null) {
             println("OnTagDiscovered: ${tag.id.toHex()}")
+            liveTag.value = tag.id.toHex()
         }
     }
 }

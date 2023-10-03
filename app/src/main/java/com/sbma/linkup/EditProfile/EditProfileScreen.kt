@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +27,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,13 +43,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.R
+import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.presentation.screens.CreateCard
+import com.sbma.linkup.presentation.screens.CreateCardData
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.ui.theme.YellowApp
+import com.sbma.linkup.usercard.UserCardViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen() {
+fun EditProfileScreen(
+    onSave: () -> Unit,
+    userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     var username by rememberSaveable { mutableStateOf("Enter Username") }
     var email by rememberSaveable { mutableStateOf("Enter your Email") }
     var note by rememberSaveable { mutableStateOf("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ") }
@@ -58,6 +68,10 @@ fun EditProfileScreen() {
     var twitter by rememberSaveable { mutableStateOf("Twitter account") }
     var linkedIn by rememberSaveable { mutableStateOf("LinkedIn account") }
     var facebook by rememberSaveable { mutableStateOf("Facebook account") }
+    var newCards = remember { mutableStateOf<List<CreateCardData>>(listOf()) }
+    val composableScope = rememberCoroutineScope()
+
+
 
     Column(
         modifier = Modifier
@@ -90,33 +104,33 @@ fun EditProfileScreen() {
             }
 
         }
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.profile_photo),
-                    contentDescription = "profile photo",
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(RoundedCornerShape(50.dp))
-                        .scale(2f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .align(Alignment.Center)
-                        .padding(16.dp)
-                )
-            }
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.profile_photo),
+                contentDescription = "profile photo",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .scale(2f)
+            )
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier
+                    .size(60.dp)
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            )
+        }
 
 //        }
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -218,102 +232,127 @@ fun EditProfileScreen() {
             )
         }
 
+        Text(text = newCards.value.count().toString())
+
+        CreateCard(onSubmit = {
+            val copy = newCards.value.toMutableList()
+            copy.add(it)
+            newCards.value = copy
+            println("CreateCard")
+
+        })
+
         Column {
 
-            //Instagram
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painterResource(R.drawable.instagram),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(40.dp)
-                )
-                TextField(
-                    value = instagram,
-                    onValueChange = { instagram = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent
+//            //Instagram
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 4.dp, end = 4.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.instagram),
+//                    contentDescription = "Edit",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.size(40.dp)
+//                )
+//                TextField(
+//                    value = instagram,
+//                    onValueChange = { instagram = it },
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        containerColor = Color.Transparent
+//                    )
+//                )
+//
+//            }
+//
+//            //Twitter
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 4.dp, end = 4.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.twitter),
+//                    contentDescription = "Edit",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.size(40.dp)
+//                )
+//                TextField(
+//                    value = twitter,
+//                    onValueChange = { twitter = it },
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        containerColor = Color.Transparent
+//                    )
+//                )
+//
+//            }
+//
+//            //LinkedIn
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 4.dp, end = 4.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.linkedin),
+//                    contentDescription = "Edit",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.size(40.dp)
+//                )
+//                TextField(
+//                    value = linkedIn,
+//                    onValueChange = { linkedIn = it },
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        containerColor = Color.Transparent
+//                    )
+//                )
+//            }
+//
+//            //Facebook
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 4.dp, end = 4.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.facebook),
+//                    contentDescription = "Edit",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.size(40.dp)
+//                )
+//                TextField(
+//                    value = facebook,
+//                    onValueChange = { facebook = it },
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        containerColor = Color.Transparent
+//                    )
+//                )
+//            }
+        }
+        Column {
+            newCards.value.forEach() {
+                Row(
+                ) {
+                    Image(
+                        painterResource(R.drawable.twitter),
+                        contentDescription = "Edit",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(40.dp)
                     )
-                )
-
-            }
-
-            //Twitter
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painterResource(R.drawable.twitter),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(40.dp)
-                )
-                TextField(
-                    value = twitter,
-                    onValueChange = { twitter = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent
-                    )
-                )
-
-            }
-
-            //LinkedIn
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painterResource(R.drawable.linkedin),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(40.dp)
-                )
-                TextField(
-                    value = linkedIn,
-                    onValueChange = { linkedIn = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent
-                    )
-                )
-            }
-
-            //Facebook
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painterResource(R.drawable.facebook),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(40.dp)
-                )
-                TextField(
-                    value = facebook,
-                    onValueChange = { facebook = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent
-                    )
-                )
+                    Text(it.value)
+                }
             }
         }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -322,7 +361,13 @@ fun EditProfileScreen() {
 
             ) {
             Button(
-                onClick = {},
+                modifier = Modifier.padding(bottom = 100.dp),
+                onClick = {
+                    composableScope.launch {
+                        userCardViewModel.saveItems(newCards.value)
+                        onSave()
+                    }
+                },
                 colors = buttonColors(YellowApp)
             ) {
                 Text("Save", color = Color.Black)
@@ -336,6 +381,6 @@ fun EditProfileScreen() {
 @Composable
 fun DefaultPreview() {
     LinkUpTheme {
-        EditProfileScreen()
+        EditProfileScreen(onSave = {})
     }
 }

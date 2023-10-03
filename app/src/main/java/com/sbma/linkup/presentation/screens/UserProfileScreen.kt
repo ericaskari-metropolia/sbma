@@ -220,7 +220,7 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
             )
             Icon(
                 Icons.Filled.Share,
-                contentDescription = "Edit",
+                contentDescription = "Share",
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
                     .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
