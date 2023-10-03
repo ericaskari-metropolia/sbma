@@ -7,12 +7,12 @@ import androidx.navigation.compose.composable
 import com.sbma.linkup.EditProfile.EditProfileScreen
 import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
-import com.sbma.linkup.presentation.screens.QRCodeScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
 import com.sbma.linkup.presentation.screens.UserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.UserShareScreenProvider
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
+import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
 import com.sbma.linkup.user.User
 
@@ -27,8 +27,40 @@ fun NavigationGraph(
         /**
          * tab of the bottom navigation bar
          */
-        composable(BottomNavItem.QRCode.screen_route) {
-            QRCodeScreen()
+        composable(BottomNavItem.Share.screen_route) {
+            UserShareScreenProvider(user) {
+                navController.navigate("share/choosemethod")
+            }
+        }
+        /**
+         * Simple page with three buttons and three callbacks which we can navigate to the wanted route.
+         */
+        composable("share/choosemethod") {
+            MainShareScreen(
+                onBluetoothClick = {
+                    navController.navigate("share/bluetooth")
+                },
+                onNfcClick = {
+                    navController.navigate("share/nfc")
+                },
+                onQrCodeClick = {
+                    navController.navigate("share/qr")
+                },
+                isReceiving = false
+            )
+        }
+        /**
+         * Bluetooth method of sharing user profile.
+         * at this point json string should be already saved to datastore and available.
+         */
+        composable("share/bluetooth") {
+            ShareViaBluetoothScreenProvider()
+        }
+
+        composable("share/nfc") {
+            NfcScanScreen()
+        }
+        composable("share/qr") {
         }
         /**
          * tab of the bottom navigation bar
@@ -39,7 +71,30 @@ fun NavigationGraph(
         /**
          * tab of the bottom navigation bar
          */
-        composable(BottomNavItem.Camera.screen_route) {
+        composable(BottomNavItem.Receive.screen_route) {
+            MainShareScreen(
+                onBluetoothClick = {
+                    navController.navigate("receive/bluetooth")
+                },
+                onNfcClick = {
+                    navController.navigate("receive/nfc")
+                },
+                onQrCodeClick = {
+                    navController.navigate("receive/qr")
+                },
+                isReceiving = true
+            )
+        }
+        /**
+         * Bluetooth method of sharing user profile.
+         * at this point json string should be already saved to datastore and available.
+         */
+        composable("receive/bluetooth") {
+        }
+        composable("receive/nfc") {
+            NfcReceiveScreen()
+        }
+        composable("receive/qr") {
             CameraScreen()
         }
         /**
@@ -60,15 +115,6 @@ fun NavigationGraph(
             )
         }
         /**
-         *  Choose what cards to share and save them to datastore so we wouldn't need to transfer it for each navigation.
-         *  After user presses submit button it will navigate to .../share/choosemethod route to choose the mathod user wants to share.
-         */
-        composable("profile/share") {
-            UserShareScreenProvider(user) {
-                navController.navigate("profile/share/choosemethod")
-            }
-        }
-        /**
          *  Edit profile screen
          *  After user presses save button it will navigate back to profile route.
          */
@@ -76,33 +122,6 @@ fun NavigationGraph(
             EditProfileScreen(onSave = {
                 navController.navigate("profile")
             })
-        }
-        /**
-         * Simple page with three buttons and three callbacks which we can navigate to the wanted route.
-         */
-        composable("profile/share/choosemethod") {
-            MainShareScreen(
-                onBluetoothClick = {
-                    navController.navigate("profile/share/bluetooth")
-                },
-                onNfcClick = {
-                    navController.navigate("profile/share/nfc")
-                },
-                onQrCodeClick = {
-                    navController.navigate("profile/share/qr")
-                }
-            )
-        }
-        /**
-         * Bluetooth method of sharing user profile.
-         * at this point json string should be already saved to datastore and available.
-         */
-        composable("profile/share/bluetooth") {
-            ShareViaBluetoothScreenProvider()
-        }
-
-        composable("profile/share/nfc") {
-            NfcScanScreen()
         }
     }
 }

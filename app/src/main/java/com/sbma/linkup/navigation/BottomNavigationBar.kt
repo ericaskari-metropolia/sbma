@@ -30,10 +30,10 @@ import androidx.navigation.NavController
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem.QRCode,
+        BottomNavItem.Share,
         BottomNavItem.MyContacts,
         BottomNavItem.Profile,
-        BottomNavItem.Camera,
+        BottomNavItem.Receive,
         BottomNavItem.Setting
     )
 
@@ -48,45 +48,45 @@ fun BottomNavigationBar(navController: NavController) {
             },
         containerColor = MaterialTheme.colorScheme.primary,
         tonalElevation = 15.dp,
-    ){
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, // evenly space icons
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                var selectedItem by remember { mutableStateOf(0) }
-                items.forEachIndexed { index, item ->
-                    val isSelected = selectedItem == index
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable {
-                            selectedItem = index
-                            navController.navigate(item.screen_route) {
-                                navController.graph.startDestinationRoute?.let { screen_route ->
-                                    popUpTo(screen_route) {
-                                        saveState = true
-                                    }
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly, // evenly space icons
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            var selectedItem by remember { mutableStateOf(0) }
+            items.forEachIndexed { index, item ->
+                val isSelected = selectedItem == index
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable {
+                        selectedItem = index
+                        navController.navigate(item.screen_route) {
+                            navController.graph.startDestinationRoute?.let { screen_route ->
+                                popUpTo(screen_route) {
+                                    saveState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = item.icon),
-                            contentDescription = item.title,
-                            modifier = Modifier
-                                .size(35.dp)
-                                .padding(bottom = 4.dp),
-                            tint = if (isSelected) Color.Yellow else Color.Black
-                        )
-                        Text(
-                            text = item.title,
-                            fontSize = 9.sp,
-                            color = if (isSelected) Color.Yellow else Color.Black
-                        )
                     }
+                ) {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .padding(bottom = 4.dp),
+                        tint = if (isSelected) Color.Yellow else Color.Black
+                    )
+                    Text(
+                        text = item.title,
+                        fontSize = 9.sp,
+                        color = if (isSelected) Color.Yellow else Color.Black
+                    )
                 }
             }
+        }
     }
 }
 
