@@ -107,4 +107,24 @@ class UserViewModel(
         }
     }
 
+    suspend fun scanTag(id: String) {
+        viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.scanTag(
+                    authorization,
+                    id
+                )
+                    .onSuccess { response ->
+                        println("receiveTag")
+                        println(response)
+                    }.onFailure {
+                        println(it)
+                    }
+            }
+        }
+    }
 }
+
+
+
