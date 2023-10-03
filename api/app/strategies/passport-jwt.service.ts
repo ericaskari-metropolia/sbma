@@ -22,7 +22,6 @@ export function config() {
                     id: payload.sub,
                 },
             });
-            console.log({ payload, user });
 
             if (user) {
                 return done(null, user);
