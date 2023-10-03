@@ -133,10 +133,18 @@ app.post('/share', passport.authenticate('jwt', { session: false }), async (req,
         }),
     );
 
-    res.status(200).send({
-        share: share,
-        shareCards: shareCards,
+    const response = await prisma.share.findFirstOrThrow({
+        where: {
+            id: share.id,
+        },
+        include: {
+            tags: true,
+            cards: true,
+            user: true,
+        },
     });
+
+    res.status(200).send(response);
     return;
 });
 
@@ -195,10 +203,15 @@ async function onScan(user: User, shareId: string, res: Response) {
                   });
         }),
     );
-    res.status(200).send({
-        connection,
-        connectionCards,
+    const response = await prisma.connection.findFirstOrThrow({
+        where: {
+            id: connection.id,
+        },
+        include: {
+            connectionCards: true,
+        },
     });
+    res.status(200).send(response);
 }
 
 app.post('/share/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
