@@ -4,9 +4,9 @@ import com.sbma.linkup.R
 
 sealed class BottomNavItem(var title: String, var icon: Int, var screen_route: String) {
 
-    object QRCode : BottomNavItem("My QR", R.drawable.qr_icon, "qr_code_route")
+    object Share : BottomNavItem("Share", R.drawable.qr_icon, "share")
     object MyContacts : BottomNavItem("My Contacts", R.drawable.card_icon, "my_contacts_route")
     object Profile : BottomNavItem("Profile", R.drawable.user_icon, "profile")
-    object Camera : BottomNavItem("Camera", R.drawable.camera_icon, "camera_route")
+    object Receive : BottomNavItem("Receive", R.drawable.camera_icon, "receive")
     object Setting : BottomNavItem("Setting", R.drawable.setting_icon, "setting_route")
 }

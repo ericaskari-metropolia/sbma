@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -27,26 +29,29 @@ import com.sbma.linkup.R
 import com.sbma.linkup.ui.theme.LinkUpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun MainShareScreen(
     onQrCodeClick: () -> Unit,
+    isReceiving: Boolean,
     onNfcClick: () -> Unit,
     onBluetoothClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .padding(20.dp),
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Share",
+            text = if(isReceiving) "Receive" else "Share",
             fontSize = 25.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .padding(5.dp)
         )
         Text(
-            text = "How would you like to share?",
+            text = if(isReceiving) "How would you like to receive?" else "How would you like to share?",
             fontSize = 25.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
@@ -69,7 +74,7 @@ fun MainShareScreen(
                 )
                 Image(
                     painterResource(R.drawable.qr_code_icon),
-                    contentDescription = "Edit",
+                    contentDescription = "QR code",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -93,7 +98,7 @@ fun MainShareScreen(
                 )
                 Image(
                     painterResource(R.drawable.bluetooth_wireless_icon),
-                    contentDescription = "Edit",
+                    contentDescription = "Bluetooth",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -103,7 +108,7 @@ fun MainShareScreen(
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = "Or would you like to assign a card or tag",
+            text = if(isReceiving) "Or would you like to receive from a card or tag?" else "Or would you like to assign a card or tag?",
             textAlign = TextAlign.Center,
             fontSize = 25.sp,
             lineHeight = 1.5.em,
@@ -120,7 +125,7 @@ fun MainShareScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 Image(
                     painterResource(R.drawable.nfcphone),
-                    contentDescription = "Edit",
+                    contentDescription = "Nfc",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -136,6 +141,6 @@ fun MainShareScreen(
 @Composable
 fun MainShareScreenPreview() {
     LinkUpTheme {
-        MainShareScreen(onQrCodeClick = {}, onNfcClick = {}, onBluetoothClick = {})
+        MainShareScreen(onQrCodeClick = {}, onNfcClick = {}, onBluetoothClick = {}, isReceiving = true)
     }
 }
