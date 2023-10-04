@@ -119,9 +119,11 @@ fun NavigationGraph(
          *  After user presses save button it will navigate back to profile route.
          */
         composable("profile/edit") {
-            EditProfileScreen(onSave = {
-                navController.navigate("profile")
-            })
+            EditProfileScreen(
+                user,
+                onSave = {
+                    navController.navigate("profile")
+                })
         }
     }
 }
