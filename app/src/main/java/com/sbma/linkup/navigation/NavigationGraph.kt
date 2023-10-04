@@ -15,6 +15,7 @@ import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenPro
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
 import com.sbma.linkup.user.User
+import com.sbma.linkup.util.MyQrCode
 
 
 @Composable
@@ -61,6 +62,7 @@ fun NavigationGraph(
             NfcScanScreen()
         }
         composable("share/qr") {
+            MyQrCode()
         }
         /**
          * tab of the bottom navigation bar

@@ -37,7 +37,7 @@ class UserViewModel(
     val loggedInUserId = dataStore.getUserId
     val getAccessToken = dataStore.getAccessToken
     val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt
-
+    val shareId = dataStore.getJsonToShare
     val allItemsStream = repository.getAllItemsStream()
     fun getItemStream(id: UUID) = repository.getItemStream(id)
 
