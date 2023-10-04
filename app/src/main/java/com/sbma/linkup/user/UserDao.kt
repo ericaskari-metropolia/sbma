@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
@@ -16,6 +17,9 @@ interface UserDao {
 
     @Update
     suspend fun update(item: User)
+
+    @Upsert
+    suspend fun upsert(item: User)
 
     @Delete
     suspend fun delete(item: User)

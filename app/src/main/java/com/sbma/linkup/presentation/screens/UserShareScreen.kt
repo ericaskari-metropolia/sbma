@@ -31,20 +31,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.usercard.UserCard
-import com.sbma.linkup.usercard.UserCardViewModel
+import com.sbma.linkup.card.Card
+import com.sbma.linkup.card.CardViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
 fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
-    val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = null)
     val composableScope = rememberCoroutineScope()
@@ -61,7 +59,7 @@ fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
 
 
 @Composable
-fun UserShareScreen(userCards: List<UserCard>, onShareClick: (userCards: List<UserCard>) -> Unit) {
+fun UserShareScreen(userCards: List<Card>, onShareClick: (userCards: List<Card>) -> Unit) {
     val input = remember {
         mutableStateOf(userCards.map { Pair(it, false) })
     }
@@ -116,7 +114,7 @@ fun UserShareScreen(userCards: List<UserCard>, onShareClick: (userCards: List<Us
 
 
 @Composable
-fun InfoListItem(item: Pair<UserCard, Boolean>, onItemClick: () -> Unit) {
+fun InfoListItem(item: Pair<Card, Boolean>, onItemClick: () -> Unit) {
 
     Card(
         modifier = Modifier
@@ -128,7 +126,7 @@ fun InfoListItem(item: Pair<UserCard, Boolean>, onItemClick: () -> Unit) {
             modifier = Modifier.padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = item.first.name, style = MaterialTheme.typography.bodyLarge)
+            Text(text = item.first.title, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.weight(1f))
             Switch(
                 checked = item.second,
@@ -145,9 +143,9 @@ fun UserShareScreenPreview() {
     val userId = UUID.randomUUID()
     val cards = remember {
         mutableListOf(
-            UserCard(UUID.randomUUID(), userId, "Facebook", "facebook.com/something"),
-            UserCard(UUID.randomUUID(), userId, "Instagram", "instagram.com/something"),
-            UserCard(UUID.randomUUID(), userId, "Twitter", "twitter.com/something")
+            Card(UUID.randomUUID(), userId, "Facebook", "facebook.com/something"),
+            Card(UUID.randomUUID(), userId, "Instagram", "instagram.com/something"),
+            Card(UUID.randomUUID(), userId, "Twitter", "twitter.com/something")
         )
     }
     LinkUpTheme {

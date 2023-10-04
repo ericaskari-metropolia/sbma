@@ -4,7 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
 import com.sbma.linkup.api.apimodels.AssignTagRequest
+import com.sbma.linkup.api.apimodels.toConnectionList
+import com.sbma.linkup.api.apimodels.toUser
+import com.sbma.linkup.card.Card
+import com.sbma.linkup.card.ICardRepository
 import com.sbma.linkup.datasource.DataStore
+import com.sbma.linkup.userconnection.IUserConnectionRepository
+import com.sbma.linkup.userconnection.UserConnection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -13,6 +19,8 @@ import java.util.UUID
 
 class UserViewModel(
     private val repository: IUserRepository,
+    private val cardRepository: ICardRepository,
+    private val userConnectionRepository: IUserConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
 ) : ViewModel() {
@@ -23,9 +31,24 @@ class UserViewModel(
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
                 apiService.getProfile(authorization)
-                    .onSuccess { call ->
-                        println("getProfile")
-                        println(call)
+                    .onSuccess { apiUser ->
+                        val user = apiUser.toUser()
+
+                        println("Syncing User Profile")
+                        repository.upsertItem(user)
+
+                        println("Syncing User Cards")
+                        val cards: List<Card> = (apiUser.cards ?: listOf()).toConnectionList()
+                        cardRepository.syncUserItems(user.id, cards)
+
+                        println("Syncing User Connections")
+                        val connections: List<UserConnection> = (apiUser.connections ?: listOf()).toConnectionList()
+                        val connectedUserConnections: List<UserConnection> = (apiUser.connectedUsers ?: listOf()).toConnectionList()
+                        userConnectionRepository.syncUserItems(user.id, connections)
+                        userConnectionRepository.syncConnectedUserItems(user.id, connectedUserConnections)
+
+
+
                     }.onFailure {
                         println(it)
                     }

@@ -50,14 +50,14 @@ import com.sbma.linkup.presentation.screens.CreateCard
 import com.sbma.linkup.presentation.screens.CreateCardData
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.ui.theme.YellowApp
-import com.sbma.linkup.usercard.UserCardViewModel
+import com.sbma.linkup.card.CardViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     onSave: () -> Unit,
-    userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var username by rememberSaveable { mutableStateOf("Enter Username") }
     var email by rememberSaveable { mutableStateOf("Enter your Email") }

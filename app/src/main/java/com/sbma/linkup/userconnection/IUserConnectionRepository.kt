@@ -11,6 +11,11 @@ interface IUserConnectionRepository {
     fun getUserItemsStream(userId: UUID): Flow<Map<UserConnection, User>>
     fun getItemStream(id: String): Flow<UserConnection?>
     suspend fun insertItem(item: UserConnection)
+    suspend fun insertItem(item: List<UserConnection>)
+
+    suspend fun syncUserItems(userId: UUID, items: List<UserConnection>)
+    suspend fun syncConnectedUserItems(userId: UUID, items: List<UserConnection>)
+
     suspend fun deleteItem(item: UserConnection)
 
     suspend fun updateItem(item: UserConnection)

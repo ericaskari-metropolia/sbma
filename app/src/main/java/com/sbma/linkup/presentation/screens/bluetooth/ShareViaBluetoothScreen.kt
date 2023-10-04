@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.usercard.UserCardViewModel
+import com.sbma.linkup.card.CardViewModel
 
 @Composable()
 fun ShareViaBluetoothScreenProvider() {
-    val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.jsonToShare.collectAsState(initial = null)
     println(userCards)
     ShareViaBluetoothScreen()
