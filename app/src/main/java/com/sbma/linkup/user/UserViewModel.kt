@@ -13,6 +13,9 @@ import com.sbma.linkup.card.ICardRepository
 import com.sbma.linkup.datasource.DataStore
 import com.sbma.linkup.userconnection.IUserConnectionRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,7 +27,8 @@ class UserViewModel(
     private val userConnectionRepository: IUserConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
-) : ViewModel() {
+
+    ) : ViewModel() {
 
     init {
         // Example code of how Api works.
@@ -88,6 +92,9 @@ class UserViewModel(
 
     val allItemsStream = userRepository.getAllItemsStream()
     fun getItemStream(id: UUID) = userRepository.getItemStream(id)
+    val responseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
+    val assignTagResponseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
+
 
     /**
      * combines two flows together. here it combines userId and list of users and returns the user with that id.
@@ -147,8 +154,11 @@ class UserViewModel(
                         .onSuccess { response ->
                             println("assignTag")
                             println(response)
+                            assignTagResponseStatus.value =
+                                "Congratulations! You successfully added your details on the NFC-enabled card."
                         }.onFailure {
                             println(it)
+                            assignTagResponseStatus.value = "Oh no! Something went wrong."
                         }
                 }
             }
@@ -166,11 +176,23 @@ class UserViewModel(
                     .onSuccess { response ->
                         println("receiveTag")
                         println(response)
+                        responseStatus.value =
+                            "Congratulations! Contact has been successfully added."
+
                     }.onFailure {
                         println(it)
+                        responseStatus.value = "Oh no! Contact retrieval has failed"
                     }
             }
         }
+    }
+
+    fun observeNfcStatus(): StateFlow<String?> {
+        return responseStatus.asStateFlow()
+    }
+
+    fun assignNfcStatus(): StateFlow<String?> {
+        return assignTagResponseStatus.asStateFlow()
     }
 }
 

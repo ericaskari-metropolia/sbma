@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,11 +51,11 @@ import java.util.UUID
 fun UserProfileScreenProvider(user: User, onShareClick: () -> Unit, onEditClick: () -> Unit) {
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
-    UserProfileScreen(user, userCards.value, onEditClick = onEditClick, onShareClick = onShareClick)
+    UserProfileScreen(user, userCards.value, onEditClick = onEditClick)
 }
 
 @Composable
-fun UserProfileScreen(user: User, userCards: List<Card>, onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun UserProfileScreen(user: User, userCards: List<Card>, onEditClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +66,6 @@ fun UserProfileScreen(user: User, userCards: List<Card>, onShareClick: () -> Uni
     ) {
         ScreenTitle(
             onEditClick = onEditClick,
-            onShareClick = onShareClick
         )
         Column {
             Column(
@@ -185,7 +183,7 @@ fun ContactInfoRow(icon: ImageVector, text: String) {
 }
 
 @Composable
-fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun ScreenTitle(onEditClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,16 +210,16 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
                         onEditClick()
                     }
             )
-            Icon(
-                Icons.Filled.Share,
-                contentDescription = "Share",
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-                    .clickable {
-                        onShareClick()
-                    }
-            )
+//            Icon(
+//                Icons.Filled.Share,
+//                contentDescription = "Share",
+//                modifier = Modifier
+//                    .padding(horizontal = 5.dp)
+//                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
+//                    .clickable {
+//                        onShareClick()
+//                    }
+//            )
         }
     }
 }
@@ -229,18 +227,28 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", picture = null)) }
+    val user =
+        remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", null)) }
     val cards = remember {
         mutableListOf(
-            Card(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
-            Card(UUID.randomUUID(), user.value.id, "Instagram", "https://instagram.com/something"),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Facebook",
+                "https://facebook.com/something"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Instagram",
+                "https://instagram.com/something"
+            ),
         )
     }
     LinkUpTheme {
         UserProfileScreen(
             user.value,
             cards,
-            onShareClick = {},
             onEditClick = {}
         )
     }
