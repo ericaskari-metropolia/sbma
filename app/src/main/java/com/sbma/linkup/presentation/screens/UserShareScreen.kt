@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.ui.theme.LinkUpTheme
-import com.sbma.linkup.user.User
-import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.user.User
+import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
 

@@ -1,4 +1,4 @@
-package com.sbma.linkup.EditProfile
+package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -48,10 +48,8 @@ import coil.compose.AsyncImage
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.CardViewModel
-import com.sbma.linkup.presentation.screens.CreateCard
-import com.sbma.linkup.presentation.screens.CreateCardData
-import com.sbma.linkup.ui.theme.LinkUpTheme
-import com.sbma.linkup.ui.theme.YellowApp
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

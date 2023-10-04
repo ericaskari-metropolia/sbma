@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.navigation.NavigationView
-import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

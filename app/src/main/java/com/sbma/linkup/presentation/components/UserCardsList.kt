@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.R
-import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.card.Card
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import java.util.UUID
 
 @Composable

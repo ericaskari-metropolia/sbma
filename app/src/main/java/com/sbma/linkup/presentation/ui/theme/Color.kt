@@ -1,4 +1,4 @@
-package com.sbma.linkup.ui.theme
+package com.sbma.linkup.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

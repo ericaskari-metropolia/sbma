@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +39,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.components.UserCardsList
-import com.sbma.linkup.ui.theme.LinkUpTheme
-import com.sbma.linkup.user.User
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.presentation.components.UserCardsList
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.user.User
 import java.util.UUID
 
 @Composable

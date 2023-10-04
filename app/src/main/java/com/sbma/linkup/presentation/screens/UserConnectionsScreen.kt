@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
-import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
 import java.util.UUID
 
