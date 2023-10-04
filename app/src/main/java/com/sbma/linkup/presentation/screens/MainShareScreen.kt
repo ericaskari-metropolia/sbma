@@ -1,18 +1,24 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +41,9 @@ fun MainShareScreen(
     onQrCodeClick: () -> Unit,
     isReceiving: Boolean,
     onNfcClick: () -> Unit,
-    onBluetoothClick: () -> Unit
+    onBluetoothClick: () -> Unit,
+    onBackClick: () -> Unit
+
 ) {
     Column(
         modifier = Modifier
@@ -43,15 +51,30 @@ fun MainShareScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (!isReceiving) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Start)
+            ) {
+                Icon(
+                    Icons.Rounded.KeyboardArrowLeft,
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .clickable { onBackClick() }
+                )
+            }
+        }
+
         Text(
-            text = if(isReceiving) "Receive" else "Share",
+            text = if (isReceiving) "Receive" else "Share",
             fontSize = 25.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .padding(5.dp)
         )
         Text(
-            text = if(isReceiving) "How would you like to receive?" else "How would you like to share?",
+            text = if (isReceiving) "How would you like to receive?" else "How would you like to share?",
             fontSize = 25.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
@@ -108,7 +131,7 @@ fun MainShareScreen(
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = if(isReceiving) "Or would you like to receive from a card or tag?" else "Or would you like to assign a card or tag?",
+            text = if (isReceiving) "Or would you like to receive from a card or tag?" else "Or would you like to assign a card or tag?",
             textAlign = TextAlign.Center,
             fontSize = 25.sp,
             lineHeight = 1.5.em,
@@ -141,6 +164,12 @@ fun MainShareScreen(
 @Composable
 fun MainShareScreenPreview() {
     LinkUpTheme {
-        MainShareScreen(onQrCodeClick = {}, onNfcClick = {}, onBluetoothClick = {}, isReceiving = true)
+        MainShareScreen(
+            onQrCodeClick = {},
+            onNfcClick = {},
+            onBluetoothClick = {},
+            isReceiving = true,
+            onBackClick = {}
+        )
     }
 }

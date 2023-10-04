@@ -1,6 +1,5 @@
 package com.sbma.linkup.presentation.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,13 +34,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.ui.theme.LinkUpTheme
@@ -52,14 +48,14 @@ import com.sbma.linkup.usercard.UserCardViewModel
 import java.util.UUID
 
 @Composable
-fun UserProfileScreenProvider(user: User, onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun UserProfileScreenProvider(user: User, onEditClick: () -> Unit) {
     val userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
-    UserProfileScreen(user, userCards.value, onEditClick = onEditClick, onShareClick = onShareClick)
+    UserProfileScreen(user, userCards.value, onEditClick = onEditClick)
 }
 
 @Composable
-fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun UserProfileScreen(user: User, userCards: List<UserCard>, onEditClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +66,6 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
     ) {
         ScreenTitle(
             onEditClick = onEditClick,
-            onShareClick = onShareClick
         )
         Column {
             Column(
@@ -188,7 +183,7 @@ fun ContactInfoRow(icon: ImageVector, text: String) {
 }
 
 @Composable
-fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun ScreenTitle(onEditClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -215,16 +210,16 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
                         onEditClick()
                     }
             )
-            Icon(
-                Icons.Filled.Share,
-                contentDescription = "Share",
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-                    .clickable {
-                        onShareClick()
-                    }
-            )
+//            Icon(
+//                Icons.Filled.Share,
+//                contentDescription = "Share",
+//                modifier = Modifier
+//                    .padding(horizontal = 5.dp)
+//                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
+//                    .clickable {
+//                        onShareClick()
+//                    }
+//            )
         }
     }
 }
@@ -232,18 +227,28 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", picture = null)) }
+    val user =
+        remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", null)) }
     val cards = remember {
         mutableListOf(
-            UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
-            UserCard(UUID.randomUUID(), user.value.id, "Instagram", "https://instagram.com/something"),
+            UserCard(
+                UUID.randomUUID(),
+                user.value.id,
+                "Facebook",
+                "https://facebook.com/something"
+            ),
+            UserCard(
+                UUID.randomUUID(),
+                user.value.id,
+                "Instagram",
+                "https://instagram.com/something"
+            ),
         )
     }
     LinkUpTheme {
         UserProfileScreen(
             user.value,
             cards,
-            onShareClick = {},
             onEditClick = {}
         )
     }
