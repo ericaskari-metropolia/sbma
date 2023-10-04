@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,24 +45,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.CreateCard
 import com.sbma.linkup.presentation.screens.CreateCardData
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.ui.theme.YellowApp
+import com.sbma.linkup.user.User
 import com.sbma.linkup.usercard.UserCardViewModel
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
+    user: User,
     onSave: () -> Unit,
     userCardViewModel: UserCardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var username by rememberSaveable { mutableStateOf("Enter Username") }
-    var email by rememberSaveable { mutableStateOf("Enter your Email") }
-    var note by rememberSaveable { mutableStateOf("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ") }
+    var aboutMe by rememberSaveable { mutableStateOf("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ") }
     var phone by rememberSaveable { mutableStateOf("Add your phone number") }
     var address by rememberSaveable { mutableStateOf("Add your address") }
     var instagram by rememberSaveable { mutableStateOf("Instagram account") }
@@ -108,13 +112,12 @@ fun EditProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.profile_photo),
+            AsyncImage(
+                model = user.picture,
                 contentDescription = "profile photo",
                 modifier = Modifier
                     .size(150.dp)
                     .clip(RoundedCornerShape(50.dp))
-                    .scale(2f)
             )
             Icon(
                 imageVector = Icons.Filled.Edit,
@@ -134,7 +137,7 @@ fun EditProfileScreen(
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Sebubebu", fontSize = 30.sp)
+            Text(text = user.name, fontSize = 30.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "UX/UI Designer", fontSize = 15.sp)
             Spacer(modifier = Modifier.height(8.dp))
@@ -149,27 +152,17 @@ fun EditProfileScreen(
             horizontalArrangement = Arrangement.SpaceBetween
 
         ) {
-            Text(text = "Username", modifier = Modifier.width(100.dp))
-            TextField(
-                value = username,
-                onValueChange = { username = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent
-                )
+            Text(
+                text = "Username",
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 4.dp),
+                fontWeight = FontWeight.Bold,
             )
-        }
-
-        //Email
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Email", modifier = Modifier.width(100.dp))
             TextField(
-                value = email,
-                onValueChange = { email = it },
+                value = user.name,
+                onValueChange = { username = it },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent
                 )
@@ -183,7 +176,14 @@ fun EditProfileScreen(
                 .padding(start = 4.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Phone number", modifier = Modifier.width(100.dp))
+            Text(
+                text = "Phone number",
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 4.dp),
+                fontWeight = FontWeight.Bold,
+            )
             TextField(
                 value = phone,
                 onValueChange = { phone = it },
@@ -200,7 +200,14 @@ fun EditProfileScreen(
                 .padding(start = 4.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Address", modifier = Modifier.width(100.dp))
+            Text(
+                text = "Address",
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 4.dp),
+                fontWeight = FontWeight.Bold,
+            )
             TextField(
                 value = address,
                 onValueChange = { address = it },
@@ -210,27 +217,31 @@ fun EditProfileScreen(
             )
         }
 
-        //Note
+        // Description
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 4.dp, end = 4.dp),
         ) {
             Text(
-                text = "Note", modifier = Modifier
-                    .width(100.dp)
-                    .padding(top = 8.dp)
+                text = "About Me",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 4.dp),
+                fontWeight = FontWeight.Bold,
             )
             TextField(
-                value = note,
-                onValueChange = { note = it },
+                value = aboutMe,
+                onValueChange = {  aboutMe = it },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent
                 ),
                 singleLine = false,
-                modifier = Modifier.height(150.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
+
 
         Text(text = newCards.value.count().toString())
 
@@ -380,7 +391,9 @@ fun EditProfileScreen(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val user =
+        remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", email = "", description = "UX/UI Designer",picture = null)) }
     LinkUpTheme {
-        EditProfileScreen(onSave = {})
+        EditProfileScreen(user.value, onSave = {})
     }
 }

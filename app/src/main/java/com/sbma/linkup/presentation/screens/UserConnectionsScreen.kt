@@ -111,12 +111,14 @@ fun ScreenPreview() {
                         id = UUID.randomUUID(),
                         name = "Eric",
                         description = "Mobile developer",
+                        email = "",
                         picture = null
                     ),
                     User(
                         id = UUID.randomUUID(),
                         name = "Shayne",
                         description = "Mobile developer",
+                        email = "",
                         picture = null
 
                     ),
@@ -124,12 +126,14 @@ fun ScreenPreview() {
                         id = UUID.randomUUID(),
                         name = "Binod",
                         description = "Mobile developer",
+                        email = "",
                         picture = null
                     ),
                     User(
                         id = UUID.randomUUID(),
                         name = "Sebastian",
                         description = "Mobile developer",
+                        email = "",
                         picture = null
                     )
                 )

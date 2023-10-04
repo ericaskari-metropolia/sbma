@@ -92,7 +92,6 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
                         modifier = Modifier
                             .size(150.dp)
                             .clip(RoundedCornerShape(50.dp))
-                            .scale(2f)
                     )
                 }
                 Column(
@@ -153,7 +152,7 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
                         Spacer(modifier = Modifier.height(8.dp))
                         ContactInfoRow(
                             icon = Icons.Filled.Email,
-                            text = "sebubebu@gmail.com"
+                            text = user.email
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         ContactInfoRow(
@@ -235,7 +234,7 @@ fun ScreenTitle(onShareClick: () -> Unit, onEditClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "UX/UI Designer", null)) }
+    val user = remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", picture = null)) }
     val cards = remember {
         mutableListOf(
             UserCard(UUID.randomUUID(), user.value.id, "Facebook", "https://facebook.com/something"),
