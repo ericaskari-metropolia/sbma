@@ -46,7 +46,10 @@ fun NavigationGraph(
                 onQrCodeClick = {
                     navController.navigate("share/qr")
                 },
-                isReceiving = false
+                isReceiving = false,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
         /**
@@ -58,7 +61,11 @@ fun NavigationGraph(
         }
 
         composable("share/nfc") {
-            NfcScanScreen()
+            NfcScanScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable("share/qr") {
         }
@@ -82,7 +89,11 @@ fun NavigationGraph(
                 onQrCodeClick = {
                     navController.navigate("receive/qr")
                 },
-                isReceiving = true
+                isReceiving = true,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+
             )
         }
         /**
@@ -92,7 +103,10 @@ fun NavigationGraph(
         composable("receive/bluetooth") {
         }
         composable("receive/nfc") {
-            NfcReceiveScreen()
+            NfcReceiveScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                })
         }
         composable("receive/qr") {
             CameraScreen()
@@ -110,7 +124,7 @@ fun NavigationGraph(
         composable("profile") {
             UserProfileScreenProvider(
                 user,
-                onShareClick = { navController.navigate("profile/share") },
+//                onShareClick = { navController.navigate("profile/share") },
                 onEditClick = { navController.navigate("profile/edit") },
             )
         }

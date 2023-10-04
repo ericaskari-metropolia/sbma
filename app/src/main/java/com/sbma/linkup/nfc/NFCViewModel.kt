@@ -1,6 +1,5 @@
 package com.sbma.linkup.nfc
 
-import android.content.ContentValues
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Date
-import kotlin.experimental.and
 
 class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     companion object {
@@ -80,58 +75,9 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
         }
     }
 
-    public fun observeNFCStatus(): StateFlow<NFCStatus?> {
-        return liveNFC.asStateFlow()
-    }
-
-    //endregion
-    //region Tags Information Methods
-    private fun getDateTimeNow(): String {
-        Log.d(TAG, "getDateTimeNow()")
-        val TIME_FORMAT: DateFormat = SimpleDateFormat.getDateTimeInstance()
-        val now: Date = Date()
-        Log.d(ContentValues.TAG, "getDateTimeNow() Return ${TIME_FORMAT.format(now)}")
-        return TIME_FORMAT.format(now)
-    }
-
-    private fun getHex(bytes: ByteArray): String {
-        val sb = StringBuilder()
-        for (i in bytes.indices.reversed()) {
-            val b: Int = bytes[i].and(0xff.toByte()).toInt()
-            if (b < 0x10) sb.append('0')
-            sb.append(Integer.toHexString(b))
-            if (i > 0)
-                sb.append(" ")
-        }
-        return sb.toString()
-    }
-
-    private fun getDec(bytes: ByteArray): Long {
-        Log.d(TAG, "getDec()")
-        var result: Long = 0
-        var factor: Long = 1
-        for (i in bytes.indices) {
-            val value: Long = bytes[i].and(0xffL.toByte()).toLong()
-            result += value * factor
-            factor *= 256L
-        }
-        return result
-    }
-
-    private fun getReversed(bytes: ByteArray): Long {
-        Log.d(TAG, "getReversed()")
-        var result: Long = 0
-        var factor: Long = 1
-        for (i in bytes.indices.reversed()) {
-            val value = bytes[i].and(0xffL.toByte()).toLong()
-            result += value * factor
-            factor *= 256L
-        }
-        return result
-    }
-
     public fun observeTag(): StateFlow<String?> {
         return appNfcManager.liveTag.asStateFlow()
     }
-    //endregion
+
+
 }

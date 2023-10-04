@@ -22,7 +22,6 @@ class AppNfcManager(
     private val TAG = AppNfcManager::class.java.getSimpleName()
     val liveTag: MutableStateFlow<String?> = MutableStateFlow(null)
 
-
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     public fun enableReaderMode(
         flags: Int,
