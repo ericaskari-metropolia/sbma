@@ -1,14 +1,20 @@
 package com.sbma.linkup.api.apimodels
 
+import com.sbma.linkup.user.User
+import java.util.UUID
+
 data class ApiUser(
     val id: String,
     val email: String,
     val name: String,
+    val picture: String?,
     val cards: List<ApiCard>?,
     val connections: List<ApiConnection>?,
     val connectedUsers: List<ApiConnection>?,
     val shares: List<ApiShare>?
 )
+fun ApiUser.toUser(): User = User(UUID.fromString(id), name, "", picture)
+
 
 data class ApiCard(
     val id: String,

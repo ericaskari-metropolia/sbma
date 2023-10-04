@@ -1,7 +1,7 @@
 datasource db {
   provider          = "postgresql"
   url               = env("APP_DATABASE_URL")
-  shadowDatabaseUrl = "postgresql://postgres:sbma-local@localhost:5433/postgres?schema=public"
+  shadowDatabaseUrl = "postgresql://postgres:V7NHzBm6U.4-phLzTvJt@localhost:5433/postgres?schema=public"
 }
 
 generator client {
@@ -12,6 +12,7 @@ model User {
   id             String       @id @default(uuid())
   email          String       @unique
   name           String
+  picture        String?
   cards          Card[]
   connections    Connection[] @relation("Connection_user")
   connectedUsers Connection[] @relation("Connection_connectedUser")

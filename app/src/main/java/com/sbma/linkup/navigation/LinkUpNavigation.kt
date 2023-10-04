@@ -11,9 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.sbma.linkup.api.apimodels.ApiUser
+import com.sbma.linkup.api.apimodels.toUser
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.intents.login.LoginResponseToken
-import com.sbma.linkup.intents.login.LoginUserResponse
 import com.sbma.linkup.presentation.screens.LoadingScreen
 import com.sbma.linkup.presentation.screens.LoginScreen
 import com.sbma.linkup.user.UserViewModel
@@ -49,8 +50,8 @@ fun NavigationView(
                     val tokenQuery = data.getQueryParameter("token")
                     val userQuery = data.getQueryParameter("user")
                     val token = Gson().fromJson(tokenQuery, LoginResponseToken::class.java)
-                    val loginUserResponse = Gson().fromJson(userQuery, LoginUserResponse::class.java)
-                    val user = loginUserResponse.toUser()
+                    val apiUser = Gson().fromJson(userQuery, ApiUser::class.java)
+                    val user = apiUser.toUser()
                     userViewModel.insertItem(user)
                     userViewModel.saveLoginData(
                         accessToken = token.accessToken,

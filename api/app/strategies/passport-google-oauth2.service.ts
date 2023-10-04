@@ -48,7 +48,7 @@ export function configRoutes(app: Express) {
         const token = generateAccessToken(user);
         const params = new URLSearchParams();
         params.set('token', JSON.stringify(token));
-        params.set('user', JSON.stringify({ ...user, googleProfile }));
+        params.set('user', JSON.stringify(user));
         const template = continueWithAppTemplate
             .replace('[launchLink]', `/android/auth/login?${params.toString()}`)
             .replace('[accessToken]', token.accessToken);
