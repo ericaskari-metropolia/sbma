@@ -101,8 +101,6 @@ fun UserProfileScreen(user: User, userCards: List<UserCard>, onShareClick: () ->
                 ) {
                     Text(text = user.name, fontSize = 30.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = user.description, fontSize = 15.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
                     Card(
                         modifier = Modifier
                             .size(width = 400.dp, height = 240.dp)
