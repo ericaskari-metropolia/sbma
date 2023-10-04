@@ -15,6 +15,7 @@ class CardViewModel(
     private val dataStore: DataStore,
     private val apiService: ApiService
 ) : ViewModel() {
+    var phoneNumber: String = ""
     /**
      * Flow of user cards json string that user wants to share.
      */

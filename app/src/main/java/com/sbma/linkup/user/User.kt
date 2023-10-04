@@ -9,7 +9,8 @@ import java.util.UUID
 data class User(
     @PrimaryKey val id: UUID,
     @ColumnInfo val name: String,
-    @ColumnInfo val description: String,
+    @ColumnInfo val email: String,
+    @ColumnInfo var description: String,
     @ColumnInfo val picture: String?,
 ) {
 

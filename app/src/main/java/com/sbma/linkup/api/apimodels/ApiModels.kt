@@ -19,7 +19,7 @@ data class ApiUser(
     val connectedUsers: List<ApiConnection>?,
     val shares: List<ApiShare>?
 )
-fun ApiUser.toUser(): User = User(UUID.fromString(id), name, "", picture)
+fun ApiUser.toUser(): User = User(UUID.fromString(id), name, email ,"", picture)
 
 
 data class ApiCard(
