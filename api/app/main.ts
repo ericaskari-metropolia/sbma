@@ -66,7 +66,7 @@ app.get('/profile', requiresAccessToken, async (req: Request, res: Response): Pr
                     },
                 },
             },
-            connectedUsers: {
+            reverseConnections: {
                 include: {
                     user: true,
                     connectionCards: {

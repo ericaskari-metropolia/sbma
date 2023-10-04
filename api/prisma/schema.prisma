@@ -9,15 +9,14 @@ generator client {
 }
 
 model User {
-  id             String       @id @default(uuid())
-  email          String       @unique
-  name           String
-  picture        String?
-  cards          Card[]
-  connections    Connection[] @relation("Connection_user")
-  // TODO: should be renamed to reverseConnections
-  connectedUsers Connection[] @relation("Connection_connectedUser")
-  shares         Share[]
+  id                 String       @id @default(uuid())
+  email              String       @unique
+  name               String
+  picture            String?
+  cards              Card[]
+  connections        Connection[] @relation("Connection_user")
+  reverseConnections Connection[] @relation("Connection_reverseConnections")
+  shares             Share[]
 }
 
 model Card {
@@ -36,7 +35,7 @@ model Connection {
   //  User who scans the code
   userId          String
   //  User who shared their code.
-  connectedUser   User             @relation("Connection_connectedUser", fields: [connectedUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  connectedUser   User             @relation("Connection_reverseConnections", fields: [connectedUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   connectedUserId String
   connectionCards ConnectionCard[]
 

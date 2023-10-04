@@ -23,10 +23,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.nfc.NFCViewModel
 import com.sbma.linkup.tag.TagViewModel
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.userconnection.UserConnectionViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire app
@@ -54,8 +54,8 @@ object AppViewModelProvider {
                 MyApplication().container.apiService
             )
         }
-        addInitializer(UserConnectionViewModel::class) {
-            UserConnectionViewModel(
+        addInitializer(ConnectionViewModel::class) {
+            ConnectionViewModel(
                 MyApplication().container.userConnectionRepository
             )
         }

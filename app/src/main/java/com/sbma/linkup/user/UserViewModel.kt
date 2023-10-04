@@ -10,8 +10,8 @@ import com.sbma.linkup.api.apimodels.toConnectionList
 import com.sbma.linkup.api.apimodels.toUser
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.ICardRepository
+import com.sbma.linkup.connection.IConnectionRepository
 import com.sbma.linkup.datasource.DataStore
-import com.sbma.linkup.userconnection.IUserConnectionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ import java.util.UUID
 class UserViewModel(
     private val userRepository: IUserRepository,
     private val cardRepository: ICardRepository,
-    private val userConnectionRepository: IUserConnectionRepository,
+    private val userConnectionRepository: IConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
 
@@ -52,7 +52,7 @@ class UserViewModel(
                         userConnectionRepository.syncUserConnections(user.id, connections)
 
                         println("Syncing User Reverse Connections")
-                        val apiReverseConnections = apiUser.connectedUsers ?: listOf()
+                        val apiReverseConnections = apiUser.reverseConnections ?: listOf()
                         val reverseConnections = apiReverseConnections.toConnectionList()
                         userConnectionRepository.syncUserReverseConnections(user.id, reverseConnections)
 

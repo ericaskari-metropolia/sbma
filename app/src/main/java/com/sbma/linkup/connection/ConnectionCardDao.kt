@@ -1,4 +1,4 @@
-package com.sbma.linkup.userconnection
+package com.sbma.linkup.connection
 
 import androidx.room.Dao
 import androidx.room.Delete

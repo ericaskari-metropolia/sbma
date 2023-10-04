@@ -1,9 +1,9 @@
 package com.sbma.linkup.api.apimodels
 
 import com.sbma.linkup.card.Card
+import com.sbma.linkup.connection.Connection
+import com.sbma.linkup.connection.ConnectionCard
 import com.sbma.linkup.user.User
-import com.sbma.linkup.userconnection.ConnectionCard
-import com.sbma.linkup.userconnection.UserConnection
 import java.util.UUID
 
 data class ApiUser(
@@ -13,10 +13,7 @@ data class ApiUser(
     val picture: String?,
     val cards: List<ApiCard>?,
     val connections: List<ApiConnection>?,
-    /**
-     * TODO: Rename to reverseConnections
-     */
-    val connectedUsers: List<ApiConnection>?,
+    val reverseConnections: List<ApiConnection>?,
     val shares: List<ApiShare>?
 )
 fun ApiUser.toUser(): User = User(UUID.fromString(id), name, email ,"", picture)
@@ -42,8 +39,8 @@ data class ApiConnection(
     val connectedUser: ApiUser?,
     val connectionCards: List<ApiConnectionCard>?
 )
-fun ApiConnection.toConnection(): UserConnection = UserConnection(UUID.fromString(id), UUID.fromString(userId), UUID.fromString(connectedUserId))
-fun List<ApiConnection>.toConnectionList(): List<UserConnection> = this.map { it.toConnection() }
+fun ApiConnection.toConnection(): Connection = Connection(UUID.fromString(id), UUID.fromString(userId), UUID.fromString(connectedUserId))
+fun List<ApiConnection>.toConnectionList(): List<Connection> = this.map { it.toConnection() }
 
 data class ApiConnectionCard(
     val id: String,
