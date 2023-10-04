@@ -1,15 +1,14 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 
 import {
     config as configGoogleOAuth2,
     configRoutes as configGoogleOAuth2Routes,
 } from './strategies/passport-google-oauth2.service.js';
 
-import { config as configJWT } from './strategies/passport-jwt.service.js';
+import { config as configJWT, requiresAccessToken } from './strategies/passport-jwt.service.js';
 import { configSession } from './configurations/configSession.js';
 import { configParsers } from './configurations/configParsers.js';
 import { environment } from './configurations/environment.js';
-import passport from 'passport';
 import { Card, ConnectionCard, Tag, User } from '@prisma/client';
 import { prisma } from './databases/userDatabase.js';
 import { ErrorRequestHandler } from 'express-serve-static-core';
@@ -36,7 +35,7 @@ configGoogleOAuth2Routes(app);
  * https://www.branch.io/resources/blog/how-to-open-an-android-app-from-the-browser/
  * https://developer.android.com/training/app-links/verify-android-applinks
  */
-app.get('/.well-known/assetlinks.json', (req: any, res: any) => {
+app.get('/.well-known/assetlinks.json', (req: Request, res: Response) => {
     res.json([
         {
             relation: ['delegate_permission/common.handle_all_urls'],
@@ -49,7 +48,7 @@ app.get('/.well-known/assetlinks.json', (req: any, res: any) => {
     ]);
 });
 
-app.get('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/profile', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const response = await prisma.user.findFirst({
         where: {
             id: (req.user as User).id,
@@ -61,7 +60,19 @@ app.get('/profile', passport.authenticate('jwt', { session: false }), async (req
                     connectionCards: true,
                 },
             },
-            connectedUsers: true,
+            connectedUsers: {
+                include: {
+                    connectionCards: {
+                        include: {
+                            card: {
+                                include: {
+                                    connectionCards: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
             shares: {
                 include: {
                     tags: true,
@@ -74,7 +85,7 @@ app.get('/profile', passport.authenticate('jwt', { session: false }), async (req
     return;
 });
 
-app.put('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.put('/profile', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const body: User = req.body as User;
     const response = await prisma.user.update({
@@ -85,6 +96,7 @@ app.put('/profile', passport.authenticate('jwt', { session: false }), async (req
             ...user,
             ...body,
             id: user.id,
+            email: user.email,
         },
     });
 
@@ -92,7 +104,7 @@ app.put('/profile', passport.authenticate('jwt', { session: false }), async (req
     return;
 });
 
-app.post('/card', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/card', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const body: Card = req.body as Card;
     const response = await prisma.card.create({
@@ -105,8 +117,42 @@ app.post('/card', passport.authenticate('jwt', { session: false }), async (req, 
     res.status(200).send(response);
     return;
 });
+app.put('/card/:id', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
+    const user: User = req.user as User;
+    const id: string = req.params.id as string;
+    const body: Card = req.body as Card;
+    const card = await prisma.card.findFirstOrThrow({
+        where: {
+            id,
+            ownerId: user.id,
+        },
+    });
+    const response = await prisma.card.update({
+        where: {
+            id: card.id,
+        },
+        data: {
+            title: body.title ?? card.title,
+            value: body.value ?? card.value,
+        },
+    });
+    res.status(200).send(response);
+    return;
+});
+app.delete('/card/:id', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
+    const user: User = req.user as User;
+    const id: string = req.params.id as string;
+    const response = await prisma.card.delete({
+        where: {
+            id: id,
+            ownerId: user.id,
+        },
+    });
+    res.status(200).send(response);
+    return;
+});
 
-app.post('/share', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/share', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const body: string[] = req.body as string[];
 
@@ -148,7 +194,13 @@ app.post('/share', passport.authenticate('jwt', { session: false }), async (req,
     return;
 });
 
-async function onScan(user: User, shareId: string, res: Response) {
+/**
+ *
+ * @param user User who scans the code.
+ * @param shareId User who shared their QR code or card.
+ * @param res this function is responsible to respond.
+ */
+async function onScan(user: User, shareId: string, res: Response): Promise<void> {
     const share = await prisma.share.findFirstOrThrow({
         where: {
             id: shareId,
@@ -214,13 +266,13 @@ async function onScan(user: User, shareId: string, res: Response) {
     res.status(200).send(response);
 }
 
-app.post('/share/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/share/:id/scan', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
-    const shareId = req.params.id;
-    await onScan(user, shareId, res);
+    const id = req.params.id;
+    await onScan(user, id, res);
 });
 
-app.post('/tag', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/tag', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const body: Tag = req.body as Tag;
     const response = await prisma.tag.create({
@@ -233,22 +285,21 @@ app.post('/tag', passport.authenticate('jwt', { session: false }), async (req, r
     return;
 });
 
-app.post('/tag/:id/scan', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/tag/:id/scan', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
-    const tagId = req.params.id;
+    const id = req.params.id;
 
     const response = await prisma.tag.findFirstOrThrow({
         where: {
-            tagId,
+            tagId: id,
         },
     });
     await onScan(user, response.shareId, res);
 });
 
-app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.delete('/tag/:id', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const id = req.params.id;
-    const body: Tag = req.body as Tag;
 
     const tag = await prisma.tag.findFirstOrThrow({
         where: {
@@ -275,7 +326,7 @@ app.delete('/tag/:id', passport.authenticate('jwt', { session: false }), async (
 });
 
 // Define a global error handler middleware
-app.use(((err, req, res, next) => {
+app.use((async (err, req: Request, res: Response, next): Promise<void> => {
     // Handle the error here
     console.error(err);
 
@@ -287,8 +338,8 @@ app.use(((err, req, res, next) => {
         error: 'Internal Server Error',
         message: err.message,
     });
-}) as ErrorRequestHandler<any>);
+}) satisfies ErrorRequestHandler<any>);
 
-app.listen(8000, '0.0.0.0', () => {
+app.listen(8000, '0.0.0.0', (): void => {
     console.log('Started listening on port 8000');
 });

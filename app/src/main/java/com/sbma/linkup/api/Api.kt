@@ -13,6 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -26,6 +27,16 @@ interface ApiService {
     @POST("/card")
     @Headers("Content-Type: application/json")
     suspend fun createNewCard(@Header("Authorization") authorization: String, @Body request: NewCardRequest): Result<ApiCard>
+
+    // Update Card PUT Request
+    @PUT("/card/{id}")
+    @Headers("Content-Type: application/json")
+    suspend fun updateCard(@Header("Authorization") authorization: String, @Path("shareId") id: String, @Body request: ApiCard): Result<ApiCard>
+
+    // Update Card PUT Request
+    @DELETE("/card/{id}")
+    @Headers("Content-Type: application/json")
+    suspend fun deleteCard(@Header("Authorization") authorization: String, @Path("shareId") id: String): Result<Unit>
 
     // Share POST Request
     @POST("/share")
