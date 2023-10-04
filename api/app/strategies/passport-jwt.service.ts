@@ -49,6 +49,9 @@ export function generateAccessToken(user: User) {
         expiresAt,
     };
 }
+
+export const requiresAccessToken = passport.authenticate('jwt', { session: false });
+
 export const jwtAuthenticateDebugCallback: AuthenticateCallback = (err, user, info, status) => {
     console.log({ err, user, info, status });
 };
