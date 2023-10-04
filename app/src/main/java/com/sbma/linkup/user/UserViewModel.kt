@@ -4,6 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
 import com.sbma.linkup.api.apimodels.AssignTagRequest
+import com.sbma.linkup.api.apimodels.toCardList
+import com.sbma.linkup.api.apimodels.toConnectionCardList
+import com.sbma.linkup.api.apimodels.toConnectionList
+import com.sbma.linkup.api.apimodels.toUser
+import com.sbma.linkup.card.Card
+import com.sbma.linkup.card.ICardRepository
+import com.sbma.linkup.connection.IConnectionRepository
 import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +22,9 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class UserViewModel(
-    private val repository: IUserRepository,
+    private val userRepository: IUserRepository,
+    private val cardRepository: ICardRepository,
+    private val userConnectionRepository: IConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
 
@@ -27,9 +36,48 @@ class UserViewModel(
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
                 apiService.getProfile(authorization)
-                    .onSuccess { call ->
-                        println("getProfile")
-                        println(call)
+                    .onSuccess { apiUser ->
+                        val user = apiUser.toUser()
+
+                        println("Syncing User Profile")
+                        userRepository.insertItem(user)
+
+                        println("Syncing User Cards")
+                        val cards: List<Card> = (apiUser.cards ?: listOf()).toCardList()
+                        cardRepository.syncUserItems(user.id, cards)
+
+                        println("Syncing User Connections")
+                        val apiConnections = apiUser.connections ?: listOf()
+                        val connections = apiConnections.toConnectionList()
+                        userConnectionRepository.syncUserConnections(user.id, connections)
+
+                        println("Syncing User Reverse Connections")
+                        val apiReverseConnections = apiUser.reverseConnections ?: listOf()
+                        val reverseConnections = apiReverseConnections.toConnectionList()
+                        userConnectionRepository.syncUserReverseConnections(user.id, reverseConnections)
+
+                        println("Syncing Connection Cards")
+                        apiConnections.forEach { apiConnection ->
+                            val apiConnectionUser = apiConnection.connectedUser
+                            val apiConnectionCards = apiConnection.connectionCards ?: listOf()
+                            val connectionCards = apiConnectionCards.toConnectionCardList()
+                            apiConnectionUser?.let {
+                                println("Syncing Connection User")
+                                userRepository.insertItem(it.toUser())
+                            }
+
+                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(apiConnection.id), connectionCards)
+
+                        }
+
+                        println("Syncing Reverse Connection Cards")
+                        apiReverseConnections.forEach { apiConnection ->
+                            val apiConnectionCards = apiConnection.connectionCards ?: listOf()
+                            val connectionCards = apiConnectionCards.toConnectionCardList()
+                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(apiConnection.id), connectionCards)
+                        }
+
+
                     }.onFailure {
                         println(it)
                     }
@@ -42,8 +90,9 @@ class UserViewModel(
     val getAccessToken = dataStore.getAccessToken
     val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt
     val shareId = dataStore.getJsonToShare
-    val allItemsStream = repository.getAllItemsStream()
-    fun getItemStream(id: UUID) = repository.getItemStream(id)
+
+    val allItemsStream = userRepository.getAllItemsStream()
+    fun getItemStream(id: UUID) = userRepository.getItemStream(id)
     val responseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
     val assignTagResponseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
 
@@ -56,7 +105,7 @@ class UserViewModel(
      * (Empty list) = there is no user with this id or id is null
      */
     val getLoggedInUserProfile: Flow<List<User>> =
-        dataStore.getUserId.combine(repository.getAllItemsStream()) { userId, users ->
+        dataStore.getUserId.combine(userRepository.getAllItemsStream()) { userId, users ->
             userId?.let { id ->
                 val user = users.find { it.id == id }
                 if (user == null) {
@@ -67,7 +116,7 @@ class UserViewModel(
             } ?: listOf<User>()
         }
 
-    suspend fun insertItem(user: User) = repository.insertItem(user)
+    suspend fun insertItem(user: User) = userRepository.insertItem(user)
 
     suspend fun saveLoginData(accessToken: String, expiresAt: String, userId: UUID) =
         dataStore.saveLoginData(accessToken = accessToken, expiresAt = expiresAt, userId = userId)

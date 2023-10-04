@@ -6,26 +6,36 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.sbma.linkup.card.Card
+import com.sbma.linkup.card.CardDao
+import com.sbma.linkup.connection.Connection
+import com.sbma.linkup.connection.ConnectionCard
+import com.sbma.linkup.connection.ConnectionCardDao
+import com.sbma.linkup.connection.ConnectionDao
+import com.sbma.linkup.tag.Tag
+import com.sbma.linkup.tag.TagDao
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserDao
-import com.sbma.linkup.usercard.UserCard
-import com.sbma.linkup.usercard.UserCardDao
-import com.sbma.linkup.userconnection.UserConnection
-import com.sbma.linkup.userconnection.UserConnectionDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [User::class, UserCard::class, UserConnection::class],
-    version = 4,
+    entities = [User::class, Card::class, Connection::class, Tag::class, ConnectionCard::class],
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
-    abstract fun userCardDao(): UserCardDao
-    abstract fun userConnectionDao(): UserConnectionDao
+
+    // TODO: should be renamed to cardDao
+    abstract fun userCardDao(): CardDao
+
+    // TODO: should be renamed to connectionDao
+    abstract fun userConnectionDao(): ConnectionDao
+    abstract fun connectionCardDao(): ConnectionCardDao
+    abstract fun tagDao(): TagDao
 
 
     companion object {

@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sbma.linkup.EditProfile.EditProfileScreen
 import com.sbma.linkup.presentation.screens.CameraScreen
+import com.sbma.linkup.presentation.screens.EditProfileScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
@@ -126,7 +126,6 @@ fun NavigationGraph(
         composable("profile") {
             UserProfileScreenProvider(
                 user,
-//                onShareClick = { navController.navigate("profile/share") },
                 onEditClick = { navController.navigate("profile/edit") },
             )
         }

@@ -1,4 +1,4 @@
-package com.sbma.linkup.usercard
+package com.sbma.linkup.card
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class UserCardViewModel(
-    private val repository: IUserCardRepository,
+class CardViewModel(
+    private val repository: ICardRepository,
     private val dataStore: DataStore,
     private val apiService: ApiService
 ) : ViewModel() {
@@ -28,7 +28,7 @@ class UserCardViewModel(
 
     fun allItemsStream(userId: UUID) = repository.getUserItemsStream(userId)
     fun getItemStream(id: UUID) = repository.getItemStream(id)
-    suspend fun insertItem(item: UserCard) = repository.insertItem(item)
+    suspend fun insertItem(item: Card) = repository.insertItem(item)
 
     suspend fun saveItem(createCardData: CreateCardData) {
         // Example code of how Api works.
@@ -43,7 +43,7 @@ class UserCardViewModel(
                         println("create new Card")
                         println(response)
                         insertItem(
-                            UserCard(
+                            Card(
                                 UUID.fromString(response.id),
                                 UUID.fromString(response.ownerId),
                                 response.title,

@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.sbma.linkup.R
-import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 

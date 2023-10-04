@@ -15,32 +15,29 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
-import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
-import com.sbma.linkup.userconnection.UserConnectionViewModel
 import java.util.UUID
 
 @Composable
 fun UserConnectionsScreenProvider(
     user: User,
 ) {
-    val userConnectionViewModel: UserConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userItems = userConnectionViewModel
         .allItemsStream(user.id)
         .collectAsState(initial = mapOf())
 
-    val state = remember {
-        UserConnectionsScreenState(
-            contacts = userItems.value.values.toList()
-        )
-    }
+    val state = UserConnectionsScreenState(
+        contacts = userItems.value.values.toList()
+    )
 
     if (state.contacts.isEmpty()) {
         EmptyUserConnectionsScreen()

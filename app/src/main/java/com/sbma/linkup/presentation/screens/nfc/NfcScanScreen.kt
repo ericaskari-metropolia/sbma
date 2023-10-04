@@ -33,7 +33,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.nfc.NFCViewModel
-import com.sbma.linkup.ui.theme.YellowApp
+import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.flow.collectLatest
 

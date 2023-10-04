@@ -22,10 +22,11 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sbma.linkup.application.MyApplication
+import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.nfc.NFCViewModel
+import com.sbma.linkup.tag.TagViewModel
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.usercard.UserCardViewModel
-import com.sbma.linkup.userconnection.UserConnectionViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire app
@@ -34,9 +35,11 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             UserViewModel(
-                repository = MyApplication().container.userRepository,
+                userRepository = MyApplication().container.userRepository,
+                cardRepository = MyApplication().container.cardRepository,
                 dataStore = MyApplication().dataStore,
-                apiService = MyApplication().container.apiService
+                apiService = MyApplication().container.apiService,
+                userConnectionRepository = MyApplication().container.userConnectionRepository
             )
         }
         addInitializer(NFCViewModel::class) {
@@ -44,16 +47,21 @@ object AppViewModelProvider {
                 MyApplication().appNfcManager
             )
         }
-        addInitializer(UserCardViewModel::class) {
-            UserCardViewModel(
-                MyApplication().container.userCardRepository,
+        addInitializer(CardViewModel::class) {
+            CardViewModel(
+                MyApplication().container.cardRepository,
                 MyApplication().dataStore,
                 MyApplication().container.apiService
             )
         }
-        addInitializer(UserConnectionViewModel::class) {
-            UserConnectionViewModel(
+        addInitializer(ConnectionViewModel::class) {
+            ConnectionViewModel(
                 MyApplication().container.userConnectionRepository
+            )
+        }
+        addInitializer(TagViewModel::class) {
+            TagViewModel(
+                repository = MyApplication().container.tagRepository,
             )
         }
     }

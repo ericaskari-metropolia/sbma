@@ -16,7 +16,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
-import com.sbma.linkup.ui.theme.LinkUpTheme
+import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 
 @Composable
 fun LoadingScreen() {

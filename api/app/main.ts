@@ -57,18 +57,21 @@ app.get('/profile', requiresAccessToken, async (req: Request, res: Response): Pr
             cards: true,
             connections: {
                 include: {
-                    connectionCards: true,
-                },
-            },
-            connectedUsers: {
-                include: {
+                    user: true,
+                    connectedUser: true,
                     connectionCards: {
                         include: {
-                            card: {
-                                include: {
-                                    connectionCards: true,
-                                },
-                            },
+                            card: true,
+                        },
+                    },
+                },
+            },
+            reverseConnections: {
+                include: {
+                    user: true,
+                    connectionCards: {
+                        include: {
+                            card: true,
                         },
                     },
                 },
@@ -110,8 +113,8 @@ app.post('/card', requiresAccessToken, async (req: Request, res: Response): Prom
     const response = await prisma.card.create({
         data: {
             ownerId: user.id,
-            title: body.title,
-            value: body.value,
+            title: body.title.trim(),
+            value: body.value.trim(),
         },
     });
     res.status(200).send(response);
@@ -216,24 +219,23 @@ async function onScan(user: User, shareId: string, res: Response): Promise<void>
         },
     });
     if (share.userId === user.id) {
-        res.status(400).send({
-            message:
-                "Looks like you've fallen into a QR code loop! We'll break the cycle for you - scan someone else's code to escape the matrix!",
-        });
+        res.status(400).send(
+            "Looks like you've fallen into a QR code loop! We'll break the cycle for you - scan someone else's code to escape the matrix!",
+        );
         return;
     }
     const existingConnection = await prisma.connection.findFirst({
         where: {
-            userId: share.userId,
-            connectedUserId: user.id,
+            userId: user.id,
+            connectedUserId: share.userId,
         },
     });
     const connection =
         existingConnection ??
         (await prisma.connection.create({
             data: {
-                userId: share.userId,
-                connectedUserId: user.id,
+                userId: user.id,
+                connectedUserId: share.userId,
             },
         }));
 
@@ -268,7 +270,7 @@ async function onScan(user: User, shareId: string, res: Response): Promise<void>
 
 app.post('/share/:id/scan', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
-    const id = req.params.id;
+    const id = req.params.id.trim();
     await onScan(user, id, res);
 });
 
