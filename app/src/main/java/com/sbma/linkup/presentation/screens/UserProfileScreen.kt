@@ -48,7 +48,7 @@ import com.sbma.linkup.card.CardViewModel
 import java.util.UUID
 
 @Composable
-fun UserProfileScreenProvider(user: User, onShareClick: () -> Unit, onEditClick: () -> Unit) {
+fun UserProfileScreenProvider(user: User, onEditClick: () -> Unit) {
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
     UserProfileScreen(user, userCards.value, onEditClick = onEditClick)

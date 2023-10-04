@@ -126,7 +126,6 @@ fun NavigationGraph(
         composable("profile") {
             UserProfileScreenProvider(
                 user,
-//                onShareClick = { navController.navigate("profile/share") },
                 onEditClick = { navController.navigate("profile/edit") },
             )
         }

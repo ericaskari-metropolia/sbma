@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,7 +26,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -50,14 +47,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.presentation.screens.CreateCard
 import com.sbma.linkup.presentation.screens.CreateCardData
 import com.sbma.linkup.ui.theme.LinkUpTheme
 import com.sbma.linkup.ui.theme.YellowApp
-import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.user.User
-import com.sbma.linkup.usercard.UserCard
-import com.sbma.linkup.usercard.UserCardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -83,7 +78,7 @@ fun EditProfileScreen(
     LaunchedEffect(true){
         userCardViewModel.allItemsStream(user.id).collectLatest {
             println(it)
-            var phoneNumberCard = it.find { it.name == "Phone Number" }
+            var phoneNumberCard = it.find { it.title == "Phone Number" }
             println(phoneNumberCard)
             phoneNumberCard?.let {
                 phone = it.value
@@ -94,7 +89,7 @@ fun EditProfileScreen(
     LaunchedEffect(true){
         userCardViewModel.allItemsStream(user.id).collectLatest {
             println(it)
-            var addressCard = it.find { it.name == "Address" }
+            var addressCard = it.find { it.title == "Address" }
             println(addressCard)
             addressCard?.let {
                 address = it.value
@@ -105,7 +100,7 @@ fun EditProfileScreen(
     LaunchedEffect(true){
         userCardViewModel.allItemsStream(user.id).collectLatest {
             println(it)
-            var aboutMeCard = it.find { it.name == "About Me" }
+            var aboutMeCard = it.find { it.title == "About Me" }
             println(aboutMeCard)
             aboutMeCard?.let {
                 aboutMe = it.value
@@ -116,7 +111,7 @@ fun EditProfileScreen(
     LaunchedEffect(true){
         userCardViewModel.allItemsStream(user.id).collectLatest {
             println(it)
-            var descriptionCard = it.find { it.name == "Description" }
+            var descriptionCard = it.find { it.title == "Description" }
             println(descriptionCard)
             descriptionCard?.let {
                 description = it.value
