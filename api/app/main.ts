@@ -57,18 +57,17 @@ app.get('/profile', requiresAccessToken, async (req: Request, res: Response): Pr
             cards: true,
             connections: {
                 include: {
+                    user: true,
+                    connectedUser: true,
                     connectionCards: true,
                 },
             },
             connectedUsers: {
                 include: {
+                    user: true,
                     connectionCards: {
                         include: {
-                            card: {
-                                include: {
-                                    connectionCards: true,
-                                },
-                            },
+                            card: true,
                         },
                     },
                 },
