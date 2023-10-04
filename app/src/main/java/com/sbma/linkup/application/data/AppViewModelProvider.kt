@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.nfc.NFCViewModel
+import com.sbma.linkup.tag.TagViewModel
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.userconnection.UserConnectionViewModel
 
@@ -34,7 +35,7 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             UserViewModel(
-                repository = MyApplication().container.userRepository,
+                userRepository = MyApplication().container.userRepository,
                 cardRepository = MyApplication().container.cardRepository,
                 dataStore = MyApplication().dataStore,
                 apiService = MyApplication().container.apiService,
@@ -56,6 +57,11 @@ object AppViewModelProvider {
         addInitializer(UserConnectionViewModel::class) {
             UserConnectionViewModel(
                 MyApplication().container.userConnectionRepository
+            )
+        }
+        addInitializer(TagViewModel::class) {
+            TagViewModel(
+                repository = MyApplication().container.tagRepository,
             )
         }
     }

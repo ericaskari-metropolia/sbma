@@ -13,10 +13,11 @@ interface IUserConnectionRepository {
     suspend fun insertItem(item: UserConnection)
     suspend fun insertItem(item: List<UserConnection>)
 
-    suspend fun syncUserItems(userId: UUID, items: List<UserConnection>)
-    suspend fun syncConnectedUserItems(userId: UUID, items: List<UserConnection>)
-
     suspend fun deleteItem(item: UserConnection)
 
     suspend fun updateItem(item: UserConnection)
+    suspend fun syncConnectionCardItems(connectionId: UUID, items: List<ConnectionCard>)
+    suspend fun syncUserConnections(userId: UUID, items: List<UserConnection>)
+    suspend fun syncUserReverseConnections(userId: UUID, items: List<UserConnection>)
+
 }

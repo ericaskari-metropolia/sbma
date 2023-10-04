@@ -15,6 +15,7 @@ model User {
   picture        String?
   cards          Card[]
   connections    Connection[] @relation("Connection_user")
+  // TODO: should be renamed to reverseConnections
   connectedUsers Connection[] @relation("Connection_connectedUser")
   shares         Share[]
 }

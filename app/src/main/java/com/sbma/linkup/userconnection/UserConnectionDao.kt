@@ -24,10 +24,10 @@ interface UserConnectionDao {
     suspend fun update(item: UserConnection)
 
     @Query("DELETE FROM UserConnection WHERE userId = :userId AND id NOT IN (:idList)")
-    suspend fun deleteNotInTheListUserItems(userId: UUID, idList: List<UUID>)
+    suspend fun deleteNotInTheListUserConnections(userId: UUID, idList: List<UUID>)
 
-    @Query("DELETE FROM UserConnection WHERE connectedUserId = :connectedUserId AND id NOT IN (:idList)")
-    suspend fun deleteNotInTheListConnectedUserItems(connectedUserId: UUID, idList: List<UUID>)
+    @Query("DELETE FROM UserConnection WHERE connectedUserId = :userId AND id NOT IN (:idList)")
+    suspend fun deleteNotInTheListReverseUserConnections(userId: UUID, idList: List<UUID>)
 
     @Upsert
     suspend fun upsert(item: UserConnection)
@@ -38,21 +38,24 @@ interface UserConnectionDao {
     @Query("SELECT * from UserConnection WHERE id = :id")
     fun getItem(id: String): Flow<UserConnection?>
 
-    @Query("SELECT * from UserConnection JOIN User ON user.id = UserConnection.connectedUserId where userId = :userId")
+    @Query("SELECT * from UserConnection JOIN User ON user.id = UserConnection.connectedUserId where UserConnection.userId = :userId")
     fun getUserItems(userId: UUID): Flow<Map<UserConnection, User>>
 
+    @Query("SELECT * from UserConnection where UserConnection.userId = :userId")
+    fun getUserConnections(userId: UUID): Flow<List<UserConnection>>
+
     @Transaction
-    suspend fun syncUserItems(userId: UUID, items: List<UserConnection>) {
+    suspend fun syncUserConnections(userId: UUID, items: List<UserConnection>) {
         val userItems = items.filter { it.userId == userId }
         insert(userItems)
-        deleteNotInTheListUserItems(userId, userItems.map { it.id })
+        deleteNotInTheListUserConnections(userId, userItems.map { it.id })
     }
 
     @Transaction
-    suspend fun syncConnectedUserItems(userId: UUID, items: List<UserConnection>) {
+    suspend fun syncReverseConnections(userId: UUID, items: List<UserConnection>) {
         val userItems = items.filter { it.connectedUserId == userId }
         insert(userItems)
-        deleteNotInTheListConnectedUserItems(userId, userItems.map { it.id })
+        deleteNotInTheListReverseUserConnections(userId, userItems.map { it.id })
     }
 
 }
