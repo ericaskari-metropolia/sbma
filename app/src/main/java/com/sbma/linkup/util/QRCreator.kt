@@ -3,9 +3,20 @@ package com.sbma.linkup.util
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,10 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,31 +42,73 @@ import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.sbma.linkup.R
 
 
 const val MYAPI = "https://sbma.ericaskari.com/android/qr/scan?id="
 @Composable
-fun QRCode(data:String, ) {
-    var painter = rememberQrBitmapPainter(content = data)
+fun QRCode(data:String ) {
+    val painter = rememberQrBitmapPainter(content = data)
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_qr))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier.size(200.dp)
-    )
+        Spacer(modifier = Modifier.height(-2.dp))
+        Text(
+            text = "Scan the QR code to add me in your contacts",
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+        )
+
+        // Spacer to create space between text and Image
+        Spacer(modifier = Modifier.height(16.dp))
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.size(200.dp)
+        )
+        Spacer(modifier= Modifier.height(12.dp))
+
+        LottieAnimation(
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+                 modifier = Modifier.size(250.dp)
+        )
+    }
 }
 
     @Composable
-    fun MyQrCode() {
+    fun MyQrCode(onBackClick: () -> Unit) {
         var userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
         val getQRString = userViewModel.shareId.collectAsState(initial = null)
-        var qrCodeContent by remember { mutableStateOf("") }
-
-        var isVisible by remember { mutableStateOf(false) }
-
-
         Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Start)
+                    .padding(top = 10.dp, start = 16.dp)
+            ) {
+                Icon(
+                    Icons.Rounded.KeyboardArrowLeft,
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable { onBackClick() }
+                )
+            }
             getQRString.value?.let{myData->
                 QRCode( MYAPI + myData)
 

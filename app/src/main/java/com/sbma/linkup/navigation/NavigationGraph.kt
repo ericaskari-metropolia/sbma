@@ -69,7 +69,11 @@ fun NavigationGraph(
             )
         }
         composable("share/qr") {
-            MyQrCode()
+            MyQrCode(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
         /**
          * tab of the bottom navigation bar
