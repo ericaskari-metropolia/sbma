@@ -2,23 +2,30 @@ package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
@@ -53,6 +60,26 @@ fun EmptyUserConnectionsScreen() {
     Text(text = "Contact list is empty!")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserConnectionsScreenTopBar() {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+    MediumTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
+        title = {
+            Text(
+                "My Contacts",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
 @Composable
 fun UserConnectionsScreen(
     state: UserConnectionsScreenState,
@@ -60,39 +87,38 @@ fun UserConnectionsScreen(
     onItemClick: (user: User) -> Unit
 ) {
 
-    LazyColumn(
-        modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(1.dp),
-    ) {
-        items(state.contacts) { contact ->
-            ListItem(
-                modifier = Modifier.clickable(
-                    onClick = {
-                        onItemClick(contact)
-                    }
-                ),
-                headlineContent = { Text(contact.name) },
-                supportingContent = {
-                    Column {
-                        Text(contact.description)
-                        Row {
-                            Icon(
-                                Icons.Filled.Phone,
-                                contentDescription = "Localized description",
-                            )
-                            Text("+358 1234567890")
+    Scaffold(
+        topBar = {
+            UserConnectionsScreenTopBar()
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier
+                .padding(padding)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+        ) {
+            items(state.contacts) { contact ->
+                ListItem(
+                    modifier = Modifier.clickable(
+                        onClick = {
+                            onItemClick(contact)
                         }
+                    ),
+                    headlineContent = { Text(contact.name) },
+                    leadingContent = {
+                        AsyncImage(
+                            model = contact.picture,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "User picture",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                        )
                     }
-                },
-                leadingContent = {
-                    Icon(
-                        Icons.Filled.Favorite,
-                        contentDescription = "Localized description",
-                    )
-                }
-            )
+                )
 
 
+            }
         }
     }
 }
@@ -100,41 +126,42 @@ fun UserConnectionsScreen(
 @Preview(showBackground = true)
 @Composable
 fun ScreenPreview() {
+    val users = remember {
+        listOf(
+            User(
+                id = UUID.randomUUID(),
+                name = "Eric",
+                description = "Mobile developer",
+                email = "",
+                picture = null
+            ),
+            User(
+                id = UUID.randomUUID(),
+                name = "Shayne",
+                description = "Mobile developer",
+                email = "",
+                picture = null
+
+            ),
+            User(
+                id = UUID.randomUUID(),
+                name = "Binod",
+                description = "Mobile developer",
+                email = "",
+                picture = null
+            ),
+            User(
+                id = UUID.randomUUID(),
+                name = "Sebastian",
+                description = "Mobile developer",
+                email = "",
+                picture = null
+            )
+        )
+    }
     LinkUpTheme {
         UserConnectionsScreen(
-            UserConnectionsScreenState(
-                listOf(
-                    User(
-                        id = UUID.randomUUID(),
-                        name = "Eric",
-                        description = "Mobile developer",
-                        email = "",
-                        picture = null
-                    ),
-                    User(
-                        id = UUID.randomUUID(),
-                        name = "Shayne",
-                        description = "Mobile developer",
-                        email = "",
-                        picture = null
-
-                    ),
-                    User(
-                        id = UUID.randomUUID(),
-                        name = "Binod",
-                        description = "Mobile developer",
-                        email = "",
-                        picture = null
-                    ),
-                    User(
-                        id = UUID.randomUUID(),
-                        name = "Sebastian",
-                        description = "Mobile developer",
-                        email = "",
-                        picture = null
-                    )
-                )
-            )
+            UserConnectionsScreenState(users)
         ) {
             println(it)
         }

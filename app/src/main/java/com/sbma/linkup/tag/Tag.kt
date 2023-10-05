@@ -8,9 +8,8 @@ import java.util.UUID
 @Entity
 data class Tag(
     @PrimaryKey val id: UUID,
-    @ColumnInfo val name: String,
-    @ColumnInfo val description: String,
-    @ColumnInfo val picture: String?,
+    @ColumnInfo val shareId: String,
+    @ColumnInfo val tagId: String
 ) {
 
     companion object {
