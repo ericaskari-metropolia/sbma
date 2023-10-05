@@ -1,6 +1,7 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -356,7 +357,7 @@ fun BottomSheet() {
                 isSheetOpen = true
             },
         ) {
-            Text(text = "Add social")
+            Text(text = "Add social media platform")
         }
 
     }
@@ -401,6 +402,10 @@ fun SocialMediaItem(
 @Composable
 fun SocialMediaList() {
     val socialMediaList = listOf(
+        Pair(R.drawable.call, "Phone Number"),
+        Pair(R.drawable.description, "Description"),
+        Pair(R.drawable.aboutme, "About Me"),
+        Pair(R.drawable.location, "Location"),
         Pair(R.drawable.instagram, "Instagram"),
         Pair(R.drawable.twitter, "Twitter"),
         Pair(R.drawable.linkedin, "Linkedin"),
@@ -410,14 +415,45 @@ fun SocialMediaList() {
         Pair(R.drawable.telegram, "Telegram"),
         Pair(R.drawable.tiktok, "Tiktok"),
         Pair(R.drawable.youtube, "Youtube"),
+        Pair(R.drawable.discord, "Discord"),
+        Pair(R.drawable.github, "Github"),
     )
 
+    val rows = socialMediaList.chunked(3)
+
     LazyColumn {
-        items(socialMediaList) { (iconRes, text) ->
-            SocialMediaItem(iconRes = iconRes, text = text)
+        items(rows) { rowItems ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                for ((iconRes, text) in rowItems) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(iconRes),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .padding(8.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = text,
+                            modifier = Modifier.padding(start = 16.dp),
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
@@ -439,3 +475,4 @@ fun DefaultPreview() {
 
     }
 }
+
