@@ -45,6 +45,7 @@ class UserViewModel(
                         val connections = apiUser.connections ?: listOf()
                         val connectionsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().groupBy { it.connectionId }.toList()
                         val connectionsUsers = connections.mapNotNull { it.user }
+                        val connectionsConnectedUsers = connections.mapNotNull { it.connectedUser }
                         val connectionsCardsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().mapNotNull { it.card }.groupBy { it.ownerId }.toList()
 
                         println("Sync User Profile")
@@ -58,6 +59,9 @@ class UserViewModel(
                         userRepository.insertItem(user)
                         userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
                         connectionsUsers.toUserList().forEach {
+                            userRepository.insertItem(it)
+                        }
+                        connectionsConnectedUsers.toUserList().forEach {
                             userRepository.insertItem(it)
                         }
                         connectionsCards.forEach {
