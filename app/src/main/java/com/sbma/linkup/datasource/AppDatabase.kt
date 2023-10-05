@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [User::class, Card::class, Connection::class, Tag::class, ConnectionCard::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

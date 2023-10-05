@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
 import com.sbma.linkup.api.apimodels.NewCardRequest
 import com.sbma.linkup.datasource.DataStore
-import com.sbma.linkup.presentation.screens.CreateCardData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -30,7 +29,7 @@ class CardViewModel(
     fun getItemStream(id: UUID) = repository.getItemStream(id)
     suspend fun insertItem(item: Card) = repository.insertItem(item)
 
-    suspend fun saveItem(createCardData: CreateCardData) {
+    suspend fun saveItem(createCardData: Card) {
         // Example code of how Api works.
         viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
@@ -57,7 +56,7 @@ class CardViewModel(
         }
     }
 
-    suspend fun saveItems(items: List<CreateCardData>) {
+    suspend fun saveItems(items: List<Card>) {
         viewModelScope.launch {
             items.forEach {
                 saveItem(it)

@@ -27,6 +27,6 @@ interface TagDao {
     @Query("SELECT * from Tag WHERE id = :id")
     fun getItem(id: UUID): Flow<Tag?>
 
-    @Query("SELECT * from Tag ORDER BY name DESC")
+    @Query("SELECT * from Tag")
     fun getAllItems(): Flow<List<Tag>>
 }

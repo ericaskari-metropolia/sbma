@@ -1,6 +1,5 @@
 package com.sbma.linkup.presentation.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,9 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
@@ -70,7 +68,7 @@ fun EditProfileScreen(
     var twitter by rememberSaveable { mutableStateOf("Twitter account") }
     var linkedIn by rememberSaveable { mutableStateOf("LinkedIn account") }
     var facebook by rememberSaveable { mutableStateOf("Facebook account") }
-    var newCards = remember { mutableStateOf<List<CreateCardData>>(listOf()) }
+    var newCards = remember { mutableStateOf<List<Card>>(listOf()) }
     val composableScope = rememberCoroutineScope()
 
     LaunchedEffect(true){
@@ -280,126 +278,16 @@ fun EditProfileScreen(
 
         }
 
-
-        // Text(text = newCards.value.count().toString())
-
         CreateCard(onSubmit = {
             val copy = newCards.value.toMutableList()
-            copy.add(it)
+            copy.add(Card(id= UUID.randomUUID(), userId = user.id, title = it.title, value = it.value))
             newCards.value = copy
             println("CreateCard")
 
         })
 
         Column {
-
-//            //Instagram
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 4.dp, end = 4.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.instagram),
-//                    contentDescription = "Edit",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.size(40.dp)
-//                )
-//                TextField(
-//                    value = instagram,
-//                    onValueChange = { instagram = it },
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color.Transparent
-//                    )
-//                )
-//
-//            }
-//
-//            //Twitter
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 4.dp, end = 4.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.twitter),
-//                    contentDescription = "Edit",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.size(40.dp)
-//                )
-//                TextField(
-//                    value = twitter,
-//                    onValueChange = { twitter = it },
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color.Transparent
-//                    )
-//                )
-//
-//            }
-//
-//            //LinkedIn
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 4.dp, end = 4.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.linkedin),
-//                    contentDescription = "Edit",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.size(40.dp)
-//                )
-//                TextField(
-//                    value = linkedIn,
-//                    onValueChange = { linkedIn = it },
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color.Transparent
-//                    )
-//                )
-//            }
-//
-//            //Facebook
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 4.dp, end = 4.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.facebook),
-//                    contentDescription = "Edit",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.size(40.dp)
-//                )
-//                TextField(
-//                    value = facebook,
-//                    onValueChange = { facebook = it },
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = Color.Transparent
-//                    )
-//                )
-//            }
-        }
-        Column {
-            newCards.value.forEach() {
-                Row(
-                ) {
-                    Image(
-                        painterResource(R.drawable.twitter),
-                        contentDescription = "Edit",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Text(it.value)
-                }
-            }
+            UserCardsList(newCards.value, withLazyColumn = false)
         }
 
         Column(

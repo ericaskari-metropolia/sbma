@@ -1,6 +1,9 @@
 package com.sbma.linkup.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,10 +24,15 @@ import com.sbma.linkup.util.MyQrCode
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
+    paddingValues: PaddingValues,
     user: User,
 ) {
 
-    NavHost(navController, startDestination = "profile") {
+    NavHost(
+        navController,
+        modifier = Modifier.padding(paddingValues),
+        startDestination = "profile"
+    ) {
         /**
          * tab of the bottom navigation bar
          */
