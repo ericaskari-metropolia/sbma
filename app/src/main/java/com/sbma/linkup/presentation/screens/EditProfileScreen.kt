@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.BottomSheetScaffold
@@ -31,6 +32,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -51,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -339,10 +342,6 @@ fun EditProfileScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheet() {
-    val size = remember {
-        mutableStateOf(50.dp)
-    }
-
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -352,12 +351,12 @@ fun BottomSheet() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        FloatingActionButton(
+        Button(
             onClick = {
                 isSheetOpen = true
             },
         ) {
-            Icon(Icons.Filled.Add, "Floating action button.")
+            Text(text = "Add social")
         }
 
     }
@@ -372,7 +371,6 @@ fun BottomSheet() {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SocialMediaItem(
     iconRes: Int,
@@ -380,9 +378,11 @@ fun SocialMediaItem(
 ) {
     Column {
         ListItem(
-            headlineContent = { Text(
-                text = text,
-            ) },
+            headlineContent = {
+                Text(
+                    text = text,
+                )
+            },
             leadingContent = {
                 Image(
                     painter = painterResource(iconRes),
@@ -404,7 +404,12 @@ fun SocialMediaList() {
         Pair(R.drawable.instagram, "Instagram"),
         Pair(R.drawable.twitter, "Twitter"),
         Pair(R.drawable.linkedin, "Linkedin"),
-        Pair(R.drawable.facebook, "Facebook")
+        Pair(R.drawable.facebook, "Facebook"),
+        Pair(R.drawable.snapchat, "Snapchat"),
+        Pair(R.drawable.pinterest, "Pintrest"),
+        Pair(R.drawable.telegram, "Telegram"),
+        Pair(R.drawable.tiktok, "Tiktok"),
+        Pair(R.drawable.youtube, "Youtube"),
     )
 
     LazyColumn {
@@ -413,7 +418,6 @@ fun SocialMediaList() {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
