@@ -10,6 +10,7 @@ interface IUserRepository {
     fun getAllItemsStream(): Flow<List<User>>
     fun getItemStream(id: UUID): Flow<User?>
     suspend fun insertItem(item: User)
+    suspend fun insertItemList(item: List<User>)
     suspend fun upsertItem(item: User)
     suspend fun deleteItem(item: User)
 
