@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.sbma.linkup.presentation.screens.CameraScreen
+import com.sbma.linkup.presentation.screens.ConnectionUserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.EditProfileScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
@@ -82,8 +85,21 @@ fun NavigationGraph(
         /**
          * tab of the bottom navigation bar
          */
-        composable(BottomNavItem.MyContacts.screen_route) {
-            UserConnectionsScreenProvider(user)
+        composable("connections") {
+            UserConnectionsScreenProvider(user) { connection ->
+                navController.navigate("connections/${connection.id}")
+            }
+        }
+        /**
+         * When user selected one of their connections it should redirect to the profile screen of the connection user
+         * And show the profile with cards that user has access to.
+         */
+        composable(
+            "connections/{connectionId}",
+            arguments = listOf(navArgument("connectionId") { type = NavType.StringType }),
+
+        ) {backStackEntry ->
+            ConnectionUserProfileScreenProvider(user, backStackEntry.arguments?.getString("connectionId"))
         }
         /**
          * tab of the bottom navigation bar
@@ -134,6 +150,7 @@ fun NavigationGraph(
         composable("profile") {
             UserProfileScreenProvider(
                 user,
+                canEdit = true,
                 onEditClick = { navController.navigate("profile/edit") },
             )
         }

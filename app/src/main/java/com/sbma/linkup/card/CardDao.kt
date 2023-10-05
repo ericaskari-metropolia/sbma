@@ -46,4 +46,10 @@ interface CardDao {
         insert(userItems)
         deleteNotInTheListUserItems(userId, userItems.map { it.id })
     }
+    @Transaction
+    suspend fun syncUserItems(items: List<Pair<UUID, List<Card>>>) {
+        items.forEach {
+            syncUserItems(it.first, it.second)
+        }
+    }
 }

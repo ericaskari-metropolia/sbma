@@ -8,6 +8,7 @@ import com.sbma.linkup.api.apimodels.toCardList
 import com.sbma.linkup.api.apimodels.toConnectionCardList
 import com.sbma.linkup.api.apimodels.toConnectionList
 import com.sbma.linkup.api.apimodels.toUser
+import com.sbma.linkup.api.apimodels.toUserList
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.ICardRepository
 import com.sbma.linkup.connection.IConnectionRepository
@@ -37,47 +38,29 @@ class UserViewModel(
             authorization?.let {
                 apiService.getProfile(authorization)
                     .onSuccess { apiUser ->
+                        // asSequence() is not necessary but improves performance
+
                         val user = apiUser.toUser()
-
-                        println("Syncing User Profile")
-                        userRepository.insertItem(user)
-
-                        println("Syncing User Cards")
                         val cards: List<Card> = (apiUser.cards ?: listOf()).toCardList()
+                        val connections = apiUser.connections ?: listOf()
+                        val connectionsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().groupBy { it.connectionId }.toList()
+                        val connectionsUsers = connections.mapNotNull { it.user }
+                        val connectionsCardsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().mapNotNull { it.card }.groupBy { it.ownerId }.toList()
+
+                        println("Sync User Profile")
+                        println("Sync User Cards")
+                        println("Sync Connection Items.          count: ${connections.count()}")
+                        println("Sync Connection User Items.     count: ${connectionsUsers.count()}")
+                        println("Sync ConnectionCard Items.      count: ${connectionsCards.count()}")
+                        println("Sync ConnectionCard Card Items. count: ${connectionsCardsCards.count()}")
+                        println("Sync Started.")
                         cardRepository.syncUserItems(user.id, cards)
-
-                        println("Syncing User Connections")
-                        val apiConnections = apiUser.connections ?: listOf()
-                        val connections = apiConnections.toConnectionList()
-                        userConnectionRepository.syncUserConnections(user.id, connections)
-
-                        println("Syncing User Reverse Connections")
-                        val apiReverseConnections = apiUser.reverseConnections ?: listOf()
-                        val reverseConnections = apiReverseConnections.toConnectionList()
-                        userConnectionRepository.syncUserReverseConnections(user.id, reverseConnections)
-
-                        println("Syncing Connection Cards")
-                        apiConnections.forEach { apiConnection ->
-                            val apiConnectionUser = apiConnection.connectedUser
-                            val apiConnectionCards = apiConnection.connectionCards ?: listOf()
-                            val connectionCards = apiConnectionCards.toConnectionCardList()
-                            apiConnectionUser?.let {
-                                println("Syncing Connection User")
-                                userRepository.insertItem(it.toUser())
-                            }
-
-                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(apiConnection.id), connectionCards)
-
-                        }
-
-                        println("Syncing Reverse Connection Cards")
-                        apiReverseConnections.forEach { apiConnection ->
-                            val apiConnectionCards = apiConnection.connectionCards ?: listOf()
-                            val connectionCards = apiConnectionCards.toConnectionCardList()
-                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(apiConnection.id), connectionCards)
-                        }
-
-
+                        userRepository.insertItem(user)
+                        userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
+                        userRepository.insertItem(connectionsUsers.toUserList())
+                        userConnectionRepository.syncConnectionCardItems(connectionsCards.map { Pair(UUID.fromString(it.first), it.second.toConnectionCardList()) })
+                        cardRepository.syncUserItems(connectionsCardsCards.map { Pair(UUID.fromString(it.first), it.second.toCardList()) })
+                        println("Sync Completed.")
                     }.onFailure {
                         println(it)
                     }

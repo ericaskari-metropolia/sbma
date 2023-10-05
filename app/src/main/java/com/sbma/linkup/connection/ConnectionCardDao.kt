@@ -40,4 +40,10 @@ interface ConnectionCardDao {
         insert(items)
         deleteNotInTheListConnectionCardItems(connectionId, items.map { it.id })
     }
+    @Transaction
+    suspend fun syncConnectionCardItems(items: List<Pair<UUID, List<ConnectionCard>>>) {
+       items.forEach {
+           syncConnectionCardItems(it.first, it.second)
+       }
+    }
 }

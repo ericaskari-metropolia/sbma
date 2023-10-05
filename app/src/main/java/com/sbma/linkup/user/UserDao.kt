@@ -14,6 +14,8 @@ import java.util.UUID
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: User)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(item: List<User>)
 
     @Update
     suspend fun update(item: User)
