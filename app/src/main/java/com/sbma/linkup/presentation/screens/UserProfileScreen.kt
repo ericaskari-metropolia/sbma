@@ -41,20 +41,36 @@ import coil.compose.AsyncImage
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
+import com.sbma.linkup.user.UserViewModel
 import java.util.UUID
 
 @Composable
-fun UserProfileScreenProvider(user: User, onEditClick: () -> Unit) {
+fun UserProfileScreenProvider(user: User, canEdit: Boolean, onEditClick: () -> Unit) {
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
-    UserProfileScreen(user, userCards.value, onEditClick = onEditClick)
+    UserProfileScreen(user, userCards.value, canEdit = canEdit, onEditClick = onEditClick)
+}
+@Composable
+fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) {
+    val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val connectionUser = userConnectionViewModel.allItemsStream(user.id).collectAsState(initial = null)
+
+    val connection = (connectionUser.value ?: mapOf()).entries.toList().find { mapEntry ->
+        connectionIdParam?.let { mapEntry.key.id == UUID.fromString(it) } ?: false
+    }
+    connection?.let {
+        val userCards = userCardViewModel.allItemsStream(it.value.id).collectAsState(initial = listOf())
+        UserProfileScreen(it.value, userCards.value, canEdit = false, onEditClick = null)
+    }
 }
 
 @Composable
-fun UserProfileScreen(user: User, userCards: List<Card>, onEditClick: () -> Unit) {
+fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEditClick: (() -> Unit)? = null) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,6 +80,7 @@ fun UserProfileScreen(user: User, userCards: List<Card>, onEditClick: () -> Unit
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ScreenTitle(
+            canEdit = canEdit,
             onEditClick = onEditClick,
         )
         Column {
@@ -182,7 +199,7 @@ fun ContactInfoRow(icon: ImageVector, text: String) {
 }
 
 @Composable
-fun ScreenTitle(onEditClick: () -> Unit) {
+fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,16 +216,18 @@ fun ScreenTitle(onEditClick: () -> Unit) {
         )
         Row {
 
-            Icon(
-                Icons.Filled.Edit,
-                contentDescription = "Edit",
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-                    .clickable {
-                        onEditClick()
-                    }
-            )
+            if (canEdit) {
+                Icon(
+                    Icons.Filled.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
+                        .clickable {
+                            onEditClick?.let { it() }
+                        }
+                )
+            }
 //            Icon(
 //                Icons.Filled.Share,
 //                contentDescription = "Share",
@@ -248,6 +267,7 @@ fun ProfileScreenPreview() {
         UserProfileScreen(
             user.value,
             cards,
+            canEdit = true,
             onEditClick = {}
         )
     }

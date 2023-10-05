@@ -17,6 +17,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.connection.Connection
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
@@ -36,6 +39,7 @@ import java.util.UUID
 @Composable
 fun UserConnectionsScreenProvider(
     user: User,
+    onConnectionClick: (connection: Connection) -> Unit
 ) {
     val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userItems = userConnectionViewModel
@@ -43,14 +47,14 @@ fun UserConnectionsScreenProvider(
         .collectAsState(initial = mapOf())
 
     val state = UserConnectionsScreenState(
-        contacts = userItems.value.values.toList()
+        connections = userItems.value
     )
 
-    if (state.contacts.isEmpty()) {
+    if (state.connections.values.isEmpty()) {
         EmptyUserConnectionsScreen()
     } else {
         UserConnectionsScreen(state) {
-            // TODO: What happens when clicking on list item.
+            onConnectionClick(it)
         }
     }
 }
@@ -84,7 +88,7 @@ fun UserConnectionsScreenTopBar() {
 fun UserConnectionsScreen(
     state: UserConnectionsScreenState,
     modifier: Modifier = Modifier,
-    onItemClick: (user: User) -> Unit
+    onConnectionClick: (connection: Connection) -> Unit
 ) {
 
     Scaffold(
@@ -98,17 +102,17 @@ fun UserConnectionsScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(1.dp),
         ) {
-            items(state.contacts) { contact ->
+            items(state.connections.entries.toList()) { contact ->
                 ListItem(
                     modifier = Modifier.clickable(
                         onClick = {
-                            onItemClick(contact)
+                            onConnectionClick(contact.key)
                         }
                     ),
-                    headlineContent = { Text(contact.name) },
+                    headlineContent = { Text(contact.value.name) },
                     leadingContent = {
                         AsyncImage(
-                            model = contact.picture,
+                            model = contact.value.picture,
                             contentScale = ContentScale.Crop,
                             contentDescription = "User picture",
                             modifier = Modifier
@@ -126,16 +130,29 @@ fun UserConnectionsScreen(
 @Preview(showBackground = true)
 @Composable
 fun ScreenPreview() {
-    val users = remember {
-        listOf(
-            User(
+    val userId by remember {
+        mutableStateOf(UUID.randomUUID())
+    }
+
+    val users: Map<Connection, User> = remember {
+        mapOf(
+            Connection(
+                id = UUID.randomUUID(),
+                userId = userId,
+                connectedUserId = UUID.randomUUID()
+            ) to User(
                 id = UUID.randomUUID(),
                 name = "Eric",
                 description = "Mobile developer",
                 email = "",
                 picture = null
             ),
-            User(
+
+            Connection(
+                id = UUID.randomUUID(),
+                userId = userId,
+                connectedUserId = UUID.randomUUID()
+            ) to User(
                 id = UUID.randomUUID(),
                 name = "Shayne",
                 description = "Mobile developer",
@@ -143,14 +160,24 @@ fun ScreenPreview() {
                 picture = null
 
             ),
-            User(
+
+            Connection(
+                id = UUID.randomUUID(),
+                userId = userId,
+                connectedUserId = UUID.randomUUID()
+            ) to User(
                 id = UUID.randomUUID(),
                 name = "Binod",
                 description = "Mobile developer",
                 email = "",
                 picture = null
             ),
-            User(
+
+            Connection(
+                id = UUID.randomUUID(),
+                userId = userId,
+                connectedUserId = UUID.randomUUID()
+            ) to User(
                 id = UUID.randomUUID(),
                 name = "Sebastian",
                 description = "Mobile developer",

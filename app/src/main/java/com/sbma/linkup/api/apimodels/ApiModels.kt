@@ -17,6 +17,7 @@ data class ApiUser(
     val shares: List<ApiShare>?
 )
 fun ApiUser.toUser(): User = User(UUID.fromString(id), name, email ,"", picture)
+fun List<ApiUser>.toUserList(): List<User> = this.map { it.toUser() }
 
 
 data class ApiCard(
