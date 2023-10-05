@@ -32,50 +32,8 @@ class UserViewModel(
     ) : ViewModel() {
 
     init {
-        // Example code of how Api works.
         viewModelScope.launch {
-            val authorization = dataStore.getAuthorizationHeaderValue.first()
-            authorization?.let {
-                apiService.getProfile(authorization)
-                    .onSuccess { apiUser ->
-                        // asSequence() is not necessary but improves performance
-
-                        val user = apiUser.toUser()
-                        val cards: List<Card> = (apiUser.cards ?: listOf()).toCardList()
-                        val connections = apiUser.connections ?: listOf()
-                        val connectionsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().groupBy { it.connectionId }.toList()
-                        val connectionsUsers = connections.mapNotNull { it.user }
-                        val connectionsConnectedUsers = connections.mapNotNull { it.connectedUser }
-                        val connectionsCardsCards = connections.asSequence().mapNotNull { it.connectionCards }.flatten().mapNotNull { it.card }.groupBy { it.ownerId }.toList()
-
-                        println("Sync User Profile")
-                        println("Sync User Cards")
-                        println("Sync Connection Items.          count: ${connections.count()}")
-                        println("Sync Connection User Items.     count: ${connectionsUsers.count()}")
-                        println("Sync ConnectionCard Items.      count: ${connectionsCards.count()}")
-                        println("Sync ConnectionCard Card Items. count: ${connectionsCardsCards.count()}")
-                        println("Sync Started.")
-                        cardRepository.syncUserItems(user.id, cards)
-                        userRepository.insertItem(user)
-                        userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
-                        connectionsUsers.toUserList().forEach {
-                            userRepository.insertItem(it)
-                        }
-                        connectionsConnectedUsers.toUserList().forEach {
-                            userRepository.insertItem(it)
-                        }
-                        connectionsCards.forEach {
-                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(it.first), it.second.toConnectionCardList())
-                        }
-                        connectionsCardsCards.forEach {
-                            cardRepository.syncUserItems(UUID.fromString(it.first), it.second.toCardList())
-                        }
-                        println("Sync Completed.")
-                    }.onFailure {
-                        println(it)
-                    }
-
-            }
+            syncRoomDatabase()
         }
     }
 
@@ -108,6 +66,55 @@ class UserViewModel(
                 }
             } ?: listOf<User>()
         }
+
+    suspend fun syncRoomDatabase() {
+        // Example code of how Api works.
+        val authorization = dataStore.getAuthorizationHeaderValue.first()
+        authorization?.let {
+            apiService.getProfile(authorization)
+                .onSuccess { apiUser ->
+                    // asSequence() is not necessary but improves performance
+
+                    val user = apiUser.toUser()
+                    val cards: List<Card> = (apiUser.cards ?: listOf()).toCardList()
+                    val connections = apiUser.connections ?: listOf()
+                    val connectionsCards =
+                        connections.asSequence().mapNotNull { it.connectionCards }.flatten().groupBy { it.connectionId }.toList()
+                    val connectionsUsers = connections.mapNotNull { it.user }
+                    val connectionsConnectedUsers = connections.mapNotNull { it.connectedUser }
+                    val connectionsCardsCards =
+                        connections.asSequence().mapNotNull { it.connectionCards }.flatten().mapNotNull { it.card }.groupBy { it.ownerId }
+                            .toList()
+
+                    println("Sync User Profile")
+                    println("Sync User Cards")
+                    println("Sync Connection Items.          count: ${connections.count()}")
+                    println("Sync Connection User Items.     count: ${connectionsUsers.count()}")
+                    println("Sync ConnectionCard Items.      count: ${connectionsCards.count()}")
+                    println("Sync ConnectionCard Card Items. count: ${connectionsCardsCards.count()}")
+                    println("Sync Started.")
+                    cardRepository.syncUserItems(user.id, cards)
+                    userRepository.insertItem(user)
+                    userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
+                    connectionsUsers.toUserList().forEach {
+                        userRepository.insertItem(it)
+                    }
+                    connectionsConnectedUsers.toUserList().forEach {
+                        userRepository.insertItem(it)
+                    }
+                    connectionsCards.forEach {
+                        userConnectionRepository.syncConnectionCardItems(UUID.fromString(it.first), it.second.toConnectionCardList())
+                    }
+                    connectionsCardsCards.forEach {
+                        cardRepository.syncUserItems(UUID.fromString(it.first), it.second.toCardList())
+                    }
+                    println("Sync Completed.")
+                }.onFailure {
+                    println(it)
+                }
+
+        }
+    }
 
     suspend fun insertItem(user: User) = userRepository.insertItem(user)
 
@@ -170,6 +177,7 @@ class UserViewModel(
                     .onSuccess { response ->
                         println("receiveTag")
                         println(response)
+                        syncRoomDatabase()
                         responseStatus.value =
                             "Congratulations! Contact has been successfully added."
 

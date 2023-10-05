@@ -124,12 +124,18 @@ app.put('/card/:id', requiresAccessToken, async (req: Request, res: Response): P
     const user: User = req.user as User;
     const id: string = req.params.id as string;
     const body: Card = req.body as Card;
-    const card = await prisma.card.findFirstOrThrow({
+    const card = await prisma.card.findFirst({
         where: {
             id,
             ownerId: user.id,
         },
     });
+    if (card === null) {
+        res.status(400).send({
+            message: 'Not Found.',
+        });
+        return;
+    }
     const response = await prisma.card.update({
         where: {
             id: card.id,
@@ -204,7 +210,7 @@ app.post('/share', requiresAccessToken, async (req: Request, res: Response): Pro
  * @param res this function is responsible to respond.
  */
 async function onScan(user: User, shareId: string, res: Response): Promise<void> {
-    const share = await prisma.share.findFirstOrThrow({
+    const share = await prisma.share.findFirst({
         where: {
             id: shareId,
         },
@@ -213,6 +219,12 @@ async function onScan(user: User, shareId: string, res: Response): Promise<void>
             cards: true,
         },
     });
+    if (share === null) {
+        res.status(400).send({
+            message: 'Not Found.',
+        });
+        return;
+    }
     const shareCards = await prisma.shareCard.findMany({
         where: {
             shareId: share.id,
@@ -271,6 +283,7 @@ async function onScan(user: User, shareId: string, res: Response): Promise<void>
 app.post('/share/:id/scan', requiresAccessToken, async (req: Request, res: Response): Promise<void> => {
     const user: User = req.user as User;
     const id = req.params.id.trim();
+
     await onScan(user, id, res);
 });
 
@@ -291,11 +304,17 @@ app.post('/tag/:id/scan', requiresAccessToken, async (req: Request, res: Respons
     const user: User = req.user as User;
     const id = req.params.id;
 
-    const response = await prisma.tag.findFirstOrThrow({
+    const response = await prisma.tag.findFirst({
         where: {
             tagId: id,
         },
     });
+    if (response === null) {
+        res.status(400).send({
+            message: 'Not Found.',
+        });
+        return;
+    }
     await onScan(user, response.shareId, res);
 });
 
@@ -303,7 +322,7 @@ app.delete('/tag/:id', requiresAccessToken, async (req: Request, res: Response):
     const user: User = req.user as User;
     const id = req.params.id;
 
-    const tag = await prisma.tag.findFirstOrThrow({
+    const tag = await prisma.tag.findFirst({
         where: {
             id: id,
         },
@@ -311,6 +330,12 @@ app.delete('/tag/:id', requiresAccessToken, async (req: Request, res: Response):
             share: true,
         },
     });
+    if (tag === null) {
+        res.status(400).send({
+            message: 'Not Found.',
+        });
+        return;
+    }
     if (tag.share.userId !== user.id) {
         res.status(400).send({
             message: 'This tag is not available.',
