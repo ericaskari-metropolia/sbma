@@ -52,13 +52,6 @@ interface ConnectionDao {
     }
 
     @Transaction
-    suspend fun syncUserConnections(items: List<Pair<UUID, List<Connection>>>) {
-        items.forEach {
-            syncUserConnections(it.first, it.second)
-        }
-    }
-
-    @Transaction
     suspend fun syncReverseConnections(userId: UUID, items: List<Connection>) {
         val userItems = items.filter { it.connectedUserId == userId }
         insert(userItems)

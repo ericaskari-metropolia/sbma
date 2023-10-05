@@ -17,9 +17,7 @@ interface IConnectionRepository {
 
     suspend fun updateItem(item: Connection)
     suspend fun syncConnectionCardItems(connectionId: UUID, items: List<ConnectionCard>)
-    suspend fun syncConnectionCardItems(items: List<Pair<UUID, List<ConnectionCard>>>)
     suspend fun syncUserConnections(userId: UUID, items: List<Connection>)
-    suspend fun syncUserConnections(items: List<Pair<UUID, List<Connection>>>)
     suspend fun syncUserReverseConnections(userId: UUID, items: List<Connection>)
 
 }

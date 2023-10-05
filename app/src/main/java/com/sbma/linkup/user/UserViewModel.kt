@@ -57,9 +57,15 @@ class UserViewModel(
                         cardRepository.syncUserItems(user.id, cards)
                         userRepository.insertItem(user)
                         userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
-                        userRepository.insertItem(connectionsUsers.toUserList())
-                        userConnectionRepository.syncConnectionCardItems(connectionsCards.map { Pair(UUID.fromString(it.first), it.second.toConnectionCardList()) })
-                        cardRepository.syncUserItems(connectionsCardsCards.map { Pair(UUID.fromString(it.first), it.second.toCardList()) })
+                        connectionsUsers.toUserList().forEach {
+                            userRepository.insertItem(it)
+                        }
+                        connectionsCards.forEach {
+                            userConnectionRepository.syncConnectionCardItems(UUID.fromString(it.first), it.second.toConnectionCardList())
+                        }
+                        connectionsCardsCards.forEach {
+                            cardRepository.syncUserItems(UUID.fromString(it.first), it.second.toCardList())
+                        }
                         println("Sync Completed.")
                     }.onFailure {
                         println(it)

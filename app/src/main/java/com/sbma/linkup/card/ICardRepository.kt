@@ -13,5 +13,4 @@ interface ICardRepository {
     suspend fun deleteItem(item: Card)
     suspend fun updateItem(item: Card)
     suspend fun syncUserItems(userId: UUID, items: List<Card>)
-    suspend fun syncUserItems(items: List<Pair<UUID, List<Card>>>)
 }
