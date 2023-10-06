@@ -118,6 +118,7 @@ fun UserShareScreen(userCards: List<Card>, onShareClick: (userCards: List<Card>)
                                 .map { it.first }
                         )
                     },
+                    modifier = Modifier.padding(bottom = 100.dp)
                 ) {
                     Icon(
                         Icons.Filled.Share,
