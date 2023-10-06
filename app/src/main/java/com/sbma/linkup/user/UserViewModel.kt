@@ -186,7 +186,7 @@ class UserViewModel(
         }
     }
 
-    suspend fun scanQRCode(id: String) {
+    suspend fun scanQRCode(id: String, onSuccessScan: () -> Unit) {
         viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
@@ -199,6 +199,7 @@ class UserViewModel(
                         responseStatus.value = "Congratulations! Contact has been successfully added."
                         println("Scanning Qr code")
                         println(response)
+                        onSuccessScan()
 
                     }.onFailure {
                         println(it)
