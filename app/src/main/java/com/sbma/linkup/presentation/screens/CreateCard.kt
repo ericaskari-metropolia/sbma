@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sbma.linkup.R
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.util.toPictureResource
 
 data class CreateCardData(
     val title: String,
@@ -39,22 +40,18 @@ data class CreateCardData(
 )
 
 @Composable
-fun CreateCard(onSubmit: (value: CreateCardData) -> Unit) {
-    var title by remember { mutableStateOf("") }
+fun CreateCard(text: String, picture: String) {
+    var title by remember { mutableStateOf(text) }
     var value by remember { mutableStateOf("") }
+    var picture by remember { mutableStateOf(picture) }
+
+
+
 
     Column(
         modifier = Modifier
             .padding(10.dp),
         content = {
-            Text(
-                text = "Create a new card",
-                fontSize = 25.sp,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            )
             ListItem(
                 headlineContent = {
                     TextField(
@@ -73,8 +70,8 @@ fun CreateCard(onSubmit: (value: CreateCardData) -> Unit) {
                 },
                 leadingContent = {
                     Image(
-                        painterResource(R.drawable.linkedin),
-                        contentDescription = "Linkedin",
+                        painterResource(picture.toPictureResource()),
+                        contentDescription = "Card Icon",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(48.dp)
@@ -83,28 +80,6 @@ fun CreateCard(onSubmit: (value: CreateCardData) -> Unit) {
                 }
             )
 
-            Button(
-                onClick = {
-                    onSubmit(
-                        CreateCardData(
-                            title = title,
-                            value = value,
-                        )
-                    )
-                },
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Add")
-            }
         }
     )
 
@@ -114,8 +89,6 @@ fun CreateCard(onSubmit: (value: CreateCardData) -> Unit) {
 @Composable
 fun CreateCardPreview() {
     LinkUpTheme {
-        CreateCard {
-
-        }
+        CreateCard(text = "Instagram", picture = "")
     }
 }
