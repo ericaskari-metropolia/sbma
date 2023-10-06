@@ -13,6 +13,7 @@ import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.ConnectionUserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.EditProfileScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
+import com.sbma.linkup.presentation.screens.ScanResultScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
 import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
 import com.sbma.linkup.presentation.screens.UserProfileScreenProvider
@@ -165,7 +166,14 @@ fun NavigationGraph(
                 })
         }
         composable("receive/qr") {
-            CameraScreen()
+            CameraScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                },
+                onSuccessScan = {
+                    navController.navigate("scanSuccess")
+                }
+            )
         }
         /**
          * tab of the bottom navigation bar
@@ -194,6 +202,11 @@ fun NavigationGraph(
                 onSave = {
                     navController.navigate("profile")
                 })
+        }
+        composable(route="scanSuccess"){
+            ScanResultScreen(
+
+            )
         }
     }
 }

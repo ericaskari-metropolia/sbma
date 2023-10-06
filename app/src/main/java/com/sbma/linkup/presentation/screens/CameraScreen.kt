@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.ImageFormat
 import android.net.Uri
-import android.webkit.URLUtil
+import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -15,7 +15,9 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.SpanStyle
@@ -64,7 +67,7 @@ import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
 @Composable
-fun CameraScreen(userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun CameraScreen(userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory), onBackClicked:()-> Unit, onSuccessScan:() -> Unit) {
 
 val scope = rememberCoroutineScope()
     var code by remember {
@@ -74,28 +77,40 @@ val scope = rememberCoroutineScope()
         modifier = Modifier.fillMaxSize()
     ) {
         Header(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onBackClicked
         )
         QrCodeReader(
             { result ->
                 scope.launch {
                     code = result
+                    println("Result: $result")
                     val id = code.split(MYAPI).last()
-                    userViewModel.scanQRCode(id)
+                    userViewModel.scanQRCode(id){
+                        onSuccessScan()}
+
                 }
 
             },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .size(width = 265.dp, height = 360.dp)
+                .border(
+                    width = 4.dp,
+                    color = Color.Yellow,
+                    shape = RectangleShape,
+
+                    )
         )
-        if (URLUtil.isValidUrl(code)) {
+        Text(text="Code: $code")
+      /*  if (URLUtil.isValidUrl(code)) {
             ResultLink(code)
         } else {
             ResultText(code)
-        }
+        }*/
     }
 }
     @Composable
-    private fun Header(modifier: Modifier = Modifier) {
+    private fun Header(modifier: Modifier = Modifier, onBackClicked:()-> Unit) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -110,7 +125,7 @@ val scope = rememberCoroutineScope()
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(32.dp)
-                        .clickable { /* TODO Handle back click */ }
+                        .clickable { onBackClicked() }
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -230,53 +245,72 @@ fun QrCodeReader(
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
-    val laucher = rememberLauncherForActivityResult(
+    val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             hasCamPermission = granted
 
         })
     LaunchedEffect(key1 = true) {
-        laucher.launch(Manifest.permission.CAMERA)
+        launcher.launch(Manifest.permission.CAMERA)
     }
 
     if (hasCamPermission) {
-        AndroidView(
-            factory = { context ->
-                val previewView = PreviewView(context)
-                val preview = Preview.Builder().build()
-                val selector = CameraSelector.Builder()
-                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                    .build()
-                preview.setSurfaceProvider(previewView.surfaceProvider)
-                val imageAnalysis = ImageAnalysis.Builder()
-                    .setTargetResolution(
-                        android.util.Size(
-                            previewView.width,
-                            previewView.height
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 265.dp, height = 360.dp)
+                    .border(
+                        width =4.dp,
+                        color = Color.Yellow,
+                        shape = RectangleShape,
+
                         )
-                    )
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-                imageAnalysis.setAnalyzer(
-                    ContextCompat.getMainExecutor(context),
-                    QrCodeAnalyzer { result ->
-                        onSendCode(result)
-                    }
+
+
+            ) {
+                AndroidView(
+                    factory = { context ->
+                        val previewView = PreviewView(context)
+                        val preview = Preview.Builder().build()
+                        val selector = CameraSelector.Builder()
+                            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                            .build()
+                        preview.setSurfaceProvider(previewView.surfaceProvider)
+                        val imageAnalysis = ImageAnalysis.Builder()
+                            .setTargetResolution(
+                                Size(
+                                    previewView.width,
+                                    previewView.height
+                                )
+                            )
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                        imageAnalysis.setAnalyzer(
+                            ContextCompat.getMainExecutor(context),
+                            QrCodeAnalyzer { result ->
+                                onSendCode(result)
+                            }
+                        )
+                        try {
+                            cameraProviderFuture.get().bindToLifecycle(
+                                lifecycleOwner,
+                                selector,
+                                preview,
+                                imageAnalysis
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        previewView
+                    },
+                    modifier = modifier
                 )
-                try {
-                    cameraProviderFuture.get().bindToLifecycle(
-                        lifecycleOwner,
-                        selector,
-                        preview,
-                        imageAnalysis
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                previewView
-            },
-            modifier = modifier
-        )
+            }
+        }
     }
 }
