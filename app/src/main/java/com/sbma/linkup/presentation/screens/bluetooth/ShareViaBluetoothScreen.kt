@@ -7,10 +7,7 @@ import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.CardViewModel
 
 @Composable()
-fun ShareViaBluetoothScreenProvider() {
-    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val userCards = userCardViewModel.jsonToShare.collectAsState(initial = null)
-    println(userCards)
+fun ShareViaBluetoothScreenProvider(shareId: String) {
     ShareViaBluetoothScreen()
 }
 

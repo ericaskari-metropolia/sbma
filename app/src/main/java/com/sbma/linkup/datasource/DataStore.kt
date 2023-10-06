@@ -44,23 +44,10 @@ class DataStore(private val context: Context) {
         .map { it[ACCESSTOKEN_EXPIRES_KEY] }
 
     /**
-     * Getter for saved Json string.
-     */
-    val getJsonToShare: Flow<String?> = context.dataStore.data
-        .map { it[JSONTOSHARE_KEY] }
-
-    /**
      * Setter for logged in user id
      */
     private suspend fun setUserId(value: UUID) {
         context.dataStore.edit { it[USERID_KEY] = value.toString() }
-    }
-
-    /**
-     * Setter for logged in user cards json string
-     */
-    suspend fun setJsonToShare(value: String) {
-        context.dataStore.edit { it[JSONTOSHARE_KEY] = value }
     }
 
     /**
@@ -94,7 +81,6 @@ class DataStore(private val context: Context) {
             it.remove(USERID_KEY)
             it.remove(ACCESSTOKEN_KEY)
             it.remove(ACCESSTOKEN_EXPIRES_KEY)
-            it.remove(JSONTOSHARE_KEY)
         }
     }
 
@@ -102,7 +88,6 @@ class DataStore(private val context: Context) {
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userId")
         val USERID_KEY = stringPreferencesKey("user_id")
-        val JSONTOSHARE_KEY = stringPreferencesKey("json_to_share")
         val ACCESSTOKEN_KEY = stringPreferencesKey("access_token")
         val ACCESSTOKEN_EXPIRES_KEY = stringPreferencesKey("access_token_expires")
     }

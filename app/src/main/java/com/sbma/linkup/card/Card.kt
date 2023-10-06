@@ -11,6 +11,7 @@ data class Card(
     @ColumnInfo val userId: UUID,
     @ColumnInfo val title: String,
     @ColumnInfo val value: String,
+    @ColumnInfo val picture: String?,
 ) {
 
     companion object {

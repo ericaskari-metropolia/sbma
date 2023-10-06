@@ -39,24 +39,29 @@ fun NavigationGraph(
         /**
          * tab of the bottom navigation bar
          */
-        composable(BottomNavItem.Share.screen_route) {
-            UserShareScreenProvider(user) {
-                navController.navigate("share/choosemethod")
+        composable("share") {
+            UserShareScreenProvider(user) {shareId ->
+                navController.navigate("share/${shareId}")
             }
         }
         /**
          * Simple page with three buttons and three callbacks which we can navigate to the wanted route.
          */
-        composable("share/choosemethod") {
+        composable(
+            "share/{shareId}",
+            arguments = listOf(navArgument("shareId") { type = NavType.StringType }),
+
+        ) {backStackEntry ->
+            val shareId = backStackEntry.arguments?.getString("shareId")
             MainShareScreen(
                 onBluetoothClick = {
-                    navController.navigate("share/bluetooth")
+                    navController.navigate("share/${shareId}/bluetooth")
                 },
                 onNfcClick = {
-                    navController.navigate("share/nfc")
+                    navController.navigate("share/${shareId}/nfc")
                 },
                 onQrCodeClick = {
-                    navController.navigate("share/qr")
+                    navController.navigate("share/${shareId}/qr")
                 },
                 isReceiving = false,
                 onBackClick = {
@@ -68,23 +73,44 @@ fun NavigationGraph(
          * Bluetooth method of sharing user profile.
          * at this point json string should be already saved to datastore and available.
          */
-        composable("share/bluetooth") {
-            ShareViaBluetoothScreenProvider()
+        composable(
+            "share/{shareId}/bluetooth",
+            arguments = listOf(navArgument("shareId") { type = NavType.StringType })
+        ) {backStackEntry ->
+            val shareId = backStackEntry.arguments?.getString("shareId")
+            shareId?.let {
+                ShareViaBluetoothScreenProvider(it)
+            }
         }
 
-        composable("share/nfc") {
-            NfcScanScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
+        composable(
+            "share/{shareId}/nfc",
+            arguments = listOf(navArgument("shareId") { type = NavType.StringType })
+        ) {backStackEntry ->
+            val shareId = backStackEntry.arguments?.getString("shareId")
+            shareId?.let {
+                NfcScanScreen(
+                    shareId = it,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
-        composable("share/qr") {
-            MyQrCode(
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
+        composable(
+            "share/{shareId}/qr",
+            arguments = listOf(navArgument("shareId") { type = NavType.StringType })
+        ) {backStackEntry ->
+            val shareId = backStackEntry.arguments?.getString("shareId")
+            shareId?.let {
+                MyQrCode(
+                    shareId = it,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
         }
         /**
          * tab of the bottom navigation bar

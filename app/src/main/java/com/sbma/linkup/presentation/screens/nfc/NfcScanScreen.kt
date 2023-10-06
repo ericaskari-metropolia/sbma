@@ -39,10 +39,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun NfcScanScreen(
+    shareId: String,
     nfcViewModel: NFCViewModel = viewModel(factory = AppViewModelProvider.Factory),
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onBackClick: () -> Unit
-
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_nfc))
     val toastMessage = nfcViewModel.observeToast().collectAsState(initial = null)
@@ -53,7 +53,7 @@ fun NfcScanScreen(
         nfcViewModel.onCheckNFC(true)
         nfcViewModel.observeTag().collectLatest {
             it?.let {
-                userViewModel.assignTag(it)
+                userViewModel.assignTag(it, shareId)
             }
         }
     }

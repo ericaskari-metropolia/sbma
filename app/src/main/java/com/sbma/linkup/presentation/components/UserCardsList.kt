@@ -105,10 +105,10 @@ fun UserCardsList(userCards: List<Card>, withLazyColumn: Boolean = true, modifie
 fun UserCardsListPreview() {
     val cards = remember {
         mutableListOf(
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something"),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something", null),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something", null),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something", null),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something", null),
         )
     }
     LinkUpTheme {

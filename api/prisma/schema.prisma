@@ -23,6 +23,7 @@ model Card {
   id              String           @id @default(uuid())
   title           String
   value           String
+  picture         String?
   owner           User             @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ownerId         String
   connectionCards ConnectionCard[]
