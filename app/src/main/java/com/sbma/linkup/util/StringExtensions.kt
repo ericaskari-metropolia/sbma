@@ -19,5 +19,5 @@ fun String.toPictureResource(): Int  =
         "pinterest" -> R.drawable.pinterest
         "tiktok" -> R.drawable.tiktok
         "telegram" -> R.drawable.telegram
-        else -> R.drawable.profile_photo
+        else -> R.drawable.person
     }

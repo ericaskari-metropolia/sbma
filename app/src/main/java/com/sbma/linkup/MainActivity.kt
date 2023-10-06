@@ -62,7 +62,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun DropletButtonNavBar(navController: NavController) {
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableStateOf(2) }
 
     val items = listOf(
         BottomNavigationItemsData.Share,
