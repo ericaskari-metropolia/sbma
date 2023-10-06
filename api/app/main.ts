@@ -12,8 +12,17 @@ import { environment } from './configurations/environment.js';
 import { Card, ConnectionCard, Tag, User } from '@prisma/client';
 import { prisma } from './databases/userDatabase.js';
 import { ErrorRequestHandler } from 'express-serve-static-core';
+import morgan from 'morgan';
 // Express App
 const app = express();
+
+app.use(
+    morgan(':method :status :url :response-time', {
+        skip: function (req, res) {
+            return res.statusCode < 400;
+        },
+    }),
+);
 
 // Session is required by passport.js
 configSession(app);
