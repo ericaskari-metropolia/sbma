@@ -299,14 +299,7 @@ fun EditProfileScreen(
 
         CreateCard(onSubmit = {
             val copy = newCards.value.toMutableList()
-            copy.add(
-                Card(
-                    id = UUID.randomUUID(),
-                    userId = user.id,
-                    title = it.title,
-                    value = it.value
-                )
-            )
+            copy.add(Card(id= UUID.randomUUID(), userId = user.id, title = it.title, value = it.value, picture = null))
             newCards.value = copy
             println("CreateCard")
 

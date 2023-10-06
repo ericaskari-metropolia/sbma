@@ -40,7 +40,6 @@ class UserViewModel(
     val loggedInUserId = dataStore.getUserId
     val getAccessToken = dataStore.getAccessToken
     val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt
-    val shareId = dataStore.getJsonToShare
 
     val allItemsStream = userRepository.getAllItemsStream()
     fun getItemStream(id: UUID) = userRepository.getItemStream(id)
@@ -123,7 +122,7 @@ class UserViewModel(
 
     suspend fun deleteLoginData() = dataStore.deleteLoginData()
 
-    suspend fun shareCards(cardIDs: List<String>) {
+    suspend fun shareCards(cardIDs: List<String>, onSuccessResponse: (shareId: String) -> Unit) {
         // Example code of how Api works.
         viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
@@ -135,7 +134,7 @@ class UserViewModel(
                     .onSuccess { response ->
                         println("share new Card")
                         println(response)
-                        dataStore.setJsonToShare(response.id)
+                        onSuccessResponse(response.id)
                     }.onFailure {
                         println(it)
                     }
@@ -143,25 +142,23 @@ class UserViewModel(
         }
     }
 
-    suspend fun assignTag(id: String) {
+    suspend fun assignTag(id: String, shareId: String) {
         viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
-                dataStore.getJsonToShare.first()?.let { shareId ->
-                    apiService.assignTag(
-                        authorization,
-                        AssignTagRequest(shareId, id)
-                    )
-                        .onSuccess { response ->
-                            println("assignTag")
-                            println(response)
-                            assignTagResponseStatus.value =
-                                "Congratulations! You successfully added your details on the NFC-enabled card."
-                        }.onFailure {
-                            println(it)
-                            assignTagResponseStatus.value = "Oh no! Something went wrong."
-                        }
-                }
+                apiService.assignTag(
+                    authorization,
+                    AssignTagRequest(shareId, id)
+                )
+                    .onSuccess { response ->
+                        println("assignTag")
+                        println(response)
+                        assignTagResponseStatus.value =
+                            "Congratulations! You successfully added your details on the NFC-enabled card."
+                    }.onFailure {
+                        println(it)
+                        assignTagResponseStatus.value = "Oh no! Something went wrong."
+                    }
             }
         }
     }

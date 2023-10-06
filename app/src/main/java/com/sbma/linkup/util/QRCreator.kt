@@ -90,10 +90,7 @@ fun QRCode(data:String ) {
 }
 
     @Composable
-    fun MyQrCode(onBackClick: () -> Unit) {
-        var userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
-
-        val getQRString = userViewModel.shareId.collectAsState(initial = null)
+    fun MyQrCode(shareId: String, onBackClick: () -> Unit) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
@@ -109,10 +106,7 @@ fun QRCode(data:String ) {
                         .clickable { onBackClick() }
                 )
             }
-            getQRString.value?.let{myData->
-                QRCode( MYAPI + myData)
-
-            }
+            QRCode( MYAPI + shareId)
         }
     }
     @Composable

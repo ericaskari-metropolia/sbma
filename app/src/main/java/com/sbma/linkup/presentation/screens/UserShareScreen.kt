@@ -1,8 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +10,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -25,16 +27,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.navigation.BottomNavItem
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
@@ -49,17 +51,16 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
-fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
+fun UserShareScreenProvider(user: User, onSuccessResponse: (shareId: String) -> Unit) {
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = null)
     val composableScope = rememberCoroutineScope()
 
     userCards.value?.let {
-        UserShareScreen(it, onShareClick = {cardsToShare ->
+        UserShareScreen(it, onShareClick = { cardsToShare ->
             composableScope.launch {
-                userViewModel.shareCards(it.map { card -> card.id.toString() })
-                onShareClick()
+                userViewModel.shareCards(it.map { card -> card.id.toString() }, onSuccessResponse)
             }
         })
     }
@@ -67,7 +68,7 @@ fun UserShareScreenProvider(user: User, onShareClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserShareScreenTopBar(scrollBehavior: TopAppBarScrollBehavior) {
+fun UserShareScreenTopBar(scrollBehavior: TopAppBarScrollBehavior, enableNext: Boolean, onNextClick: () -> Unit) {
 
     MediumTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -81,6 +82,18 @@ fun UserShareScreenTopBar(scrollBehavior: TopAppBarScrollBehavior) {
                 fontSize = 20.sp
             )
         },
+        actions = {
+            IconButton(
+                modifier = Modifier,
+                onClick = { onNextClick() },
+                enabled = enableNext
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowForward,
+                    contentDescription = "Next"
+                )
+            }
+        },
         scrollBehavior = scrollBehavior
     )
 }
@@ -91,14 +104,20 @@ fun UserShareScreenTopBar(scrollBehavior: TopAppBarScrollBehavior) {
 fun UserShareScreen(userCards: List<Card>, onShareClick: (userCards: List<Card>) -> Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val input = remember {
+    val input = rememberSaveable {
         mutableStateOf(userCards.map { Pair(it, false) })
     }
     Scaffold(
         topBar = {
-            UserShareScreenTopBar(scrollBehavior)
+            UserShareScreenTopBar(scrollBehavior, input.value.any { it.second }) {
+                val selectedItems = input.value.filter { pair -> pair.second }
+                val selectedCards = selectedItems.map { it.first }
+                onShareClick(selectedCards)
+            }
         },
-        modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
             itemsIndexed(input.value) { index, mediaItem ->
@@ -109,56 +128,26 @@ fun UserShareScreen(userCards: List<Card>, onShareClick: (userCards: List<Card>)
                     input.value = copy
                 }
             }
-            item {
-                Button(
-                    onClick = {
-                        onShareClick(
-                            input.value
-                                .filter { pair -> pair.second }
-                                .map { it.first }
-                        )
-                    },
-                    modifier = Modifier.padding(bottom = 100.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Share,
-                        contentDescription = "Localized description",
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Share")
-                }
-            }
         }
-
-
-
     }
-
 }
 
 
 @Composable
 fun InfoListItem(item: Pair<Card, Boolean>, onItemClick: () -> Unit) {
-
-    Card(
+    ListItem(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
             .clickable(onClick = onItemClick),
-    ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        headlineContent = {
             Text(text = item.first.title, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.weight(1f))
+        },
+        trailingContent = {
             Switch(
                 checked = item.second,
                 onCheckedChange = { onItemClick() }
             )
         }
-    }
+    )
 }
 
 
@@ -168,9 +157,9 @@ fun UserShareScreenPreview() {
     val userId = UUID.randomUUID()
     val cards = remember {
         mutableListOf(
-            Card(UUID.randomUUID(), userId, "Facebook", "facebook.com/something"),
-            Card(UUID.randomUUID(), userId, "Instagram", "instagram.com/something"),
-            Card(UUID.randomUUID(), userId, "Twitter", "twitter.com/something")
+            Card(UUID.randomUUID(), userId, "Facebook", "facebook.com/something", null),
+            Card(UUID.randomUUID(), userId, "Instagram", "instagram.com/something", null),
+            Card(UUID.randomUUID(), userId, "Twitter", "twitter.com/something", null)
         )
     }
     LinkUpTheme {

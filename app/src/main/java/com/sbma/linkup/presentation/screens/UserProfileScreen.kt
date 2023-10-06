@@ -253,13 +253,15 @@ fun ProfileScreenPreview() {
                 UUID.randomUUID(),
                 user.value.id,
                 "Facebook",
-                "https://facebook.com/something"
+                "https://facebook.com/something",
+                null
             ),
             Card(
                 UUID.randomUUID(),
                 user.value.id,
                 "Instagram",
-                "https://instagram.com/something"
+                "https://instagram.com/something",
+                null
             ),
         )
     }

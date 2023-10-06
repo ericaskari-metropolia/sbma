@@ -72,7 +72,7 @@ fun NavigationView(
         LoginScreen()
     } else {
         Scaffold(
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController = navController) }
         ) {
             NavigationGraph(navController, it, loggedInUser.value!!.first())
         }

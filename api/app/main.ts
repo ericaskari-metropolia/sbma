@@ -115,6 +115,7 @@ app.post('/card', requiresAccessToken, async (req: Request, res: Response): Prom
             ownerId: user.id,
             title: body.title.trim(),
             value: body.value.trim(),
+            picture: body.picture?.trim() ?? null,
         },
     });
     res.status(200).send(response);

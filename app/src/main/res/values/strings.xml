@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LinkUp</string>
+    <string name="navigation_share">Share</string>
+    <string name="navigation_my_network">My Network</string>
 </resources>
