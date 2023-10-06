@@ -2,30 +2,36 @@ package com.sbma.linkup.navigation
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.sbma.linkup.DropletButtonNavBar
 import com.sbma.linkup.api.apimodels.ApiUser
 import com.sbma.linkup.api.apimodels.toUser
+import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.intents.login.LoginResponseToken
+import com.sbma.linkup.presentation.components.NoInternetConnectionBarComponent
 import com.sbma.linkup.presentation.screens.LoadingScreen
 import com.sbma.linkup.presentation.screens.LoginScreen
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NavigationView(
     intent: Intent,
+    internetConnectionStateFlow: StateFlow<InternetConnectionState>,
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val navController = rememberNavController()
@@ -73,9 +79,15 @@ fun NavigationView(
         LoginScreen()
     } else {
         Scaffold(
-            bottomBar = { DropletButtonNavBar(navController = navController) }
+            bottomBar = { DropletButtonNavBar(navController = navController) },
+            topBar = {  NoInternetConnectionBarComponent(internetConnectionStateFlow) }
         ) {
-            NavigationGraph(navController, it, loggedInUser.value!!.first())
+            NavigationGraph(
+                navController,
+                loggedInUser.value!!.first(),
+                internetConnectionStateFlow = internetConnectionStateFlow,
+                modifier = Modifier.padding(it)
+            )
         }
     }
 }

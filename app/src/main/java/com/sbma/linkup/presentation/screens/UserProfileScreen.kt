@@ -45,15 +45,8 @@ import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
-import com.sbma.linkup.user.UserViewModel
 import java.util.UUID
 
-@Composable
-fun UserProfileScreenProvider(user: User, canEdit: Boolean, onEditClick: () -> Unit) {
-    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
-    UserProfileScreen(user, userCards.value, canEdit = canEdit, onEditClick = onEditClick)
-}
 @Composable
 fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) {
     val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -254,14 +247,14 @@ fun ProfileScreenPreview() {
                 user.value.id,
                 "Facebook",
                 "https://facebook.com/something",
-                null
+                "facebook"
             ),
             Card(
                 UUID.randomUUID(),
                 user.value.id,
                 "Instagram",
                 "https://instagram.com/something",
-                null
+                "instagram"
             ),
         )
     }

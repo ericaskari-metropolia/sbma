@@ -2,7 +2,7 @@ package com.sbma.linkup.util
 
 import com.sbma.linkup.R
 
-fun String.toPictureResource(): Int  =
+fun String?.toPictureResource(): Int  =
     when(this){
         "phone" -> R.drawable.call
         "description" -> R.drawable.description
