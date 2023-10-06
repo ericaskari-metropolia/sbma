@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.sbma.linkup.DropletButtonNavBar
 import com.sbma.linkup.api.apimodels.ApiUser
 import com.sbma.linkup.api.apimodels.toUser
 import com.sbma.linkup.application.data.AppViewModelProvider
@@ -72,7 +73,7 @@ fun NavigationView(
         LoginScreen()
     } else {
         Scaffold(
-            bottomBar = { BottomNavigationBar(navController = navController) }
+            bottomBar = { DropletButtonNavBar(navController = navController) }
         ) {
             NavigationGraph(navController, it, loggedInUser.value!!.first())
         }

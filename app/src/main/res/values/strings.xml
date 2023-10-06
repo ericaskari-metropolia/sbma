@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">LinkUp</string>
-    <string name="navigation_share">Share</string>
-    <string name="navigation_my_network">My Network</string>
+    <string name="Home">Home</string>
+    <string name="Bell">Bell</string>
+    <string name="Message">Message</string>
+    <string name="Heart">Heart</string>
+    <string name="Person">Person</string>
 </resources>
