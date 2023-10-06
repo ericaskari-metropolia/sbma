@@ -28,6 +28,8 @@ class ResultCall<T>(val delegate: Call<T>) :
                             )
                         )
                     } else {
+                        println(response.message())
+                        println(response.body())
                         callback.onResponse(
                             this@ResultCall,
                             Response.success(
