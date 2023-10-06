@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +34,7 @@ import com.sbma.linkup.navigation.Parabolic
 import com.sbma.linkup.navigation.shapeCornerRadius
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
+import kotlinx.coroutines.flow.asStateFlow
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +47,9 @@ class MainActivity : ComponentActivity() {
                 systemUiController.isNavigationBarVisible = false
             }
             LinkUpTheme {
-                NavigationView(intent = intent)
+                NavigationView(
+                    intent = intent,
+                    internetConnectionStateFlow = (application as MyApplication).internetConnectionState.asStateFlow())
 //                DropletButtonNavBar()
             }
         }
@@ -93,8 +97,13 @@ fun DropletButtonNavBar(navController: NavController) {
                     .fillMaxSize(),
                 isSelected = selectedItem == index,
                 onClick = {
-                    selectedItem = index
-                    navController.navigate(item.screen_route)
+                    val currentRoute = navController.currentBackStackEntry?.destination?.route
+                    currentRoute?.let {
+                        if (item.screen_route != it) {
+                            selectedItem = index
+                            navController.navigate(item.screen_route)
+                        }
+                    }
                 },
                 icon = item.icon,
                 dropletColor = YellowApp,

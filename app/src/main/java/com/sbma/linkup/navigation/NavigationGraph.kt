@@ -1,48 +1,83 @@
 package com.sbma.linkup.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sbma.linkup.application.connectivity.InternetConnectionState
+import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.ConnectionUserProfileScreenProvider
 import com.sbma.linkup.presentation.screens.EditProfileScreen
 import com.sbma.linkup.presentation.screens.MainShareScreen
 import com.sbma.linkup.presentation.screens.ScanResultScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
-import com.sbma.linkup.presentation.screens.UserConnectionsScreenProvider
-import com.sbma.linkup.presentation.screens.UserProfileScreenProvider
-import com.sbma.linkup.presentation.screens.UserShareScreenProvider
+import com.sbma.linkup.presentation.screens.UserConnectionsScreen
+import com.sbma.linkup.presentation.screens.UserProfileScreen
+import com.sbma.linkup.presentation.screens.UserShareScreen
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
+import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.user.User
+import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.MyQrCode
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
-    paddingValues: PaddingValues,
     user: User,
+    internetConnectionStateFlow: StateFlow<InternetConnectionState>,
+    modifier: Modifier = Modifier
 ) {
+    val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
+    val internetState = internetConnectionStateFlow.collectAsState()
+
+    val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val composableScope = rememberCoroutineScope()
+    val userItems = userConnectionViewModel
+        .allItemsStream(user.id)
+        .collectAsState(initial = mapOf())
+
+    val state = UserConnectionsScreenState(
+        connections = userItems.value
+    )
 
     NavHost(
         navController,
-        modifier = Modifier.padding(paddingValues),
+        modifier = modifier,
         startDestination = "profile"
     ) {
         /**
          * tab of the bottom navigation bar
          */
         composable("share") {
-            UserShareScreenProvider(user) {shareId ->
-                navController.navigate("share/${shareId}")
+            UserShareScreen(
+                userCards.value,
+            ) { cardsToShare ->
+                composableScope.launch {
+                    if (!internetState.value.isConnected()) {
+                        // TODO: Show a Toast or something and let the user know this action requires internet.
+                        return@launch
+                    }
+                    val cardIds = cardsToShare.map { card -> card.id.toString() }
+                    userViewModel.shareCards(cardIds) { shareId ->
+                        navController.navigate("share/${shareId}")
+                    }
+                }
             }
         }
         /**
@@ -117,7 +152,7 @@ fun NavigationGraph(
          * tab of the bottom navigation bar
          */
         composable("connections") {
-            UserConnectionsScreenProvider(user) { connection ->
+            UserConnectionsScreen(state) {connection ->
                 navController.navigate("connections/${connection.id}")
             }
         }
@@ -135,7 +170,7 @@ fun NavigationGraph(
         /**
          * tab of the bottom navigation bar
          */
-        composable(BottomNavItem.Receive.screen_route) {
+        composable("receive") {
             MainShareScreen(
                 onBluetoothClick = {
                     navController.navigate("receive/bluetooth")
@@ -186,10 +221,11 @@ fun NavigationGraph(
          * Navigates to {UserShareScreenProvider}  when user clicks on Share button.
          */
         composable("profile") {
-            UserProfileScreenProvider(
+            UserProfileScreen(
                 user,
+                userCards.value,
                 canEdit = true,
-                onEditClick = { navController.navigate("profile/edit") },
+                onEditClick = { navController.navigate("profile/edit") }
             )
         }
         /**
