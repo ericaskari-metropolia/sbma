@@ -5,6 +5,7 @@ import android.icu.util.ULocale.Category
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -75,6 +76,7 @@ import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
+import com.sbma.linkup.util.toPictureResource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -304,24 +306,11 @@ fun EditProfileScreen(
 
         }
 
-        CreateCard(onSubmit = {
-            val copy = newCards.value.toMutableList()
-            copy.add(
-                Card(
-                    id = UUID.randomUUID(),
-                    userId = user.id,
-                    title = it.title,
-                    value = it.value,
-                    picture = null
-                )
-            )
-            newCards.value = copy
-            println("CreateCard")
-
-        })
 
         Column {
-            UserCardsList(newCards.value, withLazyColumn = false)
+            newCards.value.forEach {
+                CreateCard(it.title, it.picture ?: "")
+            }
         }
 
         Column(
@@ -344,13 +333,27 @@ fun EditProfileScreen(
                 Text("Save", color = Color.Black)
             }
         }
-        BottomSheet()
+        BottomSheet(){ text, picture ->
+            println("Clicked $text $picture")
+            val copy = newCards.value.toMutableList()
+            copy.add(
+                Card(
+                    id = UUID.randomUUID(),
+                    userId = user.id,
+                    title = text,
+                    value = "",
+                    picture = picture
+                )
+            )
+            newCards.value = copy
+            println("CreateCard")
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet() {
+fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -370,23 +373,18 @@ fun BottomSheet() {
         ) {
             Icon(Icons.Filled.Add, "Floating action button.")
         }
-        /*
-        Button(
-            onClick = {
-                isSheetOpen = true
-            },
-        ) {
-            Text(text = "Add social media platform")
-        }
-
-         */
 
     }
     if (isSheetOpen) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList()
+            SocialMediaList(){ text, picture ->
+                println("Clicked! $text  $picture")
+                onClick(text, picture)
+                isSheetOpen = false
+
+            }
         }
     }
 
@@ -394,7 +392,7 @@ fun BottomSheet() {
 }
 
 @Composable
-fun SocialMediaItem(
+fun ProfileCardListItem(
     iconRes: Int,
     text: String
 ) {
@@ -419,9 +417,9 @@ fun SocialMediaItem(
     }
 }
 
-data class SocialMediaItem(
+data class NewCardItem(
     var category: String,
-    var iconRes: Int,
+    var picture: String,
     var text: String
 )
 
@@ -444,41 +442,37 @@ fun CategoryHeader(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SocialMediaList() {
+fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
-    val socialMediaList = listOf(
-        Pair(R.drawable.instagram, "Instagram"),
-        Pair(R.drawable.twitter, "Twitter"),
-        Pair(R.drawable.linkedin, "Linkedin"),
-        Pair(R.drawable.facebook, "Facebook"),
-        Pair(R.drawable.snapchat, "Snapchat"),
-        Pair(R.drawable.pinterest, "Pintrest"),
-        Pair(R.drawable.telegram, "Telegram"),
-        Pair(R.drawable.tiktok, "Tiktok"),
-        Pair(R.drawable.youtube, "Youtube"),
-        Pair(R.drawable.discord, "Discord"),
-        Pair(R.drawable.github, "Github"),
+    val newCardList = listOf(
+        NewCardItem("Contact", "phone", "Phone Number"),
+        NewCardItem("Contact", "description", "Description"),
+        NewCardItem("Contact", "about", "About Me"),
+        NewCardItem("Contact", "location", "Location"),
+        NewCardItem("Social Media","instagram", "Instagram"),
+        NewCardItem("Social Media","twitter", "Twitter"),
+        NewCardItem("Social Media","facebook", "Facebook"),
+        NewCardItem("Social Media","snapchat", "Snapchat"),
+        NewCardItem("Social Media","pinterest", "Pinterest"),
+        NewCardItem("Social Media","linkedin", "Linkedin"),
+        NewCardItem("Social Media","telegram", "Telegram"),
+        NewCardItem("Social Media","tiktok", "Tiktok"),
+        NewCardItem("Social Media","youtube", "Youtube"),
+        NewCardItem("Social Media","discord", "Discord"),
+        NewCardItem("Social Media","github", "Github"),
+
     )
 
-    val contactList = listOf(
-        Pair(R.drawable.call, "Phone Number"),
-        Pair(R.drawable.description, "Description"),
-        Pair(R.drawable.aboutme, "About Me"),
-        Pair(R.drawable.location, "Location"),
-    )
 
+    val categories = newCardList.groupBy { it.category }
 
-    val categories = listOf<Pair<String, List<Pair<Int, String>>>>(
-        Pair("Contact", contactList),
-        Pair("Social Media", socialMediaList)
-    )
 
     LazyColumn() {
         categories.forEach { category ->
             stickyHeader {
-                CategoryHeader(category.first)
+                CategoryHeader(category.key)
             }
-            items(category.second.toList().chunked(3)) { rowItems ->
+            items(category.value.toList().chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -486,13 +480,15 @@ fun SocialMediaList() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                    for ((iconRes, text) in rowItems) {
+                    for (rowItem in rowItems) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(8.dp)
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable { onClick(rowItem.text, rowItem.picture) }
                         ) {
                             Image(
-                                painter = painterResource(iconRes),
+                                painter = painterResource(rowItem.picture.toPictureResource()),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(48.dp)
@@ -500,7 +496,7 @@ fun SocialMediaList() {
                                 contentScale = ContentScale.Crop
                             )
                             Text(
-                                text = text,
+                                text = rowItem.text,
                                 modifier = Modifier.padding(start = 16.dp),
                             )
                         }

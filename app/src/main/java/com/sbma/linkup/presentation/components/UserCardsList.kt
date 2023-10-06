@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.sbma.linkup.R
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
 
 @Composable
@@ -39,43 +40,12 @@ fun UserCardsListItem(userCard: Card) {
         headlineContent = { Text(userCard.value) },
 
         leadingContent = {
-            when (userCard.title) {
-                "Facebook" -> Image(
-                    painterResource(R.drawable.facebook),
-                    modifier = Modifier.width(size.value).height(size.value),
-                    contentDescription = "Edit",
+            userCard.picture?.toPictureResource()?.let {
+                Image(
+                    painter = painterResource(it) ,
+                    contentDescription = "Card Icon",
                     contentScale = ContentScale.Crop,
-                )
-
-                "Instagram" -> Image(
-                    painterResource(R.drawable.instagram),
-                    modifier = Modifier.width(size.value).height(size.value),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                )
-
-                "Linkedin" -> Image(
-                    painterResource(R.drawable.linkedin),
-                    modifier = Modifier.width(size.value).height(size.value),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                )
-
-                "Twitter" -> Image(
-                    painterResource(R.drawable.twitter),
-                    modifier = Modifier.width(size.value).height(size.value),
-                    contentDescription = "Edit",
-                    contentScale = ContentScale.Crop,
-                )
-
-                else -> Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Filled.AccountCircle,
-                        contentDescription = "AccountCircle",
-                    )
-                }
+                    modifier = Modifier.width(size.value).height(size.value))
             }
         }
     )
