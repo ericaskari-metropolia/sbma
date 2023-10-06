@@ -186,6 +186,28 @@ class UserViewModel(
         }
     }
 
+    suspend fun scanQRCode(id: String) {
+        viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.scanShare(
+                    authorization,
+                    id
+                )
+                    .onSuccess { response ->
+                        syncRoomDatabase()
+                        responseStatus.value = "Congratulations! Contact has been successfully added."
+                        println("Scanning Qr code")
+                        println(response)
+
+                    }.onFailure {
+                        println(it)
+                        responseStatus.value = "Oh no! Scanning of QR code has failed"
+                    }
+            }
+        }
+    }
+
     fun observeNfcStatus(): StateFlow<String?> {
         return responseStatus.asStateFlow()
     }
