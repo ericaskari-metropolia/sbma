@@ -263,16 +263,15 @@ fun QrCodeReader(
         ) {
             Box(
                 modifier = Modifier
-                    .size(width = 265.dp, height = 360.dp)
+                    .size(width = 275.dp, height = 368.dp)
                     .border(
-                        width =4.dp,
+                        width = 4.dp,
                         color = Color.Yellow,
                         shape = RectangleShape,
 
                         )
-
-
-            ) {
+            )
+            {
                 AndroidView(
                     factory = { context ->
                         val previewView = PreviewView(context)
