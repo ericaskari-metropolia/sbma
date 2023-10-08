@@ -5,12 +5,14 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.nfc.NfcAdapter
 import androidx.activity.ComponentActivity
+import com.sbma.linkup.application.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.application.connectivity.AppConnectivityManager
 import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.application.data.AppContainer
 import com.sbma.linkup.application.data.AppDataContainer
 import com.sbma.linkup.datasource.DataStore
 import com.sbma.linkup.nfc.AppNfcManager
+import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,6 +44,8 @@ class MyApplication : Application() {
 
     lateinit var bluetoothManager: BluetoothManager
     lateinit var bluetoothAdapter: BluetoothAdapter
+    lateinit var appBluetoothManager: AppBluetoothManager
+    lateinit var appBroadcastReceiver: AppBroadcastReceiver;
     lateinit var appNfcManager: AppNfcManager
     var nfcAdapter: NfcAdapter? = null
 
@@ -64,7 +68,11 @@ class MyApplication : Application() {
         bluetoothManager = getSystemService(BluetoothManager::class.java)
 
         bluetoothAdapter = bluetoothManager.adapter
-        println(this)
+        appBluetoothManager = AppBluetoothManager(
+            bluetoothAdapter = bluetoothAdapter,
+            scope = coroutineScope,
+            context = this
+        )
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         coroutineScope.launch {
@@ -82,6 +90,15 @@ class MyApplication : Application() {
     fun initAppNfcManager(activity: ComponentActivity): AppNfcManager {
         appNfcManager = AppNfcManager(this, activity, nfcAdapter)
         return appNfcManager
+    }
+    fun initAppBroadcastReceiver(activity: ComponentActivity): AppBroadcastReceiver {
+        appBroadcastReceiver = AppBroadcastReceiver(
+            activity = activity,
+            bluetoothAdapter = bluetoothAdapter,
+            appBluetoothManager = appBluetoothManager,
+        )
+
+        return appBroadcastReceiver
     }
 
 }
