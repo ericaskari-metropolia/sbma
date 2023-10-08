@@ -8,13 +8,16 @@
 
     <!--Miscellaneous Strings -->
 
+    <string name="login">LOGIN</string>
     <string name="title">Title</string>
     <string name="value">Value</string>
     <string name="setting">Setting</string>
     <string name="logout">Log out</string>
     <string name="phone_number">Phone Number</string>
-    <string name= "Facebook">Facebook</string>
-    <string name="Address">Address</string>
+    <string name= "facebook">Facebook</string>
+    <string name="address">Address</string>
+    <string name="desc">Description</string>
+    <string name="setting_screen">Setting Screen</string>
 
 
     <!--Profile Page Related String -->
@@ -29,7 +32,7 @@
     <!--Share Related Strings -->
     <string name="share">Share</string>
     <string name="what_to_share">What would you like to share?</string>
-    <string name="how_to_share">How would you like to share?</string>
+    <string name="share_option">How would you like to share?</string>
     <string name="qr_code">QR Code</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="nfc_card_assign_option">Or Would you like to assign a Card or Tag?</string>
@@ -38,6 +41,7 @@
 
     <!-- Contact List String -->
     <string name="my_contacts">My Contacts</string>
+    <string name="empty_contact_list">Contact list is Empty.</string>
 
     <!-- Receive Related String -->
     <string name="receive">Receive</string>
@@ -48,6 +52,15 @@
     <string name="failed_qr_scan">Oh no! Contact retrieval has failed</string>
     <string name="success_nfc_scan">Congratulations! Contact has been successfully added.</string>
     <string name="failed_nfc_scan">Oh no! Scanning of QR code has failed</string>
+    <string name="success_resp">"Congratulations! You successfully added your details on the NFC-enabled card."</string>
+    <string name="failed_resp">"Oh no! Something went wrong."</string>
+
+
+    <!-- Create a new Profile -->
+    <string name="create_new_profile">Create a new Profile</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="social_media_links">Social Media Links</string>
 
 
 </resources>

@@ -33,11 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
@@ -115,7 +117,7 @@ fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEdi
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = "About Me",
+                                text = stringResource(R.string.about_me),
                                 fontSize = 20.sp,
                                 style = MaterialTheme.typography.labelLarge,
                             )
@@ -142,7 +144,7 @@ fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEdi
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Contact Details",
+                            text = stringResource(R.string.contact_details),
                             fontSize = 20.sp,
                             style = MaterialTheme.typography.labelLarge,
                         )
@@ -201,7 +203,7 @@ fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
         verticalAlignment = Alignment.Top,
     ) {
         Text(
-            text = "Profile",
+            text = stringResource(R.string.profile),
             fontSize = 25.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier

@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +79,7 @@ fun NfcReceiveScreen(
         }
         Text(
             textAlign = TextAlign.Center,
-            text = "Hover the back of your device over an NFC-enabled card",
+            text = stringResource(R.string.hover_nfc_card),
             fontSize = 20.sp,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
