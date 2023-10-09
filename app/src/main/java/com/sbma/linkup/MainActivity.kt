@@ -1,5 +1,6 @@
 package com.sbma.linkup
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
@@ -17,8 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -66,7 +69,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun DropletButtonNavBar(navController: NavController) {
-    var selectedItem by remember { mutableStateOf(2) }
+    var selectedItem by rememberSaveable { mutableStateOf(2) }
 
     val items = listOf(
         BottomNavigationItemsData.Share,
@@ -115,6 +118,7 @@ fun DropletButtonNavBar(navController: NavController) {
 
 const val Duration = 500
 const val DoubleDuration = 1000
+
 
 @Preview(showBackground = true)
 @Composable

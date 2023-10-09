@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -38,7 +39,7 @@ fun NavigationView(
     val loggedInUser = userViewModel.getLoggedInUserProfile.collectAsState(initial = null)
 
     // show loading screen at first if there is an intent
-    val isLoading = remember { mutableStateOf(intent.action != null && intent.data != null) }
+    val isLoading = rememberSaveable { mutableStateOf(intent.action != null && intent.data != null) }
 
     LaunchedEffect(true) {
         // Check if there is an intent action
