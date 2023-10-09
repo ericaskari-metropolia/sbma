@@ -1,10 +1,8 @@
 package com.sbma.linkup.presentation.screens
 
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,19 +22,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,12 +48,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,16 +75,17 @@ import java.util.UUID
 fun EditProfileScreenProvider(
     user: User,
     cards: List<Card>,
-    onSave: () -> Unit,
+    onBackClick: () -> Unit,
+    onSave: () -> Unit
 ) {
     val composableScope = rememberCoroutineScope()
-
     val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val cardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
     EditProfileScreen(
         user,
-        cards
+        cards,
+        onBackClick = { onBackClick() }
     ) { cardsToInsert, cardsToUpdate, cardsToDelete ->
         println("cardsToInsert: $cardsToInsert")
         println("cardsToUpdate: $cardsToInsert")
@@ -106,159 +107,184 @@ fun EditProfileScreenProvider(
             onSave()
         }
     }
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditProfileScreenTopBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    onBackClick: () -> Unit
+) {
+    MediumTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
+        title = {
+            Text(
+                text = "Edit Profile",
+                style = MaterialTheme.typography.labelLarge,
+                fontSize = 20.sp
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier,
+                onClick = { onBackClick() }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     user: User,
     cards: List<Card>,
+    onBackClick: () -> Unit,
     onSave: (
         cardsToInsert: List<Card>,
         cardsToUpdate: List<Card>,
         cardsToDelete: List<Card>,
     ) -> Unit,
-) {
+
+    ) {
     val composableScope = rememberCoroutineScope()
 
     var userCards by rememberSaveable { mutableStateOf(cards) }
     var cardsToInsert by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
     var cardsToUpdate by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
     var cardsToDelete by rememberSaveable { mutableStateOf<Map<UUID, Card>>(mapOf()) }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Column(
+
+
+    Scaffold(
+        topBar = {
+            EditProfileScreenTopBar(scrollBehavior) {
+                onBackClick()
+            }
+        },
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(8.dp)
-    ) {
-        Row(
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { padding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+                .verticalScroll(rememberScrollState())
+                .padding(padding)
+                .padding(8.dp)
         ) {
-            Icon(
-                Icons.Rounded.KeyboardArrowLeft,
-                contentDescription = "Back",
-            )
             Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = user.picture,
+                    contentDescription = "profile photo",
+                    modifier = Modifier
+                        .size(150.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                )
+            }
+
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center,
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = stringResource(R.string.edit_profile),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Text(text = user.name, fontSize = 30.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            Column {
+                userCards.forEachIndexed { index, card ->
+                    EditCard(
+                        card = card,
+                        canEditTitle = card.title != "About me",
+                        onCardModified = {
+                            val userCardsMutable = userCards.toMutableList()
+                            userCardsMutable[index] = it
+                            userCards = userCardsMutable.toList()
+
+                            val cardsToUpdateCopy = cardsToUpdate.toMutableMap()
+                            cardsToUpdateCopy[it.id] = true
+                            cardsToUpdate = cardsToUpdateCopy
+                        },
+                        onDelete = {
+                            val copy = userCards.toMutableList()
+                            copy.removeAt(index)
+                            userCards = copy
+                            val cardsToDeleteMutable = cardsToDelete.toMutableMap()
+                            cardsToDeleteMutable[it.id] = it
+                            cardsToDelete = cardsToDeleteMutable.toMap()
+                        },
+                        onPictureClick = {
+                            // TODO: Open Bottom sheet and choose new image
+                        }
+                    )
+                }
             }
 
-        }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            AsyncImage(
-                model = user.picture,
-                contentDescription = "profile photo",
+            Column(
                 modifier = Modifier
-                    .size(150.dp)
-                    .clip(RoundedCornerShape(50.dp))
-            )
-        }
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = user.name, fontSize = 30.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        Column {
-            userCards.forEachIndexed { index, card ->
-                EditCard(
-                    card = card,
-                    canEditTitle = card.title != "About me",
-                    onCardModified = {
-                        val userCardsMutable = userCards.toMutableList()
-                        userCardsMutable[index] = it
-                        userCards = userCardsMutable.toList()
-
-                        val cardsToUpdateCopy = cardsToUpdate.toMutableMap()
-                        cardsToUpdateCopy[it.id] = true
-                        cardsToUpdate = cardsToUpdateCopy
+                ) {
+                Button(
+                    modifier = Modifier.padding(bottom = 100.dp),
+                    onClick = {
+                        composableScope.launch {
+                            onSave(
+                                cardsToInsert
+                                    .filter { it.value }
+                                    .map { it.key }
+                                    .mapNotNull { id -> userCards.find { it.id == id } },
+                                cardsToUpdate
+                                    .filter { it.value }
+                                    .map { it.key }
+                                    .mapNotNull { id -> userCards.find { it.id == id } },
+                                cardsToDelete
+                                    .map { it.value }
+                            )
+                        }
                     },
-                    onDelete = {
-                        val copy = userCards.toMutableList()
-                        copy.removeAt(index)
-                        userCards = copy
-                        val cardsToDeleteMutable = cardsToDelete.toMutableMap()
-                        cardsToDeleteMutable[it.id] = it
-                        cardsToDelete = cardsToDeleteMutable.toMap()
-                    },
-                    onPictureClick = {
-                        // TODO: Open Bottom sheet and choose new image
-                    }
-                )
+                    colors = buttonColors(YellowApp)
+                ) {
+                    Text(stringResource(R.string.save), color = Color.Black)
+                }
+                Text(text = "Cards to insert: ${cardsToInsert.entries.count { it.value }}")
+                Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
+                Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
             }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ) {
-            Button(
-                modifier = Modifier.padding(bottom = 100.dp),
-                onClick = {
-                    composableScope.launch {
-                        onSave(
-                            cardsToInsert
-                                .filter { it.value }
-                                .map { it.key }
-                                .mapNotNull { id -> userCards.find { it.id == id} },
-                            cardsToUpdate
-                                .filter { it.value }
-                                .map { it.key }
-                                .mapNotNull { id -> userCards.find { it.id == id} },
-                            cardsToDelete
-                                .map { it.value }
-                        )
-                    }
-                },
-                colors = buttonColors(YellowApp)
-            ) {
-                Text(stringResource(R.string.save), color = Color.Black)
-            }
-            Text(text = "Cards to insert: ${cardsToInsert.entries.count { it.value }}")
-            Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
-            Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
-        }
-        BottomSheet() { text, picture ->
-            println("Clicked $text $picture")
-            val copy = userCards.toMutableList()
-            val id = UUID.randomUUID()
-            copy.add(
-                Card(
-                    id = id,
-                    userId = user.id,
-                    title = text,
-                    value = "",
-                    picture = picture
+            BottomSheet() { text, picture ->
+                println("Clicked $text $picture")
+                val copy = userCards.toMutableList()
+                val id = UUID.randomUUID()
+                copy.add(
+                    Card(
+                        id = id,
+                        userId = user.id,
+                        title = text,
+                        value = "",
+                        picture = picture
+                    )
                 )
-            )
-            userCards = copy
-            val cardsToInsertMutable = cardsToInsert.toMutableMap()
-            cardsToInsertMutable[id] = true
-            cardsToInsert = cardsToInsertMutable.toMap()
-            println("CreateCard")
+                userCards = copy
+                val cardsToInsertMutable = cardsToInsert.toMutableMap()
+                cardsToInsertMutable[id] = true
+                cardsToInsert = cardsToInsertMutable.toMap()
+                println("CreateCard")
+            }
         }
     }
 }
@@ -366,17 +392,17 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
         NewCardItem(stringResource(R.string.contact), "location", "Location"),
 
         //Category Social Media
-        NewCardItem(stringResource(R.string.social_media),"instagram", "Instagram"),
-        NewCardItem(stringResource(R.string.social_media),"twitter", "Twitter"),
-        NewCardItem(stringResource(R.string.social_media),"facebook", "Facebook"),
-        NewCardItem(stringResource(R.string.social_media),"snapchat", "Snapchat"),
-        NewCardItem(stringResource(R.string.social_media),"pinterest", "Pinterest"),
-        NewCardItem(stringResource(R.string.social_media),"linkedin", "Linkedin"),
-        NewCardItem(stringResource(R.string.social_media),"telegram", "Telegram"),
-        NewCardItem(stringResource(R.string.social_media),"tiktok", "Tiktok"),
-        NewCardItem(stringResource(R.string.social_media),"youtube", "Youtube"),
-        NewCardItem(stringResource(R.string.social_media),"discord", "Discord"),
-        NewCardItem(stringResource(R.string.social_media),"github", "Github"),
+        NewCardItem(stringResource(R.string.social_media), "instagram", "Instagram"),
+        NewCardItem(stringResource(R.string.social_media), "twitter", "Twitter"),
+        NewCardItem(stringResource(R.string.social_media), "facebook", "Facebook"),
+        NewCardItem(stringResource(R.string.social_media), "snapchat", "Snapchat"),
+        NewCardItem(stringResource(R.string.social_media), "pinterest", "Pinterest"),
+        NewCardItem(stringResource(R.string.social_media), "linkedin", "Linkedin"),
+        NewCardItem(stringResource(R.string.social_media), "telegram", "Telegram"),
+        NewCardItem(stringResource(R.string.social_media), "tiktok", "Tiktok"),
+        NewCardItem(stringResource(R.string.social_media), "youtube", "Youtube"),
+        NewCardItem(stringResource(R.string.social_media), "discord", "Discord"),
+        NewCardItem(stringResource(R.string.social_media), "github", "Github"),
 
         )
 
@@ -431,10 +457,34 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 fun DefaultPreview() {
     val cards = remember {
         mutableListOf(
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something", "facebook"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something", "instagram"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something", "twitter"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something", "twitch"),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Facebook",
+                "https://facebook.com/something",
+                "facebook"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Instagram",
+                "https://instagram.com/something",
+                "instagram"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Twitter",
+                "https://twitter.com/something",
+                "twitter"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Twitch",
+                "https://twitch.com/something",
+                "twitch"
+            ),
         )
     }
     val user =
@@ -452,7 +502,8 @@ fun DefaultPreview() {
     LinkUpTheme {
         EditProfileScreen(
             user.value,
-            cards
+            cards,
+            onBackClick = {}
         ) { x, y, z ->
 
         }
