@@ -19,11 +19,11 @@ class AppNfcManager(
 ) :
     DefaultLifecycleObserver, NfcAdapter.ReaderCallback {
 
-    private val TAG = AppNfcManager::class.java.getSimpleName()
+    private val TAG = AppNfcManager::class.java.simpleName
     val liveTag: MutableStateFlow<String?> = MutableStateFlow(null)
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
-    public fun enableReaderMode(
+    fun enableReaderMode(
         flags: Int,
         extras: Bundle
     ) {
@@ -37,7 +37,7 @@ class AppNfcManager(
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
-    public fun disableReaderMode() {
+    fun disableReaderMode() {
         nfcAdapter?.let {
             try {
                 nfcAdapter.disableReaderMode(activity)
@@ -55,7 +55,7 @@ class AppNfcManager(
         return nfcAdapter?.isEnabled ?: false
     }
 
-    public fun isSupportedAndEnabled(): Boolean {
+    fun isSupportedAndEnabled(): Boolean {
         return isSupported() && isEnabled()
     }
 

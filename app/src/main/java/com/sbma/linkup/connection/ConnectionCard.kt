@@ -10,9 +10,5 @@ data class ConnectionCard(
     @PrimaryKey val id: UUID,
     @ColumnInfo val cardId: UUID,
     @ColumnInfo val connectionId: UUID,
-) {
-    companion object {
-
-    }
-}
+)
 

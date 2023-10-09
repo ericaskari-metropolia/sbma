@@ -10,10 +10,5 @@ data class Connection(
     @PrimaryKey val id: UUID,
     @ColumnInfo val userId: UUID,
     @ColumnInfo val connectedUserId: UUID,
-) {
-
-    companion object {
-
-    }
-}
+)
 

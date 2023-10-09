@@ -267,7 +267,7 @@ fun EditProfileScreen(
                 Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
                 Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
             }
-            BottomSheet() { text, picture ->
+            BottomSheet { text, picture ->
                 println("Clicked $text $picture")
                 val copy = userCards.toMutableList()
                 val id = UUID.randomUUID()
@@ -319,7 +319,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList() { text, picture ->
+            SocialMediaList { text, picture ->
                 println("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
@@ -411,7 +411,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
     val categories = newCardList.groupBy { it.category }
 
 
-    LazyColumn() {
+    LazyColumn {
         categories.forEach { category ->
             stickyHeader {
                 CategoryHeader(category.key)
