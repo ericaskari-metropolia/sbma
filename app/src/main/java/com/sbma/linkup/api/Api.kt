@@ -6,7 +6,6 @@ import com.sbma.linkup.api.apimodels.ApiShare
 import com.sbma.linkup.api.apimodels.ApiTag
 import com.sbma.linkup.api.apimodels.ApiUser
 import com.sbma.linkup.api.apimodels.AssignTagRequest
-import com.sbma.linkup.api.apimodels.NewCardRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -26,17 +25,17 @@ interface ApiService {
     // New Card POST Request
     @POST("/card")
     @Headers("Content-Type: application/json")
-    suspend fun createNewCard(@Header("Authorization") authorization: String, @Body request: NewCardRequest): Result<ApiCard>
+    suspend fun createNewCard(@Header("Authorization") authorization: String, @Body request: ApiCard): Result<ApiCard>
 
     // Update Card PUT Request
     @PUT("/card/{id}")
     @Headers("Content-Type: application/json")
-    suspend fun updateCard(@Header("Authorization") authorization: String, @Path("shareId") id: String, @Body request: ApiCard): Result<ApiCard>
+    suspend fun updateCard(@Header("Authorization") authorization: String, @Path("id") id: String, @Body request: ApiCard): Result<ApiCard>
 
     // Update Card PUT Request
     @DELETE("/card/{id}")
     @Headers("Content-Type: application/json")
-    suspend fun deleteCard(@Header("Authorization") authorization: String, @Path("shareId") id: String): Result<Unit>
+    suspend fun deleteCard(@Header("Authorization") authorization: String, @Path("id") id: String): Result<Unit>
 
     // Share POST Request
     @POST("/share")
