@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -35,7 +36,7 @@ fun SettingScreen(
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Setting Screen",
+            text = stringResource(R.string.setting_screen),
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -48,7 +49,7 @@ fun SettingScreen(
                 userViewModel.deleteLoginData()
             }
         }) {
-            Text(text = "Log out")
+            Text(text = stringResource(R.string.logout))
         }
     }
 }

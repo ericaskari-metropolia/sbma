@@ -25,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.sbma.linkup.R
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import java.util.UUID
@@ -43,7 +45,7 @@ fun UserShareScreenTopBar(scrollBehavior: TopAppBarScrollBehavior, enableNext: B
         ),
         title = {
             Text(
-                text = "What would you like to share?",
+                text = stringResource(R.string.what_to_share),
                 style = MaterialTheme.typography.labelLarge,
                 fontSize = 20.sp
             )

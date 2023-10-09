@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +52,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
         content = {
             item {
                 Text(
-                    text = "Create a new profile",
+                    text = stringResource(R.string.create_new_profile),
                     fontSize = 25.sp,
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
@@ -63,7 +64,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 TextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("Username") },
+                    label = { Text(stringResource(R.string.username)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
@@ -73,7 +74,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 TextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.email)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
@@ -83,7 +84,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 TextField(
                     value = phoneNumber,
                     onValueChange = { phoneNumber = it },
-                    label = { Text("Phone Number") },
+                    label = { Text(stringResource(R.string.phone_number)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
@@ -93,7 +94,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 TextField(
                     value = address,
                     onValueChange = { address = it },
-                    label = { Text("Address") },
+                    label = { Text(stringResource(R.string.address)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
@@ -103,7 +104,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("About Me") },
+                    label = { Text(stringResource(R.string.about_me)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
@@ -111,7 +112,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
             }
             item {
                 Text(
-                    text = "Social Media Links",
+                    text = stringResource(R.string.social_media_links),
                     fontSize = 25.sp,
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
@@ -245,7 +246,7 @@ fun NewProfileScreen(onSubmit: (value: UserNewProfileScreenState) -> Unit) {
                         modifier = Modifier.size(ButtonDefaults.IconSize),
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Save")
+                    Text(stringResource(R.string.save))
                 }
             }
         }

@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,25 +28,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
-import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.user.UserViewModel
+import com.sbma.linkup.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.sbma.linkup.R
 
 
 const val MYAPI = "https://sbma.ericaskari.com/android/qr/scan?id="
@@ -65,7 +61,7 @@ fun QRCode(data:String ) {
 
         Spacer(modifier = Modifier.height(-2.dp))
         Text(
-            text = "Scan the QR code to add me in your contacts",
+            text = stringResource(R.string.scan_and_add_to_contacts),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier

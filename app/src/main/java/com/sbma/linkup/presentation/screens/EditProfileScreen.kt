@@ -1,18 +1,14 @@
 package com.sbma.linkup.presentation.screens
 
-import android.icu.util.ULocale
-import android.icu.util.ULocale.Category
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,24 +23,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,8 +51,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,13 +63,11 @@ import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
-import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.util.toPictureResource
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -167,7 +156,7 @@ fun EditProfileScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Edit Profile",
+                    text = stringResource(R.string.edit_profile),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -215,7 +204,7 @@ fun EditProfileScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Description",
+                text = stringResource(R.string.desc),
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxWidth()
@@ -240,7 +229,7 @@ fun EditProfileScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Phone number",
+                text = stringResource(R.string.phone_number),
                 modifier = Modifier
                     .width(100.dp)
                     .fillMaxWidth()
@@ -264,7 +253,7 @@ fun EditProfileScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Address",
+                text = stringResource(R.string.address),
                 modifier = Modifier
                     .width(100.dp)
                     .fillMaxWidth()
@@ -287,7 +276,7 @@ fun EditProfileScreen(
                 .padding(start = 4.dp, end = 4.dp),
         ) {
             Text(
-                text = "About Me",
+                text = stringResource(R.string.about_me),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 4.dp),
@@ -330,7 +319,7 @@ fun EditProfileScreen(
                 },
                 colors = buttonColors(YellowApp)
             ) {
-                Text("Save", color = Color.Black)
+                Text(stringResource(R.string.save), color = Color.Black)
             }
         }
         BottomSheet(){ text, picture ->
@@ -445,21 +434,25 @@ fun CategoryHeader(
 fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
     val newCardList = listOf(
-        NewCardItem("Contact", "phone", "Phone Number"),
-        NewCardItem("Contact", "description", "Description"),
-        NewCardItem("Contact", "about", "About Me"),
-        NewCardItem("Contact", "location", "Location"),
-        NewCardItem("Social Media","instagram", "Instagram"),
-        NewCardItem("Social Media","twitter", "Twitter"),
-        NewCardItem("Social Media","facebook", "Facebook"),
-        NewCardItem("Social Media","snapchat", "Snapchat"),
-        NewCardItem("Social Media","pinterest", "Pinterest"),
-        NewCardItem("Social Media","linkedin", "Linkedin"),
-        NewCardItem("Social Media","telegram", "Telegram"),
-        NewCardItem("Social Media","tiktok", "Tiktok"),
-        NewCardItem("Social Media","youtube", "Youtube"),
-        NewCardItem("Social Media","discord", "Discord"),
-        NewCardItem("Social Media","github", "Github"),
+
+        //Category Contacts
+        NewCardItem(stringResource(R.string.contact), "phone", "Phone Number"),
+        NewCardItem(stringResource(R.string.contact), "description", "Description"),
+        NewCardItem(stringResource(R.string.contact), "about", "About Me"),
+        NewCardItem(stringResource(R.string.contact), "location", "Location"),
+
+        //Category Social Media
+        NewCardItem(stringResource(R.string.social_media),"instagram", "Instagram"),
+        NewCardItem(stringResource(R.string.social_media),"twitter", "Twitter"),
+        NewCardItem(stringResource(R.string.social_media),"facebook", "Facebook"),
+        NewCardItem(stringResource(R.string.social_media),"snapchat", "Snapchat"),
+        NewCardItem(stringResource(R.string.social_media),"pinterest", "Pinterest"),
+        NewCardItem(stringResource(R.string.social_media),"linkedin", "Linkedin"),
+        NewCardItem(stringResource(R.string.social_media),"telegram", "Telegram"),
+        NewCardItem(stringResource(R.string.social_media),"tiktok", "Tiktok"),
+        NewCardItem(stringResource(R.string.social_media),"youtube", "Youtube"),
+        NewCardItem(stringResource(R.string.social_media),"discord", "Discord"),
+        NewCardItem(stringResource(R.string.social_media),"github", "Github"),
 
     )
 

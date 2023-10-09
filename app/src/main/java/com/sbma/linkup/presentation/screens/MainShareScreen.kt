@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +63,7 @@ fun MainShareScreenTopBar(
         },
         title = {
             Text(
-                text = if (isReceiving) "How would you like to receive?" else "How would you like to share?",
+                text = if (isReceiving) stringResource(R.string.receive_option) else stringResource(R.string.share_option),
                 style = MaterialTheme.typography.labelLarge,
                 fontSize = 20.sp
             )
@@ -109,7 +109,7 @@ fun MainShareScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
-                        "QR Code",
+                        stringResource(R.string.qr_code),
                         modifier = Modifier
                             .padding(20.dp)
                             .align(Alignment.TopCenter)
@@ -132,7 +132,7 @@ fun MainShareScreen(
                 ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        "Bluetooth", modifier = Modifier
+                        stringResource(R.string.bluetooth), modifier = Modifier
                             .padding(20.dp)
                             .align(Alignment.TopCenter)
 
@@ -149,7 +149,7 @@ fun MainShareScreen(
             }
             Spacer(modifier = Modifier.height(30.dp))
             Text(
-                text = if (isReceiving) "Or would you like to receive from a card or tag?" else "Or would you like to assign a card or tag?",
+                text = if (isReceiving) stringResource(R.string.nfc_card_receive_option) else stringResource(R.string.nfc_card_assign_option),
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
                 lineHeight = 1.5.em,

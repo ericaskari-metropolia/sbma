@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +61,7 @@ import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.MYAPI
@@ -129,7 +131,7 @@ val scope = rememberCoroutineScope()
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text="Show me your QR code",modifier = Modifier
+            Text(text= stringResource(R.string.show_qr_code),modifier = Modifier
                 .align(Alignment.CenterHorizontally),
                 fontSize = 20.sp)
         }
@@ -265,14 +267,13 @@ fun QrCodeReader(
                 modifier = Modifier
                     .size(width = 265.dp, height = 360.dp)
                     .border(
-                        width =4.dp,
+                        width = 4.dp,
                         color = Color.Yellow,
                         shape = RectangleShape,
 
                         )
-
-
-            ) {
+            )
+            {
                 AndroidView(
                     factory = { context ->
                         val previewView = PreviewView(context)
