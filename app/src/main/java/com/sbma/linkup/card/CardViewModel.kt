@@ -3,9 +3,10 @@ package com.sbma.linkup.card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
-import com.sbma.linkup.api.apimodels.NewCardRequest
+import com.sbma.linkup.api.apimodels.toApiCard
 import com.sbma.linkup.api.apimodels.toCard
 import com.sbma.linkup.datasource.DataStore
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -19,15 +20,16 @@ class CardViewModel(
     fun allItemsStream(userId: UUID) = repository.getUserItemsStream(userId)
     fun getItemStream(id: UUID) = repository.getItemStream(id)
     suspend fun insertItem(item: Card) = repository.insertItem(item)
+    suspend fun deleteFromLocalDatabase(item: Card) = repository.deleteItem(item)
 
-    suspend fun saveItem(createCardData: Card) {
+    suspend fun saveItem(card: Card): Job {
         // Example code of how Api works.
-        viewModelScope.launch {
+        return viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
                 apiService.createNewCard(
                     authorization,
-                    NewCardRequest(createCardData.title, createCardData.value)
+                    card.toApiCard()
                 )
                     .onSuccess { response ->
                         println("create new Card")
@@ -39,14 +41,36 @@ class CardViewModel(
             }
         }
     }
-
-    suspend fun saveItems(items: List<Card>) {
-        viewModelScope.launch {
-            items.forEach {
-                saveItem(it)
+    suspend fun updateItem(card: Card): Job {
+        // Example code of how Api works.
+        return viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.updateCard(authorization, card.id.toString(), card.toApiCard())
+                    .onSuccess { response ->
+                        println("update new Card")
+                        println(response)
+                        insertItem(response.toCard())
+                    }.onFailure {
+                        println(it)
+                    }
             }
         }
     }
-
-
+    suspend fun deleteItem(card: Card): Job {
+        // Example code of how Api works.
+        return viewModelScope.launch {
+            val authorization = dataStore.getAuthorizationHeaderValue.first()
+            authorization?.let {
+                apiService.deleteCard(authorization, card.id.toString())
+                    .onSuccess { response ->
+                        println("delete new Card")
+                        println(response)
+                        deleteFromLocalDatabase(card)
+                    }.onFailure {
+                        println(it)
+                    }
+            }
+        }
+    }
 }

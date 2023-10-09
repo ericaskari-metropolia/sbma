@@ -31,6 +31,7 @@ data class ApiCard(
     val shareCards: List<ApiShareCard>?
 )
 fun ApiCard.toCard(): Card = Card(UUID.fromString(id), UUID.fromString(ownerId), title, value, picture)
+fun Card.toApiCard(): ApiCard = ApiCard(id = id.toString(), ownerId = userId.toString(), title = title, value = value, picture = picture, owner = null, connectionCards = null, shareCards = null)
 fun List<ApiCard>.toCardList(): List<Card> = this.map { it.toCard() }
 
 data class ApiConnection(

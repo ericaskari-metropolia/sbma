@@ -16,7 +16,7 @@ import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screens.CameraScreen
 import com.sbma.linkup.presentation.screens.ConnectionUserProfileScreenProvider
-import com.sbma.linkup.presentation.screens.EditProfileScreen
+import com.sbma.linkup.presentation.screens.EditProfileScreenProvider
 import com.sbma.linkup.presentation.screens.MainShareScreen
 import com.sbma.linkup.presentation.screens.ScanResultScreen
 import com.sbma.linkup.presentation.screens.SettingScreen
@@ -237,8 +237,9 @@ fun NavigationGraph(
          *  After user presses save button it will navigate back to profile route.
          */
         composable("profile/edit") {
-            EditProfileScreen(
+            EditProfileScreenProvider(
                 user,
+                userCards.value,
                 onSave = {
                     navController.navigate("profile")
                 })
