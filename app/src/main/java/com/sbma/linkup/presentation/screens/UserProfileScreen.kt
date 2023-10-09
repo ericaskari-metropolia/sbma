@@ -1,8 +1,10 @@
 package com.sbma.linkup.presentation.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
@@ -210,29 +213,27 @@ fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
 
         )
         Row {
-
             if (canEdit) {
-                Icon(
-                    Icons.Filled.Edit,
-                    contentDescription = "Edit",
+                Box(
                     modifier = Modifier
                         .padding(horizontal = 5.dp)
-                        .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-                        .clickable {
-                            onEditClick?.let { it() }
-                        }
-                )
+                        .size(36.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp) )
+                ) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = "Edit",
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                            .fillMaxSize()
+                            .clickable {
+                                onEditClick?.let { it() }
+                            }
+                    )
+
+                }
+
             }
-//            Icon(
-//                Icons.Filled.Share,
-//                contentDescription = "Share",
-//                modifier = Modifier
-//                    .padding(horizontal = 5.dp)
-//                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20))
-//                    .clickable {
-//                        onShareClick()
-//                    }
-//            )
         }
     }
 }

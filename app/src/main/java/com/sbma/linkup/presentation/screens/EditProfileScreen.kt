@@ -4,6 +4,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -45,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -164,15 +168,6 @@ fun EditProfileScreen(
                     .size(150.dp)
                     .clip(RoundedCornerShape(50.dp))
             )
-            Icon(
-                imageVector = Icons.Filled.Edit,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .size(60.dp)
-                    .align(Alignment.Center)
-                    .padding(16.dp)
-            )
         }
 
         Column(
@@ -246,7 +241,7 @@ fun EditProfileScreen(
             Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
             Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
         }
-        BottomSheet(){ text, picture ->
+        BottomSheet() { text, picture ->
             println("Clicked $text $picture")
             val copy = userCards.toMutableList()
             val id = UUID.randomUUID()
@@ -267,6 +262,7 @@ fun EditProfileScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -296,7 +292,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList(){ text, picture ->
+            SocialMediaList() { text, picture ->
                 println("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
@@ -382,7 +378,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
         NewCardItem(stringResource(R.string.social_media),"discord", "Discord"),
         NewCardItem(stringResource(R.string.social_media),"github", "Github"),
 
-    )
+        )
 
 
     val categories = newCardList.groupBy { it.category }
