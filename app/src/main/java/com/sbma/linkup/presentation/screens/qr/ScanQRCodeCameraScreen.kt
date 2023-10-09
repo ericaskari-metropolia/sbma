@@ -89,7 +89,7 @@ fun ScanQRCodeCameraScreen(
     }
     Scaffold(
         topBar = {
-            CameraScreenTopBar() {
+            CameraScreenTopBar {
                 onBackClick()
             }
         },

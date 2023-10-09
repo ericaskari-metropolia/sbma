@@ -12,10 +12,5 @@ data class User(
     @ColumnInfo val email: String,
     @ColumnInfo var description: String,
     @ColumnInfo val picture: String?,
-) {
-
-    companion object {
-
-    }
-}
+)
 

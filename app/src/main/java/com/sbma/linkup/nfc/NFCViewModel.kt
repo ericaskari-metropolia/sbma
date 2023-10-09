@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     companion object {
-        private val TAG = NFCViewModel::class.java.getSimpleName()
+        private val TAG = NFCViewModel::class.java.simpleName
         private const val prefix = "android.nfc.tech."
     }
 
@@ -28,12 +28,12 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
         liveToast.emit(message)
     }
 
-    public fun observeToast(): SharedFlow<String?> {
+    fun observeToast(): SharedFlow<String?> {
         return liveToast.asSharedFlow()
     }
 
     //endregion
-    public fun getNFCFlags(): Int {
+    fun getNFCFlags(): Int {
         return NfcAdapter.FLAG_READER_NFC_A or
                 NfcAdapter.FLAG_READER_NFC_B or
                 NfcAdapter.FLAG_READER_NFC_F or
@@ -41,14 +41,14 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
                 NfcAdapter.FLAG_READER_NFC_BARCODE //or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
     }
 
-    public fun getExtras(): Bundle {
-        val options: Bundle = Bundle();
-        options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 30000);
+    fun getExtras(): Bundle {
+        val options: Bundle = Bundle()
+        options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 30000)
         return options
     }
 
     //region NFC Methods
-    public fun onCheckNFC(isChecked: Boolean) {
+    fun onCheckNFC(isChecked: Boolean) {
         viewModelScope.launch {
             Log.d(TAG, "onCheckNFC(${isChecked})")
             if (isChecked) {
@@ -75,7 +75,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
         }
     }
 
-    public fun observeTag(): StateFlow<String?> {
+    fun observeTag(): StateFlow<String?> {
         return appNfcManager.liveTag.asStateFlow()
     }
 

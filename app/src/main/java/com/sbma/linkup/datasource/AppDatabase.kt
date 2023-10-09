@@ -58,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
         /**
          * Database initializer
          */
-        private class AppDatabaseCallback() : Callback() {
+        private class AppDatabaseCallback : Callback() {
             /**
              * Override the onCreate method to populate the database.
              */
