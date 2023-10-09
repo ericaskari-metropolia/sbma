@@ -240,6 +240,9 @@ fun NavigationGraph(
             EditProfileScreenProvider(
                 user,
                 userCards.value,
+                onBackClick = {
+                    navController.popBackStack()
+                },
                 onSave = {
                     navController.navigate("profile")
                 })
