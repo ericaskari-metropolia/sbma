@@ -32,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,7 +81,7 @@ fun QRCode(
 
             Spacer(modifier = Modifier.height(-2.dp))
             Text(
-                text = "Scan the QR code to add me in your contacts",
+                text = stringResource(R.string.scan_and_add_to_contacts),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
