@@ -1,7 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
@@ -48,7 +46,6 @@ import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.components.UserCardsList
-import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
 import java.util.UUID
 
@@ -69,11 +66,24 @@ fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) 
 
 @Composable
 fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEditClick: (() -> Unit)? = null) {
+    val aboutMeCard = userCards.find { it.title == "About Me" }
+    val phoneNumberCard = userCards.find { it.title == "Phone Number" }
+    val emailCard = userCards.find { it.title == "Email" }
+    val addressCard = userCards.find { it.title == "Location" }
+    val titleCard = userCards.find { it.title == "Title" }
+    val restOfTheCards = userCards
+        .asSequence()
+        .filter { it.title != "About Me" }
+        .filter { it.title != "Phone Number" }
+        .filter { it.title != "Email" }
+        .filter { it.title != "Location" }
+        .filter { it.title != "Title" }
+        .toList()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(10.dp, bottom = 80.dp),
+            .padding(start = 10.dp, end = 10.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -103,16 +113,16 @@ fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEdi
                             .clip(RoundedCornerShape(50.dp))
                     )
                 }
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = user.name, fontSize = 30.sp)
+                Text(text = user.name, fontSize = 30.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                titleCard?.let {
+                    Text(text = it.value, fontSize = 20.sp)
                     Spacer(modifier = Modifier.height(8.dp))
+                }
+                aboutMeCard?.let {
                     Card(
                         modifier = Modifier
-                            .size(width = 400.dp, height = 240.dp)
                     ) {
                         Column(
                             modifier = Modifier
@@ -125,50 +135,53 @@ fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEdi
                                 style = MaterialTheme.typography.labelLarge,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Sebubebu is a results-driven Marketing Manager with a passion " +
-                                        "for leveraging innovative strategies to drive brand growth and " +
-                                        "customer engagement in the ever-evolving digital landscape." +
-                                        "Feel free to reach me out for any specific queries.",
-                                fontSize = 16.sp,
-                            )
+                            Text(text = it.value, fontSize = 16.sp)
                         }
 
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-                Card(
-                    modifier = Modifier
-                        .size(width = 400.dp, height = 220.dp)
-                        .padding(15.dp),
-                ) {
-                    Column(
+                if (phoneNumberCard != null || emailCard != null || addressCard != null) {
+                    Card(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.contact_details),
-                            fontSize = 20.sp,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ContactInfoRow(
-                            icon = Icons.Filled.Call,
-                            text = "+358 1234567890"
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ContactInfoRow(
-                            icon = Icons.Filled.Email,
-                            text = user.email
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ContactInfoRow(
-                            icon = Icons.Filled.LocationOn,
-                            text = "Pohjoisesplanadi 31, 00100 Helsinki, Finland"
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.contact_details),
+                                fontSize = 20.sp,
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            phoneNumberCard?.let {
+                                ContactInfoRow(
+                                    icon = Icons.Filled.Call,
+                                    text = it.value
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            emailCard?.let {
+                                ContactInfoRow(
+                                    icon = Icons.Filled.Email,
+                                    text = it.value
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            addressCard?.let {
+                                ContactInfoRow(
+                                    icon = Icons.Filled.LocationOn,
+                                    text = "Pohjoisesplanadi 31, 00100 Helsinki, Finland"
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
                     }
                 }
-                UserCardsList(userCards, withLazyColumn = false)
+
+                UserCardsList(restOfTheCards, withLazyColumn = false)
             }
         }
     }
@@ -218,7 +231,7 @@ fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
                     modifier = Modifier
                         .padding(horizontal = 5.dp)
                         .size(36.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp) )
+                        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         Icons.Filled.Edit,
@@ -248,6 +261,44 @@ fun ProfileScreenPreview() {
             Card(
                 UUID.randomUUID(),
                 user.value.id,
+                "About Me",
+                "Sebubebu is a results-driven Marketing Manager with a passion " +
+                        "for leveraging innovative strategies to drive brand growth and " +
+                        "customer engagement in the ever-evolving digital landscape." +
+                        "Feel free to reach me out for any specific queries.",
+                "facebook"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Title",
+                "UI/UX Designer and Graphic Designer",
+                "title"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Phone Number",
+                "+358245304934",
+                "phone"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Email",
+                "email@email.com",
+                "email"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
+                "Location",
+                "Pohjoisesplanadi 31, 00100 Helsinki, Finland",
+                "location"
+            ),
+            Card(
+                UUID.randomUUID(),
+                user.value.id,
                 "Facebook",
                 "https://facebook.com/something",
                 "facebook"
@@ -261,13 +312,11 @@ fun ProfileScreenPreview() {
             ),
         )
     }
-    LinkUpTheme {
-        UserProfileScreen(
-            user.value,
-            cards,
-            canEdit = true,
-            onEditClick = {}
-        )
-    }
+    UserProfileScreen(
+        user.value,
+        cards,
+        canEdit = true,
+        onEditClick = {}
+    )
 }
 
