@@ -142,7 +142,7 @@ fun EditProfileScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Edit Profile",
+                    text = stringResource(R.string.edit_profile),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -237,7 +237,7 @@ fun EditProfileScreen(
                 },
                 colors = buttonColors(YellowApp)
             ) {
-                Text("Save", color = Color.Black)
+                Text(stringResource(R.string.save), color = Color.Black)
             }
             Text(text = "Cards to insert: ${cardsToInsert.entries.count { it.value }}")
             Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
@@ -359,21 +359,25 @@ fun CategoryHeader(
 fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
     val newCardList = listOf(
-        NewCardItem("Contact", "phone", "Phone Number"),
-        NewCardItem("Contact", "description", "Description"),
-        NewCardItem("Contact", "about", "About Me"),
-        NewCardItem("Contact", "location", "Location"),
-        NewCardItem("Social Media","instagram", "Instagram"),
-        NewCardItem("Social Media","twitter", "Twitter"),
-        NewCardItem("Social Media","facebook", "Facebook"),
-        NewCardItem("Social Media","snapchat", "Snapchat"),
-        NewCardItem("Social Media","pinterest", "Pinterest"),
-        NewCardItem("Social Media","linkedin", "Linkedin"),
-        NewCardItem("Social Media","telegram", "Telegram"),
-        NewCardItem("Social Media","tiktok", "Tiktok"),
-        NewCardItem("Social Media","youtube", "Youtube"),
-        NewCardItem("Social Media","discord", "Discord"),
-        NewCardItem("Social Media","github", "Github"),
+
+        //Category Contacts
+        NewCardItem(stringResource(R.string.contact), "phone", "Phone Number"),
+        NewCardItem(stringResource(R.string.contact), "description", "Description"),
+        NewCardItem(stringResource(R.string.contact), "about", "About Me"),
+        NewCardItem(stringResource(R.string.contact), "location", "Location"),
+
+        //Category Social Media
+        NewCardItem(stringResource(R.string.social_media),"instagram", "Instagram"),
+        NewCardItem(stringResource(R.string.social_media),"twitter", "Twitter"),
+        NewCardItem(stringResource(R.string.social_media),"facebook", "Facebook"),
+        NewCardItem(stringResource(R.string.social_media),"snapchat", "Snapchat"),
+        NewCardItem(stringResource(R.string.social_media),"pinterest", "Pinterest"),
+        NewCardItem(stringResource(R.string.social_media),"linkedin", "Linkedin"),
+        NewCardItem(stringResource(R.string.social_media),"telegram", "Telegram"),
+        NewCardItem(stringResource(R.string.social_media),"tiktok", "Tiktok"),
+        NewCardItem(stringResource(R.string.social_media),"youtube", "Youtube"),
+        NewCardItem(stringResource(R.string.social_media),"discord", "Discord"),
+        NewCardItem(stringResource(R.string.social_media),"github", "Github"),
 
     )
 
