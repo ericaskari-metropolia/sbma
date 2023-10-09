@@ -1,5 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
@@ -114,6 +116,7 @@ fun EditProfileScreen(
     ) -> Unit,
 ) {
     val composableScope = rememberCoroutineScope()
+
     var userCards by rememberSaveable { mutableStateOf(cards) }
     var cardsToInsert by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
     var cardsToUpdate by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
