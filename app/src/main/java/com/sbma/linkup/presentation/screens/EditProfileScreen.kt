@@ -5,6 +5,7 @@ import android.icu.util.ULocale.Category
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.BottomSheetScaffold
@@ -57,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -160,19 +163,6 @@ fun EditProfileScreen(
                 Icons.Rounded.KeyboardArrowLeft,
                 contentDescription = "Back",
             )
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "Edit Profile",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
 
         }
         Box(
@@ -185,15 +175,6 @@ fun EditProfileScreen(
                 modifier = Modifier
                     .size(150.dp)
                     .clip(RoundedCornerShape(50.dp))
-            )
-            Icon(
-                imageVector = Icons.Filled.Edit,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .size(60.dp)
-                    .align(Alignment.Center)
-                    .padding(16.dp)
             )
         }
 
@@ -333,7 +314,7 @@ fun EditProfileScreen(
                 Text("Save", color = Color.Black)
             }
         }
-        BottomSheet(){ text, picture ->
+        BottomSheet() { text, picture ->
             println("Clicked $text $picture")
             val copy = newCards.value.toMutableList()
             copy.add(
@@ -350,6 +331,7 @@ fun EditProfileScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -379,7 +361,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList(){ text, picture ->
+            SocialMediaList() { text, picture ->
                 println("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
@@ -449,19 +431,19 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
         NewCardItem("Contact", "description", "Description"),
         NewCardItem("Contact", "about", "About Me"),
         NewCardItem("Contact", "location", "Location"),
-        NewCardItem("Social Media","instagram", "Instagram"),
-        NewCardItem("Social Media","twitter", "Twitter"),
-        NewCardItem("Social Media","facebook", "Facebook"),
-        NewCardItem("Social Media","snapchat", "Snapchat"),
-        NewCardItem("Social Media","pinterest", "Pinterest"),
-        NewCardItem("Social Media","linkedin", "Linkedin"),
-        NewCardItem("Social Media","telegram", "Telegram"),
-        NewCardItem("Social Media","tiktok", "Tiktok"),
-        NewCardItem("Social Media","youtube", "Youtube"),
-        NewCardItem("Social Media","discord", "Discord"),
-        NewCardItem("Social Media","github", "Github"),
+        NewCardItem("Social Media", "instagram", "Instagram"),
+        NewCardItem("Social Media", "twitter", "Twitter"),
+        NewCardItem("Social Media", "facebook", "Facebook"),
+        NewCardItem("Social Media", "snapchat", "Snapchat"),
+        NewCardItem("Social Media", "pinterest", "Pinterest"),
+        NewCardItem("Social Media", "linkedin", "Linkedin"),
+        NewCardItem("Social Media", "telegram", "Telegram"),
+        NewCardItem("Social Media", "tiktok", "Tiktok"),
+        NewCardItem("Social Media", "youtube", "Youtube"),
+        NewCardItem("Social Media", "discord", "Discord"),
+        NewCardItem("Social Media", "github", "Github"),
 
-    )
+        )
 
 
     val categories = newCardList.groupBy { it.category }
