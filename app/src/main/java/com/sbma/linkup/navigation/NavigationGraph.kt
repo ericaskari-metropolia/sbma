@@ -42,7 +42,8 @@ fun NavigationGraph(
     modifier: Modifier = Modifier
 ) {
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userConnectionViewModel: ConnectionViewModel =
+        viewModel(factory = AppViewModelProvider.Factory)
     val userCards = userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
     val internetState = internetConnectionStateFlow.collectAsState()
 
@@ -87,7 +88,7 @@ fun NavigationGraph(
             "share/{shareId}",
             arguments = listOf(navArgument("shareId") { type = NavType.StringType }),
 
-        ) {backStackEntry ->
+            ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             MainShareScreen(
                 onBluetoothClick = {
@@ -112,7 +113,7 @@ fun NavigationGraph(
         composable(
             "share/{shareId}/bluetooth",
             arguments = listOf(navArgument("shareId") { type = NavType.StringType })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
                 ShareViaBluetoothScreenProvider(it)
@@ -122,7 +123,7 @@ fun NavigationGraph(
         composable(
             "share/{shareId}/nfc",
             arguments = listOf(navArgument("shareId") { type = NavType.StringType })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
                 NfcScanScreen(
@@ -136,7 +137,7 @@ fun NavigationGraph(
         composable(
             "share/{shareId}/qr",
             arguments = listOf(navArgument("shareId") { type = NavType.StringType })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
                 MyQrCode(
@@ -152,7 +153,7 @@ fun NavigationGraph(
          * tab of the bottom navigation bar
          */
         composable("connections") {
-            UserConnectionsScreen(state) {connection ->
+            UserConnectionsScreen(state) { connection ->
                 navController.navigate("connections/${connection.id}")
             }
         }
@@ -164,8 +165,11 @@ fun NavigationGraph(
             "connections/{connectionId}",
             arguments = listOf(navArgument("connectionId") { type = NavType.StringType }),
 
-        ) {backStackEntry ->
-            ConnectionUserProfileScreenProvider(user, backStackEntry.arguments?.getString("connectionId"))
+            ) { backStackEntry ->
+            ConnectionUserProfileScreenProvider(
+                user,
+                backStackEntry.arguments?.getString("connectionId")
+            )
         }
         /**
          * tab of the bottom navigation bar
@@ -202,7 +206,7 @@ fun NavigationGraph(
         }
         composable("receive/qr") {
             CameraScreen(
-                onBackClicked = {
+                onBackClick = {
                     navController.popBackStack()
                 },
                 onSuccessScan = {
@@ -239,7 +243,7 @@ fun NavigationGraph(
                     navController.navigate("profile")
                 })
         }
-        composable(route="scanSuccess"){
+        composable(route = "scanSuccess") {
             ScanResultScreen(
 
             )
