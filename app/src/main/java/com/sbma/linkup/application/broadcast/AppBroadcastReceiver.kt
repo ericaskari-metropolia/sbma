@@ -2,10 +2,12 @@ package com.sbma.linkup.application.broadcast
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,9 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothManager
+import com.sbma.linkup.presentation.screens.bluetooth.connect.IFoundedBluetoothDeviceDomain
+import com.sbma.linkup.presentation.screens.bluetooth.toFoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 
 /**
  * Main responsibility of this class is to observe Bluetooth status stop scan if it turned off.
@@ -27,6 +32,12 @@ class AppBroadcastReceiver(
 ) : DefaultLifecycleObserver {
      private val _bluetoothEnabled: MutableStateFlow<Boolean> = MutableStateFlow(bluetoothAdapter.isEnabled);
      val bluetoothEnabled: StateFlow<Boolean> get() = _bluetoothEnabled.asStateFlow()
+
+     private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf());
+     val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
+
+     private val _bluetoothDevicesFound: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
+     val bluetoothDevicesFound get() = _bluetoothDevicesFound.map { it.values.toList() }
 
     // broadcastReceiver reference. It still should be registered in onResume and unregistered on onPause lifecycle.
     private lateinit var broadcastReceiver: BroadcastReceiver
@@ -41,9 +52,21 @@ class AppBroadcastReceiver(
         println("$TAG onCreate")
 
         // Initialization
-        broadcastReceiver = broadcastReceiverFactory {
-            onBluetoothAdapterStateChange(bluetoothAdapter.state)
-        }
+        broadcastReceiver = broadcastReceiverFactory(
+            onBluetoothStateChange = {
+                onBluetoothAdapterStateChange(bluetoothAdapter.state)
+            },
+            onBluetoothDeviceStateChange = { isConnected, bluetoothDevice ->
+                val copy = _bluetoothDeviceConnectionStatus.value.toMutableMap()
+                copy[bluetoothDevice.address] = isConnected
+                _bluetoothDeviceConnectionStatus.value = copy
+            },
+            onDeviceFound = {
+                val copy = _bluetoothDevicesFound.value.toMutableMap()
+                copy[it.address] = it.toFoundedBluetoothDeviceDomain(System.currentTimeMillis())
+                _bluetoothDevicesFound.value = copy
+            }
+        )
 
         // Initialization
         intentActivityResultLauncher = activityResultLauncherFactory(activity, owner, "AppAppBroadcastReceiverLauncher") {
@@ -56,7 +79,7 @@ class AppBroadcastReceiver(
         println("$TAG onPause called")
 
         try {
-            activity.unregisterReceiver(broadcastReceiver)
+            unregisterReceiver()
         } catch (e: Exception) {
             println(e)
         } finally {
@@ -68,7 +91,22 @@ class AppBroadcastReceiver(
         super.onResume(owner)
         println("$TAG onResume called")
         println("$TAG registerReceiver")
-        ContextCompat.registerReceiver(activity, broadcastReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED), ContextCompat.RECEIVER_EXPORTED)
+        registerReceiver()
+    }
+
+    private fun registerReceiver() {
+        ContextCompat.registerReceiver(activity, broadcastReceiver,
+            IntentFilter().apply {
+                addAction(BluetoothDevice.ACTION_FOUND)
+                addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+                addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+                addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+            },
+            ContextCompat.RECEIVER_EXPORTED)
+    }
+    private fun unregisterReceiver() {
+        activity.unregisterReceiver(broadcastReceiver)
     }
 
 
@@ -83,7 +121,12 @@ class AppBroadcastReceiver(
 
     companion object {
         const val TAG = "[AppBroadcastReceiver]"
-        private fun broadcastReceiverFactory(onBluetoothStateChange: () -> Unit): BroadcastReceiver {
+        private fun broadcastReceiverFactory(
+            onBluetoothStateChange: () -> Unit,
+            onDeviceFound: (bluetoothDevice: BluetoothDevice) -> Unit,
+            onBluetoothDeviceStateChange: (isConnected: Boolean, bluetoothDevice: BluetoothDevice) -> Unit
+
+        ): BroadcastReceiver {
             println("$TAG broadcastReceiverFactory")
             return object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent) {
@@ -92,6 +135,34 @@ class AppBroadcastReceiver(
                     // It means the user has changed their bluetooth state.
                     if (intent.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
                         onBluetoothStateChange()
+                        return
+                    }
+
+                    val device = getDeviceFromIntent(intent)
+
+                    device?.let {
+                        when(intent.action) {
+                            BluetoothDevice.ACTION_FOUND -> {
+                                onDeviceFound(it)
+                            }
+                            BluetoothDevice.ACTION_ACL_CONNECTED -> {
+                                onBluetoothDeviceStateChange(true, it)
+                            }
+                            BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                                onBluetoothDeviceStateChange(false, it)
+                            }
+                        }
+                    }
+                }
+
+                private fun getDeviceFromIntent(intent: Intent): BluetoothDevice? {
+                    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(
+                            BluetoothDevice.EXTRA_DEVICE,
+                            BluetoothDevice::class.java
+                        )
+                    } else {
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     }
                 }
             }

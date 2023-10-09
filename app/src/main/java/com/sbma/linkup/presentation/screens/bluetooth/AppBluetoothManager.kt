@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
@@ -38,34 +39,30 @@ class AppBluetoothManager(
     private var currentClientSocket: BluetoothSocket? = null
     private var dataTransferService: BluetoothDataTransferService? = null
 
-    val scanResultList = MutableStateFlow(mapOf<String, BluetoothDeviceDomain>())
+    private val _scanResultList = MutableStateFlow(mapOf<String, BluetoothDeviceDomain>())
+    val scanResultList get() = _scanResultList.map { it.values.toList() }
+
     private val _isScanning = MutableStateFlow(false)
-    val isScanning: StateFlow<Boolean>
-        get() = _isScanning.asStateFlow()
+    val isScanning get() = _isScanning.asStateFlow()
 
 
     private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    val scannedDevices: StateFlow<List<BluetoothDeviceDomain>>
-        get() = _scannedDevices.asStateFlow()
+    val scannedDevices: StateFlow<List<BluetoothDeviceDomain>> get() = _scannedDevices.asStateFlow()
 
     private val _pairedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    val pairedDevices: StateFlow<List<BluetoothDeviceDomain>>
-        get() = _pairedDevices.asStateFlow()
+    val pairedDevices: StateFlow<List<BluetoothDeviceDomain>> get() = _pairedDevices.asStateFlow()
 
 
 
     private var lastCleanupTimestamp: Long? = null
     private val CLEANUP_DURATION = 10000L
 
-    //  Configuration for bluetooth scanning
-
-
     private val scanCallback = appBluetoothScanCallbackFactory(
         onScanResult = {
             scope.launch {
-                val copy = scanResultList.value.toMutableMap()
+                val copy = _scanResultList.value.toMutableMap()
                 copy[it.device.address] = it.toBluetoothDeviceDomain()
-                scanResultList.value = copy
+                _scanResultList.value = copy
 
                 if (_isScanning.value) {
                     launch { deleteNotSeen() }
@@ -73,7 +70,7 @@ class AppBluetoothManager(
             }
         },
         onScanFailed = { errorCode ->
-            println("[$TAG] onScanFailed")
+            println("$TAG onScanFailed")
             println("Scan error $errorCode")
 
             if (errorCode == ScanCallback.SCAN_FAILED_ALREADY_STARTED) {
@@ -83,8 +80,22 @@ class AppBluetoothManager(
         }
     )
 
+
+    @SuppressLint("MissingPermission")
+    fun updatePairedDevices() {
+        bluetoothAdapter?.let {
+            println("Bounded devices: ${bluetoothAdapter.bondedDevices.count()}")
+            bluetoothAdapter
+                .bondedDevices
+                ?.map { it.toBluetoothDeviceDomain() }
+                ?.also { devices ->
+                    _pairedDevices.update { devices }
+                }
+        }
+    }
+
     suspend fun deleteNotSeen() {
-        val prefix = "[$TAG][deleteNotSeen]"
+        val prefix = "$TAG[deleteNotSeen]"
         lastCleanupTimestamp?.let {
             if (System.currentTimeMillis() - it > CLEANUP_DURATION) {
 //                bluetoothDeviceRepository.deleteNotSeen()
@@ -96,25 +107,16 @@ class AppBluetoothManager(
 
     @SuppressLint("MissingPermission")
     fun scan() {
-        val prefix = "[$TAG][scan]"
-        println(prefix)
+        println("$TAG scan")
 
-        if (bluetoothAdapter == null) {
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled || _isScanning.value) {
             return
         }
-        if (!_isScanning.value) {
-            return
-        }
-        if (!bluetoothAdapter.isEnabled) {
-            return
-        }
-
-        _isScanning.value = true
 
         try {
             bluetoothAdapter.bluetoothLeScanner.startScan(null, scanSettings, scanCallback)
             lastCleanupTimestamp = System.currentTimeMillis()
-
+            _isScanning.value = true
         } catch (e: Exception) {
             println("scan ERROR")
             println(e)
@@ -125,17 +127,17 @@ class AppBluetoothManager(
 
     @SuppressLint("MissingPermission")
     fun stopScan() {
-        println("[$TAG] stopScan")
-        if (!_isScanning.value) {
+        println("$TAG stopScan")
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled || !_isScanning.value) {
             return
         }
-        bluetoothAdapter?.let {
+
+        try {
+            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
             _isScanning.value = false
-            try {
-                bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
-            } catch (e: Exception) {
-                println(e.message)
-            }
+        } catch (e: Exception) {
+            println(e.message)
         }
     }
 

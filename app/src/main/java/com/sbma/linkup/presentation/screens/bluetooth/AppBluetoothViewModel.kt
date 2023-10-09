@@ -8,13 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.application.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.ConnectionResult
+import com.sbma.linkup.presentation.screens.bluetooth.connect.FoundedBluetoothDeviceDomain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -31,6 +30,14 @@ fun BluetoothDevice.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
         address = address
     )
 }
+@SuppressLint("MissingPermission")
+fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluetoothDeviceDomain {
+    return FoundedBluetoothDeviceDomain(
+        name = name,
+        address = address,
+        lastSeen = lastSeen
+    )
+}
 
 @SuppressLint("MissingPermission")
 fun ScanResult.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
@@ -45,21 +52,14 @@ class AppBluetoothViewModel(
     private val appBroadcastReceiver: AppBroadcastReceiver,
 ) : ViewModel() {
     val isBluetoothEnabled = appBroadcastReceiver.bluetoothEnabled
+    val bluetoothDevicesFound = appBroadcastReceiver.bluetoothDevicesFound
     val scanResultList = appBluetoothManager.scanResultList
     val isScanning = appBluetoothManager.isScanning
 
     private var deviceConnectionJob: Job? = null
 
-
-    private val _pairedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    val pairedDevices: StateFlow<List<BluetoothDeviceDomain>>
-        get() = _pairedDevices.asStateFlow()
-    val scannedDevices: StateFlow<List<BluetoothDeviceDomain>>
-        get() = _scannedDevices.asStateFlow()
-
-
     private val _state = MutableStateFlow(BluetoothUiState())
+
     val state = combine(
         appBluetoothManager.scannedDevices,
         appBluetoothManager.pairedDevices,
@@ -74,11 +74,13 @@ class AppBluetoothViewModel(
 
 
     fun scan() {
+        if (isScanning.value) {
+            return
+        }
         viewModelScope.launch {
             appBluetoothManager.scan()
             delay(5000)
             appBluetoothManager.stopScan()
-
         }
     }
 
@@ -94,18 +96,6 @@ class AppBluetoothViewModel(
             .listen()
     }
 
-    @SuppressLint("MissingPermission")
-    fun updatePairedDevices() {
-        appBluetoothManager.bluetoothAdapter?.let {
-            println("Bounded devices: ${appBluetoothManager.bluetoothAdapter.bondedDevices.count()}")
-            appBluetoothManager.bluetoothAdapter
-                .bondedDevices
-                ?.map { it.toBluetoothDeviceDomain() }
-                ?.also { devices ->
-                    _pairedDevices.update { devices }
-                }
-        }
-    }
 
     private fun Flow<ConnectionResult>.listen(): Job {
         return onEach { result ->

@@ -134,3 +134,41 @@ fun UserShareScreenPreview() {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun UserShareScreenDarkModePreview() {
+    val userId = UUID.randomUUID()
+    val cards = remember {
+        mutableListOf(
+            Card(UUID.randomUUID(), userId, "Facebook", "facebook.com/something", null),
+            Card(UUID.randomUUID(), userId, "Instagram", "instagram.com/something", null),
+            Card(UUID.randomUUID(), userId, "Twitter", "twitter.com/something", null)
+        )
+    }
+    LinkUpTheme(
+        darkTheme = true
+    ) {
+        UserShareScreen(cards) {
+        }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun UserShareScreenDynamicThemePreview() {
+    val userId = UUID.randomUUID()
+    val cards = remember {
+        mutableListOf(
+            Card(UUID.randomUUID(), userId, "Facebook", "facebook.com/something", null),
+            Card(UUID.randomUUID(), userId, "Instagram", "instagram.com/something", null),
+            Card(UUID.randomUUID(), userId, "Twitter", "twitter.com/something", null)
+        )
+    }
+    LinkUpTheme(
+        darkTheme = false,
+        dynamicColor = true
+    ) {
+        UserShareScreen(cards) {
+        }
+    }
+}
