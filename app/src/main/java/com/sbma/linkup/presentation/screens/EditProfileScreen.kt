@@ -1,25 +1,21 @@
 package com.sbma.linkup.presentation.screens
 
-import android.icu.util.ULocale
-import android.icu.util.ULocale.Category
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -32,24 +28,17 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,7 +53,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,77 +63,68 @@ import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
-import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
+import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.toPictureResource
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditProfileScreenProvider(
+    user: User,
+    cards: List<Card>,
+    onSave: () -> Unit,
+) {
+    val composableScope = rememberCoroutineScope()
+
+    val userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val cardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
+    EditProfileScreen(
+        user,
+        cards
+    ) { cardsToInsert, cardsToUpdate, cardsToDelete ->
+        println("cardsToInsert: $cardsToInsert")
+        println("cardsToUpdate: $cardsToInsert")
+        println("cardsToDelete: $cardsToDelete")
+        composableScope.launch {
+            cardsToInsert
+                .forEach {
+                    cardViewModel.saveItem(it).join()
+                }
+            cardsToUpdate
+                .forEach {
+                    cardViewModel.updateItem(it).join()
+                }
+            cardsToDelete
+                .forEach {
+                    cardViewModel.deleteItem(it).join()
+                }
+            userViewModel.syncRoomDatabase()
+            onSave()
+        }
+    }
+
+}
+
 @Composable
 fun EditProfileScreen(
     user: User,
-    onSave: () -> Unit,
-    userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    cards: List<Card>,
+    onSave: (
+        cardsToInsert: List<Card>,
+        cardsToUpdate: List<Card>,
+        cardsToDelete: List<Card>,
+    ) -> Unit,
 ) {
-    var phone by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var aboutMe by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var instagram by rememberSaveable { mutableStateOf("Instagram account") }
-    var twitter by rememberSaveable { mutableStateOf("Twitter account") }
-    var linkedIn by rememberSaveable { mutableStateOf("LinkedIn account") }
-    var facebook by rememberSaveable { mutableStateOf("Facebook account") }
-    var newCards = remember { mutableStateOf<List<Card>>(listOf()) }
     val composableScope = rememberCoroutineScope()
 
-    LaunchedEffect(true) {
-        userCardViewModel.allItemsStream(user.id).collectLatest {
-            println(it)
-            var phoneNumberCard = it.find { it.title == "Phone Number" }
-            println(phoneNumberCard)
-            phoneNumberCard?.let {
-                phone = it.value
-            }
-        }
-    }
-
-    LaunchedEffect(true) {
-        userCardViewModel.allItemsStream(user.id).collectLatest {
-            println(it)
-            var addressCard = it.find { it.title == "Address" }
-            println(addressCard)
-            addressCard?.let {
-                address = it.value
-            }
-        }
-    }
-
-    LaunchedEffect(true) {
-        userCardViewModel.allItemsStream(user.id).collectLatest {
-            println(it)
-            var aboutMeCard = it.find { it.title == "About Me" }
-            println(aboutMeCard)
-            aboutMeCard?.let {
-                aboutMe = it.value
-            }
-        }
-    }
-
-    LaunchedEffect(true) {
-        userCardViewModel.allItemsStream(user.id).collectLatest {
-            println(it)
-            var descriptionCard = it.find { it.title == "Description" }
-            println(descriptionCard)
-            descriptionCard?.let {
-                description = it.value
-            }
-        }
-    }
+    var userCards by rememberSaveable { mutableStateOf(cards) }
+    var cardsToInsert by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
+    var cardsToUpdate by rememberSaveable { mutableStateOf<Map<UUID, Boolean>>(mapOf()) }
+    var cardsToDelete by rememberSaveable { mutableStateOf<Map<UUID, Card>>(mapOf()) }
 
     Column(
         modifier = Modifier
@@ -163,6 +142,19 @@ fun EditProfileScreen(
                 Icons.Rounded.KeyboardArrowLeft,
                 contentDescription = "Back",
             )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.edit_profile),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
 
         }
         Box(
@@ -187,110 +179,32 @@ fun EditProfileScreen(
             Text(text = user.name, fontSize = 30.sp)
             Spacer(modifier = Modifier.height(8.dp))
         }
-
-        //Description
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Description",
-                modifier = Modifier
-                    .width(120.dp)
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 4.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            TextField(
-                value = description,
-                onValueChange = { description = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent
-                )
-            )
-        }
-
-
-        //Phone Number
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Phone number",
-                modifier = Modifier
-                    .width(100.dp)
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 4.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            TextField(
-                value = phone,
-                onValueChange = { phone = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent
-                )
-            )
-        }
-
-        //Address
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Address",
-                modifier = Modifier
-                    .width(100.dp)
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 4.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            TextField(
-                value = address,
-                onValueChange = { address = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent
-                )
-            )
-        }
-
-        // About Me
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp),
-        ) {
-            Text(
-                text = "About Me",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 4.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            TextField(
-                value = aboutMe,
-                onValueChange = { aboutMe = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent
-                ),
-                singleLine = false,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-        }
-
-
         Column {
-            newCards.value.forEach {
-                CreateCard(it.title, it.picture ?: "")
+            userCards.forEachIndexed { index, card ->
+                EditCard(
+                    card = card,
+                    canEditTitle = card.title != "About me",
+                    onCardModified = {
+                        val userCardsMutable = userCards.toMutableList()
+                        userCardsMutable[index] = it
+                        userCards = userCardsMutable.toList()
+
+                        val cardsToUpdateCopy = cardsToUpdate.toMutableMap()
+                        cardsToUpdateCopy[it.id] = true
+                        cardsToUpdate = cardsToUpdateCopy
+                    },
+                    onDelete = {
+                        val copy = userCards.toMutableList()
+                        copy.removeAt(index)
+                        userCards = copy
+                        val cardsToDeleteMutable = cardsToDelete.toMutableMap()
+                        cardsToDeleteMutable[it.id] = it
+                        cardsToDelete = cardsToDeleteMutable.toMap()
+                    },
+                    onPictureClick = {
+                        // TODO: Open Bottom sheet and choose new image
+                    }
+                )
             }
         }
 
@@ -305,28 +219,45 @@ fun EditProfileScreen(
                 modifier = Modifier.padding(bottom = 100.dp),
                 onClick = {
                     composableScope.launch {
-                        userCardViewModel.saveItems(newCards.value)
-                        onSave()
+                        onSave(
+                            cardsToInsert
+                                .filter { it.value }
+                                .map { it.key }
+                                .mapNotNull { id -> userCards.find { it.id == id} },
+                            cardsToUpdate
+                                .filter { it.value }
+                                .map { it.key }
+                                .mapNotNull { id -> userCards.find { it.id == id} },
+                            cardsToDelete
+                                .map { it.value }
+                        )
                     }
                 },
                 colors = buttonColors(YellowApp)
             ) {
-                Text("Save", color = Color.Black)
+                Text(stringResource(R.string.save), color = Color.Black)
             }
+            Text(text = "Cards to insert: ${cardsToInsert.entries.count { it.value }}")
+            Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
+            Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
         }
         BottomSheet() { text, picture ->
             println("Clicked $text $picture")
-            val copy = newCards.value.toMutableList()
+            val copy = userCards.toMutableList()
+            val id = UUID.randomUUID()
             copy.add(
                 Card(
-                    id = UUID.randomUUID(),
+                    id = id,
                     userId = user.id,
                     title = text,
                     value = "",
                     picture = picture
                 )
             )
-            newCards.value = copy
+            userCards = copy
+            val cardsToInsertMutable = cardsToInsert.toMutableMap()
+            cardsToInsertMutable[id] = true
+            cardsToInsert = cardsToInsertMutable.toMap()
             println("CreateCard")
         }
     }
@@ -427,21 +358,25 @@ fun CategoryHeader(
 fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
     val newCardList = listOf(
-        NewCardItem("Contact", "phone", "Phone Number"),
-        NewCardItem("Contact", "description", "Description"),
-        NewCardItem("Contact", "about", "About Me"),
-        NewCardItem("Contact", "location", "Location"),
-        NewCardItem("Social Media", "instagram", "Instagram"),
-        NewCardItem("Social Media", "twitter", "Twitter"),
-        NewCardItem("Social Media", "facebook", "Facebook"),
-        NewCardItem("Social Media", "snapchat", "Snapchat"),
-        NewCardItem("Social Media", "pinterest", "Pinterest"),
-        NewCardItem("Social Media", "linkedin", "Linkedin"),
-        NewCardItem("Social Media", "telegram", "Telegram"),
-        NewCardItem("Social Media", "tiktok", "Tiktok"),
-        NewCardItem("Social Media", "youtube", "Youtube"),
-        NewCardItem("Social Media", "discord", "Discord"),
-        NewCardItem("Social Media", "github", "Github"),
+
+        //Category Contacts
+        NewCardItem(stringResource(R.string.contact), "phone", "Phone Number"),
+        NewCardItem(stringResource(R.string.contact), "description", "Description"),
+        NewCardItem(stringResource(R.string.contact), "about", "About Me"),
+        NewCardItem(stringResource(R.string.contact), "location", "Location"),
+
+        //Category Social Media
+        NewCardItem(stringResource(R.string.social_media),"instagram", "Instagram"),
+        NewCardItem(stringResource(R.string.social_media),"twitter", "Twitter"),
+        NewCardItem(stringResource(R.string.social_media),"facebook", "Facebook"),
+        NewCardItem(stringResource(R.string.social_media),"snapchat", "Snapchat"),
+        NewCardItem(stringResource(R.string.social_media),"pinterest", "Pinterest"),
+        NewCardItem(stringResource(R.string.social_media),"linkedin", "Linkedin"),
+        NewCardItem(stringResource(R.string.social_media),"telegram", "Telegram"),
+        NewCardItem(stringResource(R.string.social_media),"tiktok", "Tiktok"),
+        NewCardItem(stringResource(R.string.social_media),"youtube", "Youtube"),
+        NewCardItem(stringResource(R.string.social_media),"discord", "Discord"),
+        NewCardItem(stringResource(R.string.social_media),"github", "Github"),
 
         )
 
@@ -494,6 +429,14 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val cards = remember {
+        mutableListOf(
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something", "facebook"),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something", "instagram"),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something", "twitter"),
+            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something", "twitch"),
+        )
+    }
     val user =
         remember {
             mutableStateOf(
@@ -507,8 +450,12 @@ fun DefaultPreview() {
             )
         }
     LinkUpTheme {
-        EditProfileScreen(user.value, onSave = {})
+        EditProfileScreen(
+            user.value,
+            cards
+        ) { x, y, z ->
 
+        }
     }
 }
 
