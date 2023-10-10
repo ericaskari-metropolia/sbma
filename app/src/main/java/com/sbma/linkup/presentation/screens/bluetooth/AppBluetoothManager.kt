@@ -12,6 +12,7 @@ import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDataTrans
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothMessage
 import com.sbma.linkup.presentation.screens.bluetooth.connect.ConnectionResult
+import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.toBluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.toByteArray
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +115,9 @@ class AppBluetoothManager(
         }
 
         try {
-            bluetoothAdapter.bluetoothLeScanner.startScan(null, scanSettings, scanCallback)
+            updatePairedDevices()
+            bluetoothAdapter.startDiscovery()
+//            bluetoothAdapter.bluetoothLeScanner.startScan(null, scanSettings, scanCallback)
             lastCleanupTimestamp = System.currentTimeMillis()
             _isScanning.value = true
         } catch (e: Exception) {
@@ -134,7 +137,8 @@ class AppBluetoothManager(
         }
 
         try {
-            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
+            bluetoothAdapter.cancelDiscovery()
+//            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
             _isScanning.value = false
         } catch (e: Exception) {
             println(e.message)
@@ -210,7 +214,7 @@ class AppBluetoothManager(
     }
 
     @SuppressLint("MissingPermission")
-    fun connectToDevice(device: BluetoothDeviceDomain): Flow<ConnectionResult> {
+    fun connectToDevice(device: IBluetoothDeviceDomain): Flow<ConnectionResult> {
         println("[connectToDevice]")
         return flow {
 //            if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {

@@ -154,7 +154,7 @@ fun UserShareScreenDarkModePreview() {
     LinkUpTheme(
         darkTheme = true
     ) {
-        UserShareScreen(cards) {
+        ChooseCardsToShareScreen(cards) {
         }
     }
 }
@@ -173,7 +173,7 @@ fun UserShareScreenDynamicThemePreview() {
         darkTheme = false,
         dynamicColor = true
     ) {
-        UserShareScreen(cards) {
+        ChooseCardsToShareScreen(cards) {
         }
     }
 }

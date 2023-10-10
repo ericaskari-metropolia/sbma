@@ -28,15 +28,7 @@ class UserViewModel(
     private val userConnectionRepository: IConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
-
     ) : ViewModel() {
-
-    init {
-        viewModelScope.launch {
-            syncRoomDatabase()
-        }
-    }
-
     val loggedInUserId = dataStore.getUserId
     val getAccessToken = dataStore.getAccessToken
     val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt

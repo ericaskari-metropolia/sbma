@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -20,7 +21,7 @@ import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDo
 @Composable
 fun AppBluetoothDeviceList(data: List<IBluetoothDeviceDomain>, modifier: Modifier = Modifier, onClick: (device: IBluetoothDeviceDomain) -> Unit) {
     LazyColumn(
-        modifier.fillMaxSize(),
+        modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(1.dp),
     ) {
         items(data) { scanResult ->

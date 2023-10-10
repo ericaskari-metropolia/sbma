@@ -9,6 +9,7 @@ import com.sbma.linkup.application.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.ConnectionResult
 import com.sbma.linkup.presentation.screens.bluetooth.connect.FoundedBluetoothDeviceDomain
+import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +52,9 @@ class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
     private val appBroadcastReceiver: AppBroadcastReceiver,
 ) : ViewModel() {
+    val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val isBluetoothEnabled = appBroadcastReceiver.bluetoothEnabled
+    val pairedDevices = appBluetoothManager.pairedDevices
     val bluetoothDevicesFound = appBroadcastReceiver.bluetoothDevicesFound
     val scanResultList = appBluetoothManager.scanResultList
     val isScanning = appBluetoothManager.isScanning
@@ -88,7 +91,7 @@ class AppBluetoothViewModel(
         appBroadcastReceiver.launchEnableBtAdapter()
     }
 
-    fun connectToDevice(device: BluetoothDeviceDomain) {
+    fun connectToDevice(device: IBluetoothDeviceDomain) {
         println("connectToDevice: ${device}")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
@@ -158,6 +161,10 @@ class AppBluetoothViewModel(
                 ) }
             }
         }
+    }
+
+    fun updatePaired() {
+        appBluetoothManager.updatePairedDevices()
     }
 //    fun getReadBytes(): ByteArray? {
 //        return _services.value.let { svcs ->
