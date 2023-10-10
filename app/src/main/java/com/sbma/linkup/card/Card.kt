@@ -17,10 +17,5 @@ data class Card(
     @ColumnInfo val title: String,
     @ColumnInfo val value: String,
     @ColumnInfo val picture: String?,
-): Serializable {
-
-    companion object {
-
-    }
-}
+): Serializable
 

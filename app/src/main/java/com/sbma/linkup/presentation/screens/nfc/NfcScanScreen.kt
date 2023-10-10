@@ -1,20 +1,24 @@
 package com.sbma.linkup.presentation.screens.nfc
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +41,38 @@ import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NfcScanScreenTopBar(
+    onBackClick: () -> Unit
+) {
+    MediumTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
+        title = {
+            Text(
+                text = "NFC transfer",
+                style = MaterialTheme.typography.labelLarge,
+                fontSize = 20.sp
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier,
+                onClick = { onBackClick() }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+        },
+    )
+}
+
 @Composable
 fun NfcScanScreen(
     shareId: String,
@@ -57,49 +93,48 @@ fun NfcScanScreen(
             }
         }
     }
-    Column(
+    Scaffold(
+        topBar = {
+            NfcScanScreenTopBar {
+                onBackClick()
+            }
+        },
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
+            .fillMaxSize()
+    ) { padding ->
+        Column(
             modifier = Modifier
+                .padding(padding)
                 .fillMaxWidth()
-                .align(Alignment.Start)
+                .padding(top = 20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(
-                Icons.Rounded.KeyboardArrowLeft,
-                contentDescription = "Back",
+            Text(
+                textAlign = TextAlign.Center,
+                text = "Hover the back of your device over an NFC-enabled card",
+                style = MaterialTheme.typography.labelLarge,
+                fontSize = 20.sp,
                 modifier = Modifier
-                    .clickable { onBackClick() }
+                    .padding(16.dp)
+                    .fillMaxWidth()
             )
-        }
-
-        Text(
-            textAlign = TextAlign.Center,
-            text = "Hover the back of your device over an NFC-enabled card",
-            fontSize = 20.sp,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        LottieAnimation(
-            composition = composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .border(10.dp, YellowApp, RoundedCornerShape(70.dp))
-                .clip(RoundedCornerShape(70.dp))
-        )
-        Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(50.dp))
+            LottieAnimation(
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .border(10.dp, YellowApp, RoundedCornerShape(70.dp))
+                    .clip(RoundedCornerShape(70.dp))
+            )
+            Spacer(modifier = Modifier.height(50.dp))
 //        toastMessage.value?.let {
 //            Toast.makeText(LocalContext.current, it, Toast.LENGTH_LONG).show()
 //        }
-        assignTagResponseStatus.value?.let {
-            Text(it)
+            assignTagResponseStatus.value?.let {
+                Text(it)
+            }
         }
     }
+
 }
