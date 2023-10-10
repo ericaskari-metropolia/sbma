@@ -28,15 +28,16 @@ import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 fun LoginScreen() {
     val context = LocalContext.current
     val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://sbma.ericaskari.com/auth/google")) }
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_ln6i2ywv))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.login_lottie))
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(5.dp)
     ) {
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
+
         )
         Text(text = stringResource(R.string.login))
         Column(
