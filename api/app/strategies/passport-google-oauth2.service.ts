@@ -49,9 +49,7 @@ export function configRoutes(app: Express) {
         const params = new URLSearchParams();
         params.set('token', JSON.stringify(token));
         params.set('user', JSON.stringify(user));
-        const template = continueWithAppTemplate
-            .replace('[launchLink]', `/android/auth/login?${params.toString()}`)
-            .replace('[accessToken]', token.accessToken);
+        const template = continueWithAppTemplate.replace('[launchLink]', `/android/auth/login?${params.toString()}`);
 
         res.send(template);
     });
