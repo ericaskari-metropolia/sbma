@@ -37,14 +37,20 @@ fun UserCardsListItem(userCard: Card) {
                 painter = painterResource(userCard.picture.toPictureResource()),
                 contentDescription = "Card Icon",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.width(size.value).height(size.value)
+                modifier = Modifier
+                    .width(size.value)
+                    .height(size.value)
             )
         }
     )
 }
 
 @Composable
-fun UserCardsList(userCards: List<Card>, withLazyColumn: Boolean = true, modifier: Modifier = Modifier) {
+fun UserCardsList(
+    userCards: List<Card>,
+    modifier: Modifier = Modifier,
+    withLazyColumn: Boolean = true
+) {
     if (withLazyColumn) {
         LazyColumn(
             modifier.fillMaxSize(),
@@ -67,10 +73,34 @@ fun UserCardsList(userCards: List<Card>, withLazyColumn: Boolean = true, modifie
 fun UserCardsListPreview() {
     val cards = remember {
         mutableListOf(
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Facebook", "https://facebook.com/something", "facebook"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Instagram", "https://instagram.com/something", "instagram"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitter", "https://twitter.com/something", "twitter"),
-            Card(UUID.randomUUID(), UUID.randomUUID(), "Twitch", "https://twitch.com/something", "twitch"),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Facebook",
+                "https://facebook.com/something",
+                "facebook"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Instagram",
+                "https://instagram.com/something",
+                "instagram"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Twitter",
+                "https://twitter.com/something",
+                "twitter"
+            ),
+            Card(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Twitch",
+                "https://twitch.com/something",
+                "twitch"
+            ),
         )
     }
     LinkUpTheme {
