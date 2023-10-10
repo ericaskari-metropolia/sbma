@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,7 +24,7 @@ import com.sbma.linkup.presentation.ui.theme.YellowApp
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    var selectedItem by rememberSaveable { mutableStateOf(2) }
+    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
 
     val items = listOf(
         BottomNavigationItemsData.Share,

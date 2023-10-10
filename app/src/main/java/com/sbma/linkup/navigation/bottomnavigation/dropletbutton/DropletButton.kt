@@ -58,7 +58,7 @@ fun DropletButton(
         val sizePx = remember(size) { size.toPxf(density) }
         val circleCenter by remember {
             derivedStateOf {
-                mutableStateOf(sizePx / 2)
+                mutableFloatStateOf(sizePx / 2)
             }
         }
 
