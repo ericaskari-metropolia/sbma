@@ -1,9 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +19,15 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,21 +55,70 @@ import java.util.UUID
 
 @Composable
 fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) {
-    val userConnectionViewModel: ConnectionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val userConnectionViewModel: ConnectionViewModel =
+        viewModel(factory = AppViewModelProvider.Factory)
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val connectionUser = userConnectionViewModel.allItemsStream(user.id).collectAsState(initial = null)
+    val connectionUser =
+        userConnectionViewModel.allItemsStream(user.id).collectAsState(initial = null)
 
     val connection = (connectionUser.value ?: mapOf()).entries.toList().find { mapEntry ->
         connectionIdParam?.let { mapEntry.key.id == UUID.fromString(it) } ?: false
     }
     connection?.let {
-        val userCards = userCardViewModel.allItemsStream(it.value.id).collectAsState(initial = listOf())
+        val userCards =
+            userCardViewModel.allItemsStream(it.value.id).collectAsState(initial = listOf())
         UserProfileScreen(it.value, userCards.value, canEdit = false, onEditClick = null)
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEditClick: (() -> Unit)? = null) {
+fun UserProfileScreenTopBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    canEdit: Boolean,
+    onEditClick: (() -> Unit)?
+) {
+    MediumTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
+        title = {
+            Text(
+                text = "Profile",
+                style = MaterialTheme.typography.labelLarge,
+                fontSize = 20.sp
+            )
+        },
+        actions = {
+            if (canEdit) {
+                IconButton(
+                    modifier = Modifier,
+                    onClick = { onEditClick?.let { it() } }
+                ) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = "Edit",
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+//                            .fillMaxSize()
+                    )
+                }
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserProfileScreen(
+    user: User,
+    userCards: List<Card>,
+    canEdit: Boolean,
+    onEditClick: (() -> Unit)? = null
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val aboutMeCard = userCards.find { it.title == "About Me" }
     val phoneNumberCard = userCards.find { it.title == "Phone Number" }
     val emailCard = userCards.find { it.title == "Email" }
@@ -79,109 +132,120 @@ fun UserProfileScreen(user: User, userCards: List<Card>, canEdit: Boolean, onEdi
         .filter { it.title != "Location" }
         .filter { it.title != "Title" }
         .toList()
-    Column(
+
+    Scaffold(
+        topBar = {
+            UserProfileScreenTopBar(
+                canEdit = canEdit,
+                onEditClick = onEditClick,
+                scrollBehavior = scrollBehavior
+            )
+        },
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, end = 10.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ScreenTitle(
-            canEdit = canEdit,
-            onEditClick = onEditClick,
-        )
-        Column {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-
-            ) {
-                Spacer(modifier = Modifier.height(30.dp))
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(start = 10.dp, end = 10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column {
                 Column(
                     modifier = Modifier
-                        .padding(all = 10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
 
-                    ) {
-                    AsyncImage(
-                        model = user.picture,
-                        contentDescription = "profile photo",
+                ) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Column(
                         modifier = Modifier
-                            .size(150.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                    )
-                }
-                Text(text = user.name, fontSize = 30.sp)
-                Spacer(modifier = Modifier.height(8.dp))
+                            .padding(all = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
 
-                titleCard?.let {
-                    Text(text = it.value, fontSize = 20.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                aboutMeCard?.let {
-                    Card(
-                        modifier = Modifier
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
                         ) {
-                            Text(
-                                text = stringResource(R.string.about_me),
-                                fontSize = 20.sp,
-                                style = MaterialTheme.typography.labelLarge,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = it.value, fontSize = 16.sp)
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                if (phoneNumberCard != null || emailCard != null || addressCard != null) {
-                    Card(
-                        modifier = Modifier
-                    ) {
-                        Column(
+                        AsyncImage(
+                            model = user.picture,
+                            contentDescription = "profile photo",
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
+                                .size(150.dp)
+                                .clip(RoundedCornerShape(50.dp))
+                        )
+                    }
+                    Text(text = user.name, fontSize = 30.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    titleCard?.let {
+                        Text(text = it.value, fontSize = 20.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    aboutMeCard?.let {
+                        Card(
+                            modifier = Modifier
                         ) {
-                            Text(
-                                text = stringResource(R.string.contact_details),
-                                fontSize = 20.sp,
-                                style = MaterialTheme.typography.labelLarge,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            phoneNumberCard?.let {
-                                ContactInfoRow(
-                                    icon = Icons.Filled.Call,
-                                    text = it.value
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.about_me),
+                                    fontSize = 20.sp,
+                                    style = MaterialTheme.typography.labelLarge,
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
+                                Text(text = it.value, fontSize = 16.sp)
                             }
-                            emailCard?.let {
-                                ContactInfoRow(
-                                    icon = Icons.Filled.Email,
-                                    text = it.value
+
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    if (phoneNumberCard != null || emailCard != null || addressCard != null) {
+                        Card(
+                            modifier = Modifier
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.contact_details),
+                                    fontSize = 20.sp,
+                                    style = MaterialTheme.typography.labelLarge,
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                            }
-                            addressCard?.let {
-                                ContactInfoRow(
-                                    icon = Icons.Filled.LocationOn,
-                                    text = "Pohjoisesplanadi 31, 00100 Helsinki, Finland"
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                phoneNumberCard?.let {
+                                    ContactInfoRow(
+                                        icon = Icons.Filled.Call,
+                                        text = it.value
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                                emailCard?.let {
+                                    ContactInfoRow(
+                                        icon = Icons.Filled.Email,
+                                        text = it.value
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                                addressCard?.let {
+                                    ContactInfoRow(
+                                        icon = Icons.Filled.LocationOn,
+                                        text = "Pohjoisesplanadi 31, 00100 Helsinki, Finland"
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
                             }
                         }
                     }
-                }
 
-                UserCardsList(restOfTheCards, withLazyColumn = false)
+                    UserCardsList(restOfTheCards, withLazyColumn = false)
+                }
             }
         }
     }
@@ -209,53 +273,66 @@ fun ContactInfoRow(icon: ImageVector, text: String) {
     }
 }
 
-@Composable
-fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top,
-    ) {
-        Text(
-            text = stringResource(R.string.profile),
-            fontSize = 25.sp,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-
-        )
-        Row {
-            if (canEdit) {
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 5.dp)
-                        .size(36.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-                ) {
-                    Icon(
-                        Icons.Filled.Edit,
-                        contentDescription = "Edit",
-                        modifier = Modifier
-                            .padding(horizontal = 3.dp)
-                            .fillMaxSize()
-                            .clickable {
-                                onEditClick?.let { it() }
-                            }
-                    )
-
-                }
-
-            }
-        }
-    }
-}
+//@Composable
+//fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(16.dp),
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.Top,
+//    ) {
+//        Text(
+//            text = stringResource(R.string.profile),
+//            fontSize = 25.sp,
+//            style = MaterialTheme.typography.labelLarge,
+//            modifier = Modifier
+//
+//        )
+//        Row {
+//            if (canEdit) {
+//                Box(
+//                    modifier = Modifier
+//                        .padding(horizontal = 5.dp)
+//                        .size(36.dp)
+//                        .background(
+//                            MaterialTheme.colorScheme.primaryContainer,
+//                            shape = RoundedCornerShape(10.dp)
+//                        )
+//                ) {
+//                    Icon(
+//                        Icons.Filled.Edit,
+//                        contentDescription = "Edit",
+//                        modifier = Modifier
+//                            .padding(horizontal = 3.dp)
+//                            .fillMaxSize()
+//                            .clickable {
+//                                onEditClick?.let { it() }
+//                            }
+//                    )
+//
+//                }
+//
+//            }
+//        }
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
     val user =
-        remember { mutableStateOf(User(UUID.randomUUID(), "Sebubebu", "shayne@example.com", "UX/UI Designer", null)) }
+        remember {
+            mutableStateOf(
+                User(
+                    UUID.randomUUID(),
+                    "Sebubebu",
+                    "shayne@example.com",
+                    "UX/UI Designer",
+                    null
+                )
+            )
+        }
     val cards = remember {
         mutableListOf(
             Card(

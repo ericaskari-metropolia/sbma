@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -45,7 +46,7 @@ class Parabolic(
 
         val path = remember { Path() }
         val pathMeasurer = remember { PathMeasure() }
-        val pathLength = remember { mutableStateOf(0f) }
+        val pathLength = remember { mutableFloatStateOf(0f) }
         val pos = remember { floatArrayOf(Float.MAX_VALUE, Float.MAX_VALUE) }
         val tan = remember { floatArrayOf(0f, 0f) }
 
@@ -53,7 +54,7 @@ class Parabolic(
         val maxHeightPx = remember(maxHeight) { maxHeight.toPxf(density) }
 
         fun measurePosition() {
-            pathMeasurer.getPosTan(pathLength.value * fraction.value, pos, tan)
+            pathMeasurer.getPosTan(pathLength.floatValue * fraction.value, pos, tan)
         }
 
         LaunchedEffect(targetOffset) {

@@ -23,8 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -48,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -65,7 +63,6 @@ import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.presentation.components.EditCard
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
-import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.toPictureResource
@@ -114,7 +111,8 @@ fun EditProfileScreenProvider(
 @Composable
 fun EditProfileScreenTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSave: () -> Unit
 ) {
     MediumTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -136,6 +134,19 @@ fun EditProfileScreenTopBar(
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Back"
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                modifier = Modifier,
+                onClick = { onSave() }
+            ) {
+                Icon(
+                    Icons.Filled.Check,
+                    contentDescription = "Save",
+                    modifier = Modifier
+                        .padding(horizontal = 3.dp)
                 )
             }
         },
@@ -169,14 +180,53 @@ fun EditProfileScreen(
 
     Scaffold(
         topBar = {
-            EditProfileScreenTopBar(scrollBehavior) {
-                onBackClick()
+            EditProfileScreenTopBar(
+                scrollBehavior = scrollBehavior,
+                onBackClick = onBackClick,
+                onSave = {
+                    composableScope.launch {
+                        onSave(
+                            cardsToInsert
+                                .filter { it.value }
+                                .map { it.key }
+                                .mapNotNull { id -> userCards.find { it.id == id } },
+                            cardsToUpdate
+                                .filter { it.value }
+                                .map { it.key }
+                                .mapNotNull { id -> userCards.find { it.id == id } },
+                            cardsToDelete
+                                .map { it.value }
+                        )
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            BottomSheet { text, picture ->
+                println("Clicked $text $picture")
+                val copy = userCards.toMutableList()
+                val id = UUID.randomUUID()
+                copy.add(
+                    Card(
+                        id = id,
+                        userId = user.id,
+                        title = text,
+                        value = "",
+                        picture = picture
+                    )
+                )
+                userCards = copy
+                val cardsToInsertMutable = cardsToInsert.toMutableMap()
+                cardsToInsertMutable[id] = true
+                cardsToInsert = cardsToInsertMutable.toMap()
+                println("CreateCard")
             }
         },
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -322,26 +372,6 @@ fun EditProfileScreen(
                         )
                     }
                 }
-
-            }
-            BottomSheet { text, picture ->
-                println("Clicked $text $picture")
-                val copy = userCards.toMutableList()
-                val id = UUID.randomUUID()
-                copy.add(
-                    Card(
-                        id = id,
-                        userId = user.id,
-                        title = text,
-                        value = "",
-                        picture = picture
-                    )
-                )
-                userCards = copy
-                val cardsToInsertMutable = cardsToInsert.toMutableMap()
-                cardsToInsertMutable[id] = true
-                cardsToInsert = cardsToInsertMutable.toMap()
-                println("CreateCard")
             }
         }
     }
@@ -355,10 +385,8 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
-
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
 
         FloatingActionButton(
