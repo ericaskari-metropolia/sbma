@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,14 +123,14 @@ fun UserProfileScreen(
     val aboutMeCard = userCards.find { it.title == "About Me" }
     val phoneNumberCard = userCards.find { it.title == "Phone Number" }
     val emailCard = userCards.find { it.title == "Email" }
-    val addressCard = userCards.find { it.title == "Location" }
+    val addressCard = userCards.find { it.title == "Address" }
     val titleCard = userCards.find { it.title == "Title" }
     val restOfTheCards = userCards
         .asSequence()
         .filter { it.title != "About Me" }
         .filter { it.title != "Phone Number" }
         .filter { it.title != "Email" }
-        .filter { it.title != "Location" }
+        .filter { it.title != "Address" }
         .filter { it.title != "Title" }
         .toList()
 
@@ -161,7 +162,6 @@ fun UserProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
-                    Spacer(modifier = Modifier.height(30.dp))
                     Column(
                         modifier = Modifier
                             .padding(all = 10.dp),
@@ -176,7 +176,7 @@ fun UserProfileScreen(
                                 .clip(RoundedCornerShape(50.dp))
                         )
                     }
-                    Text(text = user.name, fontSize = 30.sp)
+                    Text(text = user.name, fontSize = 30.sp, textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.height(8.dp))
 
                     titleCard?.let {
@@ -236,7 +236,7 @@ fun UserProfileScreen(
                                 addressCard?.let {
                                     ContactInfoRow(
                                         icon = Icons.Filled.LocationOn,
-                                        text = "Pohjoisesplanadi 31, 00100 Helsinki, Finland"
+                                        text = it.value
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
