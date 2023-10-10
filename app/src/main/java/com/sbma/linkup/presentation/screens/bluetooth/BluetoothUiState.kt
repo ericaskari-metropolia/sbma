@@ -1,12 +1,12 @@
 package com.sbma.linkup.presentation.screens.bluetooth
 
-import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothMessage
+import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
 
 
 data class BluetoothUiState(
-    val scannedDevices: List<BluetoothDeviceDomain> = emptyList(),
-    val pairedDevices: List<BluetoothDeviceDomain> = emptyList(),
+    val scannedDevices: List<IBluetoothDeviceDomain> = emptyList(),
+    val pairedDevices: List<IBluetoothDeviceDomain> = emptyList(),
     val isConnected: Boolean = false,
     val isConnecting: Boolean = false,
     val errorMessage: String? = null,

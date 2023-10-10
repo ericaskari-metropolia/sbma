@@ -1,63 +1,64 @@
 package com.sbma.linkup.presentation.screens.bluetooth
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetBluetoothConnectPermission
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetBluetoothScanPermission
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetEnableBluetoothPermission
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetFineLocationPermission
+import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetAllBluetoothPermissionsProvider
+import com.sbma.linkup.user.UserViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable()
-fun ShareViaBluetoothScreenProvider(shareId: String) {
+fun ShareViaBluetoothScreenProvider(
+    shareId: String,
+    appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
+) {
+    var permissionsAllowed by rememberSaveable {
+        mutableStateOf(false)
+    }
     Column {
-        GetEnableBluetoothPermission()
-        GetBluetoothConnectPermission()
-        GetBluetoothScanPermission()
-        GetFineLocationPermission()
-        ShareViaBluetoothScreen()
+        if (!permissionsAllowed) {
+            GetAllBluetoothPermissionsProvider {
+                println("All permissions are good now")
+                permissionsAllowed = true
+            }
+        } else {
+            LaunchedEffect(true){
+                appBluetoothViewModel.scan()
+                appBluetoothViewModel.updatePaired()
+            }
+            LaunchedEffect(true) {
+                println("Collecting  state now!")
+
+                appBluetoothViewModel.state.collectLatest {state ->
+                    println("Collect state")
+                    if (state.isConnected) {
+                        appBluetoothViewModel.sendMessage(shareId)
+                        println("ShareId sent!")
+                    }
+                }
+            }
+            ShareViaBluetoothScreen()
+        }
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable()
 fun ShareViaBluetoothScreen(
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
     ) {
-    val isScanning = appBluetoothViewModel.isScanning.collectAsState()
-    val scanResultList = appBluetoothViewModel.scanResultList.collectAsState(initial = listOf())
     val bluetoothDevicesFound = appBluetoothViewModel.bluetoothDevicesFound.collectAsState(initial = listOf())
     val pairedDevices = appBluetoothViewModel.pairedDevices.collectAsState(initial = listOf())
 
     Column {
-        Text(text = "isScanning: ${isScanning.value}")
-        Text(text = "scanResultList.value: ${scanResultList.value.count()}")
-        Text(text = "bluetoothDevicesFound.value: ${bluetoothDevicesFound.value.count()}")
-        Text(text = "bluetoothDeviceConnectionStatus.value: ${appBluetoothViewModel.bluetoothDeviceConnectionStatus}")
-        Button(onClick = { appBluetoothViewModel.scan() }) {
-            Text(text = "Start Scan")
-        }
-        Button(onClick = { appBluetoothViewModel.updatePaired() }) {
-            Text(text = "Update paired")
-        }
-        Button(onClick = { appBluetoothViewModel.startServer() }) {
-            Text(text = "Start Server")
-        }
-        Button(onClick = { appBluetoothViewModel.sendMessage("SHARE ID") }) {
-            Text(text = "Send Message")
-        }
-        AppBluetoothDeviceList(data = bluetoothDevicesFound.value) {
-            appBluetoothViewModel.connectToDevice(it)
-        }
-        AppBluetoothDeviceList(data = scanResultList.value) {
-            appBluetoothViewModel.connectToDevice(it)
-        }
-        AppBluetoothDeviceList(data = pairedDevices.value) {
+        AppBluetoothDeviceList(data = bluetoothDevicesFound.value + pairedDevices.value) {
             appBluetoothViewModel.connectToDevice(it)
         }
     }

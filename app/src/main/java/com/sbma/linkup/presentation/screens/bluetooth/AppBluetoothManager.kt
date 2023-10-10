@@ -4,10 +4,6 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
-import android.content.Context
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDataTransferService
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothMessage
@@ -15,7 +11,6 @@ import com.sbma.linkup.presentation.screens.bluetooth.connect.ConnectionResult
 import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.toBluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.connect.toByteArray
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,28 +22,18 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
 
 class AppBluetoothManager(
     val bluetoothAdapter: BluetoothAdapter?,
-    private val scope: CoroutineScope,
-    private val context: Context
 ) {
     private var currentServerSocket: BluetoothServerSocket? = null
     private var currentClientSocket: BluetoothSocket? = null
     private var dataTransferService: BluetoothDataTransferService? = null
 
-    private val _scanResultList = MutableStateFlow(mapOf<String, BluetoothDeviceDomain>())
-    val scanResultList get() = _scanResultList.map { it.values.toList() }
-
     private val _isScanning = MutableStateFlow(false)
     val isScanning get() = _isScanning.asStateFlow()
-
-
-    private val _scannedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    val scannedDevices: StateFlow<List<BluetoothDeviceDomain>> get() = _scannedDevices.asStateFlow()
 
     private val _pairedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
     val pairedDevices: StateFlow<List<BluetoothDeviceDomain>> get() = _pairedDevices.asStateFlow()
@@ -57,30 +42,6 @@ class AppBluetoothManager(
 
     private var lastCleanupTimestamp: Long? = null
     private val CLEANUP_DURATION = 10000L
-
-    private val scanCallback = appBluetoothScanCallbackFactory(
-        onScanResult = {
-            scope.launch {
-                val copy = _scanResultList.value.toMutableMap()
-                copy[it.device.address] = it.toBluetoothDeviceDomain()
-                _scanResultList.value = copy
-
-                if (_isScanning.value) {
-                    launch { deleteNotSeen() }
-                }
-            }
-        },
-        onScanFailed = { errorCode ->
-            println("$TAG onScanFailed")
-            println("Scan error $errorCode")
-
-            if (errorCode == ScanCallback.SCAN_FAILED_ALREADY_STARTED) {
-                stopScan()
-                scan()
-            }
-        }
-    )
-
 
     @SuppressLint("MissingPermission")
     fun updatePairedDevices() {
@@ -266,27 +227,5 @@ class AppBluetoothManager(
     companion object {
         const val TAG = "[AppBluetoothManager]"
         const val SERVICE_UUID = "27b7d1da-08c7-4505-a6d1-2459987e5e2d"
-
-        private val scanSettings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-            .build()
-
-
-        private fun appBluetoothScanCallbackFactory(
-            onScanFailed: (errorCode: Int) -> Unit,
-            onScanResult: (result: ScanResult) -> Unit,
-        ): ScanCallback {
-            return object : ScanCallback() {
-                override fun onScanFailed(errorCode: Int) {
-                    super.onScanFailed(errorCode)
-                    onScanFailed(errorCode)
-                }
-
-                override fun onScanResult(callbackType: Int, result: ScanResult) {
-                    super.onScanResult(callbackType, result)
-                    onScanResult(result)
-                }
-            }
-        }
     }
 }

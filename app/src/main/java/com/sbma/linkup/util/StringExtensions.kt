@@ -1,6 +1,8 @@
 package com.sbma.linkup.util
 
 import com.sbma.linkup.R
+import java.util.UUID
+
 
 fun String?.toPictureResource(): Int  =
     when(this){
@@ -21,3 +23,11 @@ fun String?.toPictureResource(): Int  =
         "telegram" -> R.drawable.telegram
         else -> R.drawable.person
     }
+
+fun String.uuidOrNull(): UUID? {
+    return try {
+        UUID.fromString(this)
+    } catch (exception: IllegalArgumentException) {
+        null
+    }
+}

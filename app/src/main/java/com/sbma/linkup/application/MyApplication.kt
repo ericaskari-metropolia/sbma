@@ -70,8 +70,6 @@ class MyApplication : Application() {
         bluetoothAdapter = bluetoothManager.adapter
         appBluetoothManager = AppBluetoothManager(
             bluetoothAdapter = bluetoothAdapter,
-            scope = coroutineScope,
-            context = this
         )
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 

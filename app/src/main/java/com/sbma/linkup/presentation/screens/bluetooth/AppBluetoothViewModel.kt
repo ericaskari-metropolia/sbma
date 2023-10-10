@@ -52,22 +52,18 @@ class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
     private val appBroadcastReceiver: AppBroadcastReceiver,
 ) : ViewModel() {
-    val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val isBluetoothEnabled = appBroadcastReceiver.bluetoothEnabled
+    val isScanning = appBluetoothManager.isScanning
+
+    val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val pairedDevices = appBluetoothManager.pairedDevices
     val bluetoothDevicesFound = appBroadcastReceiver.bluetoothDevicesFound
-    val scanResultList = appBluetoothManager.scanResultList
-    val isScanning = appBluetoothManager.isScanning
 
     private var deviceConnectionJob: Job? = null
 
     private val _state = MutableStateFlow(BluetoothUiState())
 
-    val state = combine(
-        appBluetoothManager.scannedDevices,
-        appBluetoothManager.pairedDevices,
-        _state
-    ) { scannedDevices, pairedDevices, state ->
+    val state = combine(bluetoothDevicesFound, pairedDevices, _state) { scannedDevices, pairedDevices, state ->
         state.copy(
             scannedDevices = scannedDevices,
             pairedDevices = pairedDevices,
@@ -166,17 +162,4 @@ class AppBluetoothViewModel(
     fun updatePaired() {
         appBluetoothManager.updatePairedDevices()
     }
-//    fun getReadBytes(): ByteArray? {
-//        return _services.value.let { svcs ->
-//            svcs.flatMap { it.characteristics }.find {
-//                it.uuid == ELKBLEDOM.uuid
-//            }?.readBytes
-//        }
-//    }
-//    fun getOnOffState(): Boolean {
-//        val bytes = getReadBytes()
-//        return bytes?.let {
-//            ELKBLEDOM.onOffState(it)
-//        } ?: false
-//    }
 }
