@@ -108,7 +108,7 @@ fun ChooseMethodScreen(
         ) {
             Card(
                 onClick = { onQrCodeClick() },
-                modifier = Modifier.size(width = 150.dp, height = 150.dp),
+                modifier = Modifier.size(width = 150.dp, height = 150.dp).padding(top = 12.dp),
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize()
