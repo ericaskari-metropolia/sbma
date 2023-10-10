@@ -8,7 +8,7 @@
 
     <!--Miscellaneous Strings -->
 
-    <string name="login">LOGIN</string>
+    <string name="login">Choose Your Sign-In Method</string>
     <string name="title">Title</string>
     <string name="value">Value</string>
     <string name="setting">Setting</string>
