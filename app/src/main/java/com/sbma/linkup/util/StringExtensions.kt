@@ -4,12 +4,13 @@ import com.sbma.linkup.R
 import java.util.UUID
 
 
-fun String?.toPictureResource(): Int  =
-    when(this){
+fun String?.toPictureResource(): Int =
+    when (this) {
         "phone" -> R.drawable.call
         "description" -> R.drawable.description
         "about" -> R.drawable.aboutme
-        "location" -> R.drawable.location
+        "address" -> R.drawable.location
+        "email" -> R.drawable.mail
         "facebook" -> R.drawable.facebook
         "instagram" -> R.drawable.instagram
         "linkedin" -> R.drawable.linkedin
@@ -21,6 +22,7 @@ fun String?.toPictureResource(): Int  =
         "pinterest" -> R.drawable.pinterest
         "tiktok" -> R.drawable.tiktok
         "telegram" -> R.drawable.telegram
+        "reddit" -> R.drawable.reddit
         else -> R.drawable.person
     }
 

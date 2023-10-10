@@ -55,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -258,6 +259,8 @@ fun EditProfileScreen(
             ) {
                 Text(text = user.name, fontSize = 30.sp)
                 Spacer(modifier = Modifier.height(8.dp))
+//                Text(text = user.description, fontSize = 20.sp)
+//                Spacer(modifier = Modifier.height(8.dp))
             }
             Column {
                 userCards.forEachIndexed { index, card ->
@@ -295,92 +298,10 @@ fun EditProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
-                Button(
-                    modifier = Modifier.padding(bottom = 40.dp),
-                    onClick = {
-                        composableScope.launch {
-                            onSave(
-                                cardsToInsert
-                                    .filter { it.value }
-                                    .map { it.key }
-                                    .mapNotNull { id -> userCards.find { it.id == id } },
-                                cardsToUpdate
-                                    .filter { it.value }
-                                    .map { it.key }
-                                    .mapNotNull { id -> userCards.find { it.id == id } },
-                                cardsToDelete
-                                    .map { it.value }
-                            )
-                        }
-                    },
-                    colors = buttonColors(YellowApp)
-                ) {
-                    Text(stringResource(R.string.save), color = Color.Black)
-                }
-                val cardsToInsertCount = cardsToInsert.entries.count { it.value }
-                val cardsToUpdateCount = cardsToUpdate.entries.count { it.value }
-                val cardsToDeleteCount = cardsToDelete.values.count()
-
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Text(text = "Change Statistics",  modifier = Modifier
-                        .padding(start = 16.dp, bottom = 10.dp),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Gray, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                            .padding(8.dp)
-
-                    ) {
-                        Text(
-                            text = "Cards to insert: $cardsToInsertCount",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.White,shape = RoundedCornerShape(0.dp, 0.dp, 0.dp, 0.dp))
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "Cards to update: $cardsToUpdateCount",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Gray,shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "Cards to delete: $cardsToDeleteCount",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -390,7 +311,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         mutableStateOf(false)
     }
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
 
         FloatingActionButton(
@@ -477,10 +398,11 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
     val newCardList = listOf(
 
         //Category Contacts
-        NewCardItem(stringResource(R.string.contact), "phone", "Phone"),
-        NewCardItem(stringResource(R.string.contact), "description", "Description"),
-        NewCardItem(stringResource(R.string.contact), "location", "Location"),
+        NewCardItem(stringResource(R.string.contact), "phone", "Phone Number"),
+        NewCardItem(stringResource(R.string.contact), "description", "Title"),
+        NewCardItem(stringResource(R.string.contact), "address", "Address"),
         NewCardItem(stringResource(R.string.contact), "about", "About Me"),
+        NewCardItem(stringResource(R.string.contact), "mail", "Email"),
 
 
         //Category Social Media
@@ -489,20 +411,23 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
         NewCardItem(stringResource(R.string.social_media), "facebook", "Facebook"),
         NewCardItem(stringResource(R.string.social_media), "snapchat", "Snapchat"),
         NewCardItem(stringResource(R.string.social_media), "pinterest", "Pinterest"),
-        NewCardItem(stringResource(R.string.social_media), "linkedin", "Linkedin"),
+        NewCardItem(stringResource(R.string.social_media), "linkedin", "LinkedIn"),
         NewCardItem(stringResource(R.string.social_media), "telegram", "Telegram"),
-        NewCardItem(stringResource(R.string.social_media), "tiktok", "Tiktok"),
+        NewCardItem(stringResource(R.string.social_media), "tiktok", "TikTok"),
         NewCardItem(stringResource(R.string.social_media), "youtube", "Youtube"),
         NewCardItem(stringResource(R.string.social_media), "discord", "Discord"),
         NewCardItem(stringResource(R.string.social_media), "github", "Github"),
-
-        )
+        NewCardItem(stringResource(R.string.social_media), "reddit", "Reddit"),
+    )
 
 
     val categories = newCardList.groupBy { it.category }
 
 
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         categories.forEach { category ->
             stickyHeader {
                 CategoryHeader(category.key)
@@ -510,8 +435,8 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
             items(category.value.toList().chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                        .fillMaxWidth(),
+//                        .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
@@ -519,20 +444,31 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(25.dp)
                                 .clickable { onClick(rowItem.text, rowItem.picture) }
                         ) {
+
                             Image(
                                 painter = painterResource(rowItem.picture.toPictureResource()),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(48.dp)
-                                    .padding(8.dp),
-                                contentScale = ContentScale.Crop
+                                    .align(Alignment.CenterHorizontally)
+                                    .size(48.dp),
+//                                    .padding(8.dp),
+                                contentScale = ContentScale.Crop,
+                                alignment = Alignment.Center
                             )
                             Text(
                                 text = rowItem.text,
-                                modifier = Modifier.padding(start = 16.dp),
+//                                modifier = Modifier.padding(start = 16.dp),
+                                fontSize = 12.sp,
+
+                                textAlign = TextAlign.Center,
+
+//                                    .align(alignment = Alignment.CenterHorizontally)
+
+
+//                                    modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         }
                     }
