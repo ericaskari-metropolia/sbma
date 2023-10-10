@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.annotation.RequiresApi
+
 
 class AppConnectivityManager(
     private val application: Application,
@@ -17,18 +20,19 @@ class AppConnectivityManager(
         register()
     }
 
-    @SuppressLint("ObsoleteSdkInt")
-    fun register() {
+    private fun register() {
         (application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).let { connectivityManager ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 registerAPI24AndAbove(connectivityManager)
             } else {
+                onChange(checkConnection(application))
                 registerAPI24Below(connectivityManager)
             }
         }
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun registerAPI24AndAbove(connectivityManager: ConnectivityManager) {
         connectivityManager.registerDefaultNetworkCallback(buildNetworkCallback())
     }
@@ -55,7 +59,37 @@ class AppConnectivityManager(
                 this@AppConnectivityManager.onChange(InternetConnectionState.DISCONNECTED)
             }
 
+            override fun onLosing(network: Network, maxMsToLive: Int) {
+                super.onLosing(network, maxMsToLive)
+            }
+
+            override fun onUnavailable() {
+                super.onUnavailable()
+            }
+
+            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                super.onCapabilitiesChanged(network, networkCapabilities)
+            }
+
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                super.onLinkPropertiesChanged(network, linkProperties)
+            }
+
+            override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
+                super.onBlockedStatusChanged(network, blocked)
+            }
         }
     }
 
+    private fun checkConnection(context: Context): InternetConnectionState {
+        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connMgr.activeNetworkInfo
+        return activeNetworkInfo?.let {
+            when (it.type) {
+                ConnectivityManager.TYPE_WIFI -> InternetConnectionState.CONNECTED
+                ConnectivityManager.TYPE_MOBILE -> InternetConnectionState.CONNECTED
+                else -> InternetConnectionState.CONNECTED
+            }
+        } ?: InternetConnectionState.DISCONNECTED
+    }
 }

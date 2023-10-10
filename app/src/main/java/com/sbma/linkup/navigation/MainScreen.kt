@@ -79,6 +79,9 @@ fun MainScreen(
     } else if (loggedInUser.value!!.isEmpty()) {
         LoginScreen()
     } else {
+        LaunchedEffect(true) {
+            userViewModel.syncRoomDatabase()
+        }
         Scaffold(
             bottomBar = { BottomNavigationBar(navController = navController) },
             topBar = { NoInternetConnectionBarComponent(internetConnectionStateFlow) }

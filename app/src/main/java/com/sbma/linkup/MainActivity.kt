@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.lifecycle.addObserver((application as MyApplication).initAppBroadcastReceiver(this))
         this.lifecycle.addObserver((application as MyApplication).initAppNfcManager(this))
 
         setContent {

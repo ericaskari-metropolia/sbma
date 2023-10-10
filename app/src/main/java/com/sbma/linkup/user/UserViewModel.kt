@@ -3,6 +3,7 @@ package com.sbma.linkup.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.api.ApiService
+import com.sbma.linkup.api.apimodels.ApiConnection
 import com.sbma.linkup.api.apimodels.AssignTagRequest
 import com.sbma.linkup.api.apimodels.toCardList
 import com.sbma.linkup.api.apimodels.toConnectionCardList
@@ -28,15 +29,7 @@ class UserViewModel(
     private val userConnectionRepository: IConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
-
     ) : ViewModel() {
-
-    init {
-        viewModelScope.launch {
-            syncRoomDatabase()
-        }
-    }
-
     val loggedInUserId = dataStore.getUserId
     val getAccessToken = dataStore.getAccessToken
     val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt
@@ -188,22 +181,36 @@ class UserViewModel(
 
     suspend fun scanQRCode(id: String, onSuccessScan: () -> Unit) {
         viewModelScope.launch {
+            scanShareId(
+                UUID.fromString(id),
+                onSuccess = {
+                    responseStatus.value = "Congratulations! Contact has been successfully added."
+                    println("Scanning Qr code")
+                    onSuccessScan()
+                },
+                onFailure = {
+                }
+            )
+        }
+    }
+
+    suspend fun scanShareId(id: UUID, onSuccess: (apiConnection: ApiConnection) -> Unit, onFailure: () -> Unit) {
+        viewModelScope.launch {
             val authorization = dataStore.getAuthorizationHeaderValue.first()
             authorization?.let {
                 apiService.scanShare(
                     authorization,
-                    id
+                    id.toString()
                 )
                     .onSuccess { response ->
+                        println("scanShareId -> onSuccess")
                         syncRoomDatabase()
-                        responseStatus.value = "Congratulations! Contact has been successfully added."
-                        println("Scanning Qr code")
                         println(response)
-                        onSuccessScan()
+                        onSuccess(response)
 
                     }.onFailure {
+                        println("scanShareId -> onFailure")
                         println(it)
-                        responseStatus.value = "Oh no! Scanning of QR code has failed"
                     }
             }
         }

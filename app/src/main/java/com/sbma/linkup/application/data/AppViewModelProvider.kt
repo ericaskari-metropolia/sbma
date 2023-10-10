@@ -25,6 +25,7 @@ import com.sbma.linkup.application.MyApplication
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.nfc.NFCViewModel
+import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.tag.TagViewModel
 import com.sbma.linkup.user.UserViewModel
 
@@ -62,6 +63,13 @@ object AppViewModelProvider {
         addInitializer(TagViewModel::class) {
             TagViewModel(
                 repository = MyApplication().container.tagRepository,
+            )
+        }
+        addInitializer(AppBluetoothViewModel::class) {
+            AppBluetoothViewModel(
+                appBluetoothManager = MyApplication().appBluetoothManager,
+                appBroadcastReceiver = MyApplication().appBroadcastReceiver
+
             )
         }
     }

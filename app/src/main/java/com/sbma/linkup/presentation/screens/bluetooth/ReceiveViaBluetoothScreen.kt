@@ -1,9 +1,9 @@
 package com.sbma.linkup.presentation.screens.bluetooth
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -12,13 +12,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetAllBluetoothPermissionsProvider
 import com.sbma.linkup.user.UserViewModel
+import com.sbma.linkup.util.uuidOrNull
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable()
-fun ShareViaBluetoothScreenProvider(
-    shareId: String,
+fun ReceiveViaBluetoothScreenProvider(
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onSuccess: () -> Unit,
+
 ) {
     var permissionsAllowed by rememberSaveable {
         mutableStateOf(false)
@@ -30,36 +32,43 @@ fun ShareViaBluetoothScreenProvider(
                 permissionsAllowed = true
             }
         } else {
-            LaunchedEffect(true){
-                appBluetoothViewModel.scan()
-                appBluetoothViewModel.updatePaired()
-            }
             LaunchedEffect(true) {
                 println("Collecting  state now!")
 
                 appBluetoothViewModel.state.collectLatest {state ->
                     println("Collect state")
-                    if (state.isConnected) {
-                        appBluetoothViewModel.sendMessage(shareId)
-                        println("ShareId sent!")
+                    state.messages.lastOrNull()?.let { message ->
+                    println("Collect message")
+                        message.message.uuidOrNull()?.let { shareId ->
+                            println("ShareId received:")
+                            userViewModel.scanShareId(
+                                id = shareId,
+                                onSuccess = {
+                                    onSuccess()
+                                },
+                                onFailure = {
+
+                                }
+
+                            )
+                        }
                     }
                 }
             }
-            ShareViaBluetoothScreen()
+            ReceiveViaBluetoothScreen {
+                appBluetoothViewModel.startServer()
+            }
         }
     }
 }
 
 @Composable()
-fun ShareViaBluetoothScreen(
-    appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    ) {
-    val bluetoothDevicesFound = appBluetoothViewModel.bluetoothDevicesFound.collectAsState(initial = listOf())
-    val pairedDevices = appBluetoothViewModel.pairedDevices.collectAsState(initial = listOf())
-
-    Column {
-        AppBluetoothDeviceList(data = bluetoothDevicesFound.value + pairedDevices.value) {
-            appBluetoothViewModel.connectToDevice(it)
-        }
+fun ReceiveViaBluetoothScreen(
+    startServer: () -> Unit
+) {
+    LaunchedEffect(true){
+        startServer()
     }
+
+    Text(text = "Waiting For Connection")
 }

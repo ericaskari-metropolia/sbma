@@ -21,6 +21,7 @@ import com.sbma.linkup.presentation.screens.EditProfileScreenProvider
 import com.sbma.linkup.presentation.screens.SettingsScreen
 import com.sbma.linkup.presentation.screens.UserNetworkScreen
 import com.sbma.linkup.presentation.screens.UserProfileScreen
+import com.sbma.linkup.presentation.screens.bluetooth.ReceiveViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
@@ -197,6 +198,9 @@ fun Navigation(
          * at this point json string should be already saved to datastore and available.
          */
         composable("receive/bluetooth") {
+            ReceiveViaBluetoothScreenProvider {
+                navController.navigate("scanSuccess")
+            }
         }
         composable("receive/nfc") {
             NfcReceiveScreen(
