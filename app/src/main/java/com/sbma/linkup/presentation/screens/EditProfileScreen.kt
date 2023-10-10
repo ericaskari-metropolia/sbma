@@ -242,7 +242,7 @@ fun EditProfileScreen(
 
                 ) {
                 Button(
-                    modifier = Modifier.padding(bottom = 100.dp),
+                    modifier = Modifier.padding(bottom = 40.dp),
                     onClick = {
                         composableScope.launch {
                             onSave(
@@ -263,9 +263,66 @@ fun EditProfileScreen(
                 ) {
                     Text(stringResource(R.string.save), color = Color.Black)
                 }
-                Text(text = "Cards to insert: ${cardsToInsert.entries.count { it.value }}")
-                Text(text = "Cards to update: ${cardsToUpdate.entries.count { it.value }}")
-                Text(text = "Cards to delete: ${cardsToDelete.values.count()}")
+                val cardsToInsertCount = cardsToInsert.entries.count { it.value }
+                val cardsToUpdateCount = cardsToUpdate.entries.count { it.value }
+                val cardsToDeleteCount = cardsToDelete.values.count()
+
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(text = "Change Statistics",  modifier = Modifier
+                        .padding(start = 16.dp, bottom = 10.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Gray, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                            .padding(8.dp)
+
+                    ) {
+                        Text(
+                            text = "Cards to insert: $cardsToInsertCount",
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White,shape = RoundedCornerShape(0.dp, 0.dp, 0.dp, 0.dp))
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = "Cards to update: $cardsToUpdateCount",
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Gray,shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = "Cards to delete: $cardsToDeleteCount",
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
             }
             BottomSheet { text, picture ->
                 println("Clicked $text $picture")
@@ -307,6 +364,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         FloatingActionButton(
             onClick = { isSheetOpen = true },
             shape = CircleShape,
+            containerColor = YellowApp,
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd)
@@ -387,10 +445,11 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
     val newCardList = listOf(
 
         //Category Contacts
-        NewCardItem(stringResource(R.string.contact), "phone", "Phone Number"),
+        NewCardItem(stringResource(R.string.contact), "phone", "Phone"),
         NewCardItem(stringResource(R.string.contact), "description", "Description"),
-        NewCardItem(stringResource(R.string.contact), "about", "About Me"),
         NewCardItem(stringResource(R.string.contact), "location", "Location"),
+        NewCardItem(stringResource(R.string.contact), "about", "About Me"),
+
 
         //Category Social Media
         NewCardItem(stringResource(R.string.social_media), "instagram", "Instagram"),
