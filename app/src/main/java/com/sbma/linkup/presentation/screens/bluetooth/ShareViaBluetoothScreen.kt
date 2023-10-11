@@ -11,14 +11,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetAllBluetoothPermissionsProvider
-import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable()
 fun ShareViaBluetoothScreenProvider(
     shareId: String,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit,
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     var permissionsAllowed by rememberSaveable {
         mutableStateOf(false)
@@ -30,6 +30,9 @@ fun ShareViaBluetoothScreenProvider(
                 permissionsAllowed = true
             }
         } else {
+            var idSent by rememberSaveable {
+                mutableStateOf(false)
+            }
             LaunchedEffect(true){
                 appBluetoothViewModel.scan()
                 appBluetoothViewModel.updatePaired()
@@ -38,10 +41,19 @@ fun ShareViaBluetoothScreenProvider(
                 println("Collecting  state now!")
 
                 appBluetoothViewModel.state.collectLatest {state ->
+                    if (idSent) {
+                        return@collectLatest
+                    }
+                    if (state.errorMessage != null) {
+                        onFailure()
+                        return@collectLatest
+                    }
                     println("Collect state")
                     if (state.isConnected) {
                         appBluetoothViewModel.sendMessage(shareId)
+                        idSent = true
                         println("ShareId sent!")
+                        onSuccess()
                     }
                 }
             }

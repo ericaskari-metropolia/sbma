@@ -21,6 +21,7 @@ import com.sbma.linkup.presentation.screens.EditProfileScreenProvider
 import com.sbma.linkup.presentation.screens.SettingsScreen
 import com.sbma.linkup.presentation.screens.UserNetworkScreen
 import com.sbma.linkup.presentation.screens.UserProfileScreen
+import com.sbma.linkup.presentation.screens.bluetooth.BluetoothShareAndReceiveResultScreen
 import com.sbma.linkup.presentation.screens.bluetooth.ReceiveViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
@@ -117,7 +118,15 @@ fun Navigation(
         ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
-                ShareViaBluetoothScreenProvider(it)
+                ShareViaBluetoothScreenProvider(
+                    shareId = it,
+                    onSuccess = {
+                        navController.navigate("scan-result/bluetooth/share/succeeded")
+                    },
+                    onFailure = {
+                        navController.navigate("scan-result/bluetooth/share/failed")
+                    }
+                )
             }
         }
 
@@ -198,9 +207,14 @@ fun Navigation(
          * at this point json string should be already saved to datastore and available.
          */
         composable("receive/bluetooth") {
-            ReceiveViaBluetoothScreenProvider {
-                navController.navigate("scanSuccess")
-            }
+            ReceiveViaBluetoothScreenProvider(
+                onSuccess = {
+                    navController.navigate("scan-result/bluetooth/receive/succeeded")
+                },
+                onFailure = {
+                    navController.navigate("scan-result/bluetooth/receive/failed")
+                }
+            )
         }
         composable("receive/nfc") {
             NfcReceiveScreen(
@@ -255,6 +269,17 @@ fun Navigation(
             ScanResultScreen(
 
             )
+        }
+        composable(
+            route = "scan-result/bluetooth/{mode}/{status}",
+            arguments = listOf(
+                navArgument("mode") { type = NavType.StringType },
+                navArgument("status") { type = NavType.StringType }
+            )
+        ) {backStackEntry ->
+            val succeeded = (backStackEntry.arguments?.getString("status") ?: "") == "succeeded"
+            val isReceiveMode = (backStackEntry.arguments?.getString("mode") ?: "") == "receive"
+            BluetoothShareAndReceiveResultScreen(isReceiveMode, succeeded)
         }
     }
 }

@@ -117,6 +117,15 @@ class AppBroadcastReceiver(
             println(e)
         }
     }
+    fun launchMakeBluetoothDiscoverable() {
+        try {
+            val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300) // 300 seconds (5 minutes)
+            intentActivityResultLauncher.launch(discoverableIntent)
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
 
 
     companion object {

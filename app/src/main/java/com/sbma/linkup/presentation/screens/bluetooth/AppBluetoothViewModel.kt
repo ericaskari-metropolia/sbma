@@ -86,6 +86,9 @@ class AppBluetoothViewModel(
     fun askToTurnBluetoothOn() {
         appBroadcastReceiver.launchEnableBtAdapter()
     }
+    fun launchMakeBluetoothDiscoverable() {
+        appBroadcastReceiver.launchMakeBluetoothDiscoverable()
+    }
 
     fun connectToDevice(device: IBluetoothDeviceDomain) {
         println("connectToDevice: ${device}")
