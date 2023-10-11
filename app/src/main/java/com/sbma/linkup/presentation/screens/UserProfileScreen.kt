@@ -121,14 +121,14 @@ fun UserProfileScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val aboutMeCard = userCards.find { it.title == "About Me" }
-    val phoneNumberCard = userCards.find { it.title == "Phone Number" }
+    val phoneNumberCard = userCards.find { it.title == "Phone" }
     val emailCard = userCards.find { it.title == "Email" }
     val addressCard = userCards.find { it.title == "Address" }
     val titleCard = userCards.find { it.title == "Title" }
     val restOfTheCards = userCards
         .asSequence()
         .filter { it.title != "About Me" }
-        .filter { it.title != "Phone Number" }
+        .filter { it.title != "Phone" }
         .filter { it.title != "Email" }
         .filter { it.title != "Address" }
         .filter { it.title != "Title" }
