@@ -67,6 +67,7 @@ import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
+import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.toPictureResource
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -389,7 +390,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
         //Category Contacts
         NewCardItem(stringResource(R.string.contact), "phone", "Phone"),
-        NewCardItem(stringResource(R.string.contact), "description", "Title"),
+        NewCardItem(stringResource(R.string.contact), "title", "Title"),
         NewCardItem(stringResource(R.string.contact), "address", "Address"),
         NewCardItem(stringResource(R.string.contact), "about", "About Me"),
         NewCardItem(stringResource(R.string.contact), "email", "Email"),
@@ -438,7 +439,11 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 .clickable { onClick(rowItem.text, rowItem.picture) }
                         ) {
 
-                            Image(
+                            CardIcon(picture = rowItem.picture, modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .size(48.dp))
+
+                            /*Image(
                                 painter = painterResource(rowItem.picture.toPictureResource()),
                                 contentDescription = null,
                                 modifier = Modifier
@@ -446,7 +451,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                     .size(48.dp),
                                 contentScale = ContentScale.Crop,
                                 alignment = Alignment.Center
-                            )
+                            )*/
                             Text(
                                 text = rowItem.text,
                                 fontSize = 12.sp,

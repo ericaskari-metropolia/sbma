@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.openSocialMedia
 import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
@@ -41,14 +42,17 @@ fun UserCardsListItem(userCard: Card) {
             overlineContent = { Text(userCard.title) },
             headlineContent = { Text(userCard.value) },
             leadingContent = {
-                Image(
+                /*Image(
                     painter = painterResource(userCard.picture.toPictureResource()),
                     contentDescription = "Card Icon",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(size.value)
                         .height(size.value)
-                )
+                )*/
+                CardIcon(picture = userCard.picture, modifier = Modifier
+                    .width(size.value)
+                    .height(size.value))
             }
         )
 
