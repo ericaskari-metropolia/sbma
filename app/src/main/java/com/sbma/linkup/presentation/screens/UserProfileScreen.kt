@@ -1,5 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +54,8 @@ import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.user.User
+import com.sbma.linkup.util.initiatePhoneCall
+import com.sbma.linkup.util.openEmail
 import java.util.UUID
 
 @Composable
@@ -119,6 +123,7 @@ fun UserProfileScreen(
     canEdit: Boolean,
     onEditClick: (() -> Unit)? = null
 ) {
+    val ctx = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val aboutMeCard = userCards.find { it.title == "About Me" }
     val phoneNumberCard = userCards.find { it.title == "Phone" }
@@ -222,14 +227,22 @@ fun UserProfileScreen(
                                 phoneNumberCard?.let {
                                     ContactInfoRow(
                                         icon = Icons.Filled.Call,
-                                        text = it.value
+                                        text = it.value,
+                                        modifier = Modifier.clickable{
+                                            initiatePhoneCall(ctx, it.value )
+                                        }
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
                                 emailCard?.let {
                                     ContactInfoRow(
                                         icon = Icons.Filled.Email,
-                                        text = it.value
+                                        text = it.value,
+                                        modifier = Modifier.clickable{
+                                            openEmail(ctx, it.value )
+                                        }
+
+
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
@@ -252,10 +265,10 @@ fun UserProfileScreen(
 }
 
 @Composable
-fun ContactInfoRow(icon: ImageVector, text: String) {
+fun ContactInfoRow(icon: ImageVector, text: String, modifier:Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Icon(
             imageVector = icon,

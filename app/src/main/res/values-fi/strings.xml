@@ -19,6 +19,7 @@
     <string name="address">Osoite</string>
     <string name="desc">Kuvaus</string>
     <string name="setting_screen">Asetusnäyttö</string>
+    <string name="error_toast">Jokin meni pieleen. Sovellusta ei voi avata</string>
 
     <!-- Profile Page Related String -->
     <string name="profile">Profiili</string>

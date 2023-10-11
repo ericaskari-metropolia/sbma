@@ -18,6 +18,7 @@
     <string name="address">Address</string>
     <string name="desc">Description</string>
     <string name="setting_screen">Setting Screen</string>
+    <string name="error_toast">Something went wrong. Cannot open the app</string>
 
 
     <!--Profile Page Related String -->

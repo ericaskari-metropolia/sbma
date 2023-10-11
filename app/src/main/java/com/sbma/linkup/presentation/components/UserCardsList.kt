@@ -2,7 +2,9 @@ package com.sbma.linkup.presentation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -16,11 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.util.openSocialMedia
 import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
 
@@ -29,20 +33,26 @@ fun UserCardsListItem(userCard: Card) {
     val size = remember {
         mutableStateOf(50.dp)
     }
-    ListItem(
-        overlineContent = { Text(userCard.title) },
-        headlineContent = { Text(userCard.value) },
-        leadingContent = {
-            Image(
-                painter = painterResource(userCard.picture.toPictureResource()),
-                contentDescription = "Card Icon",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(size.value)
-                    .height(size.value)
-            )
-        }
-    )
+    val ctx = LocalContext.current
+    Box(modifier = Modifier.clickable{
+        openSocialMedia(ctx,userCard.value)
+    }){
+        ListItem(
+            overlineContent = { Text(userCard.title) },
+            headlineContent = { Text(userCard.value) },
+            leadingContent = {
+                Image(
+                    painter = painterResource(userCard.picture.toPictureResource()),
+                    contentDescription = "Card Icon",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(size.value)
+                        .height(size.value)
+                )
+            }
+        )
+
+    }
 }
 
 @Composable
