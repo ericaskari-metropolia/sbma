@@ -210,15 +210,15 @@ fun UserProfileScreen(
                             model = user.picture,
                             contentDescription = "profile photo",
                             modifier = Modifier
-                                .size(150.dp)
+                                .size(120.dp)
                                 .clip(RoundedCornerShape(50.dp))
                         )
                     }
-                    Text(text = user.name, fontSize = 30.sp, textAlign = TextAlign.Center)
+                    Text(text = user.name, fontSize = 25.sp, textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.height(8.dp))
 
                     titleCard?.let {
-                        Text(text = it.value, fontSize = 20.sp)
+                        Text(text = it.value, fontSize = 15.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     aboutMeCard?.let {
@@ -261,8 +261,8 @@ fun UserProfileScreen(
                                     ContactInfoRow(
                                         icon = Icons.Filled.Call,
                                         text = it.value,
-                                        modifier = Modifier.clickable{
-                                            initiatePhoneCall(ctx, it.value )
+                                        modifier = Modifier.clickable {
+                                            initiatePhoneCall(ctx, it.value)
                                         }
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
@@ -271,8 +271,8 @@ fun UserProfileScreen(
                                     ContactInfoRow(
                                         icon = Icons.Filled.Email,
                                         text = it.value,
-                                        modifier = Modifier.clickable{
-                                            openEmail(ctx, it.value )
+                                        modifier = Modifier.clickable {
+                                            openEmail(ctx, it.value)
                                         }
 
 
@@ -298,7 +298,7 @@ fun UserProfileScreen(
 }
 
 @Composable
-fun ContactInfoRow(icon: ImageVector, text: String, modifier:Modifier = Modifier) {
+fun ContactInfoRow(icon: ImageVector, text: String, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()

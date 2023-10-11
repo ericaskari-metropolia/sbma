@@ -243,7 +243,7 @@ fun EditProfileScreen(
                     model = user.picture,
                     contentDescription = "profile photo",
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(120.dp)
                         .clip(RoundedCornerShape(50.dp))
                 )
             }
@@ -254,7 +254,7 @@ fun EditProfileScreen(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = user.name, fontSize = 30.sp)
+                Text(text = user.name, fontSize = 25.sp, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Column {
@@ -452,7 +452,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center,
 
-                            )
+                                )
                         }
                     }
                 }
