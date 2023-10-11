@@ -55,8 +55,10 @@ import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.user.User
+import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.initiatePhoneCall
 import com.sbma.linkup.util.openEmail
+import com.sbma.linkup.util.openSocialMedia
 import java.util.UUID
 
 @Composable
@@ -161,6 +163,10 @@ fun UserProfileScreen(
     val emailCard = userCards.find { it.title == "Email" }
     val addressCard = userCards.find { it.title == "Address" }
     val titleCard = userCards.find { it.title == "Title" }
+    val facebook = userCards.find { it.title == "Facebook" }
+    val instagram = userCards.find { it.title == "Instagram" }
+    val linkedin = userCards.find { it.title == "LinkedIn" }
+    val twitter = userCards.find { it.title == "Twitter" }
     val restOfTheCards = userCards
         .asSequence()
         .filter { it.title != "About Me" }
@@ -168,6 +174,10 @@ fun UserProfileScreen(
         .filter { it.title != "Email" }
         .filter { it.title != "Address" }
         .filter { it.title != "Title" }
+        .filter { it.title != "Facebook" }
+        .filter { it.title != "Instagram" }
+        .filter { it.title != "LinkedIn" }
+        .filter { it.title != "Twitter" }
         .toList()
 
     Scaffold(
@@ -189,112 +199,132 @@ fun UserProfileScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(start = 10.dp, end = 10.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            AsyncImage(
+                model = user.picture,
+                contentDescription = "profile photo",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(50.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = user.name, fontSize = 25.sp, textAlign = TextAlign.Center)
 
+            titleCard?.let {
+                Text(text = it.value, fontSize = 15.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            if (instagram != null || facebook != null || twitter != null || linkedin != null) {
+                Row {
+                    instagram?.let { card ->
+                        CardIcon(card.picture, modifier = Modifier
+                            .size(60.dp)
+                            .padding(5.dp)
+                            .clickable {
+                                openSocialMedia(ctx, "https://www.instagram.com/${card.value}")
+                            })
+                    }
+                    facebook?.let { card ->
+                        CardIcon(card.picture, modifier = Modifier
+                            .size(60.dp)
+                            .padding(5.dp)
+                            .clickable {
+                                openSocialMedia(ctx, "https://www.facebook.com/${card.value}")
+                            })
+                    }
+                    twitter?.let { card ->
+                        CardIcon(card.picture, modifier = Modifier
+                            .size(60.dp)
+                            .padding(5.dp)
+                            .clickable {
+                                openSocialMedia(ctx, "https://www.x.com/${card.value}")
+                            })
+                    }
+                    linkedin?.let { card ->
+                        CardIcon(card.picture, modifier = Modifier
+                            .size(60.dp)
+                            .padding(5.dp)
+                            .clickable {
+                                openSocialMedia(ctx, "https://www.linkedin.com/${card.value}")
+                            })
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            aboutMeCard?.let {
+                Card(
+                    modifier = Modifier
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(all = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-
-                        ) {
-                        AsyncImage(
-                            model = user.picture,
-                            contentDescription = "profile photo",
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(RoundedCornerShape(50.dp))
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.about_me),
+                            fontSize = 20.sp,
+                            style = MaterialTheme.typography.labelLarge,
                         )
-                    }
-                    Text(text = user.name, fontSize = 25.sp, textAlign = TextAlign.Center)
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    titleCard?.let {
-                        Text(text = it.value, fontSize = 15.sp)
                         Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = it.value, fontSize = 16.sp)
                     }
-                    aboutMeCard?.let {
-                        Card(
-                            modifier = Modifier
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.about_me),
-                                    fontSize = 20.sp,
-                                    style = MaterialTheme.typography.labelLarge,
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.value, fontSize = 16.sp)
-                            }
 
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            if (phoneNumberCard != null || emailCard != null || addressCard != null) {
+                Card(
+                    modifier = Modifier
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.contact_details),
+                            fontSize = 20.sp,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        phoneNumberCard?.let {
+                            ContactInfoRow(
+                                icon = Icons.Filled.Call,
+                                text = it.value,
+                                modifier = Modifier.clickable {
+                                    initiatePhoneCall(ctx, it.value)
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                    if (phoneNumberCard != null || emailCard != null || addressCard != null) {
-                        Card(
-                            modifier = Modifier
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.contact_details),
-                                    fontSize = 20.sp,
-                                    style = MaterialTheme.typography.labelLarge,
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                phoneNumberCard?.let {
-                                    ContactInfoRow(
-                                        icon = Icons.Filled.Call,
-                                        text = it.value,
-                                        modifier = Modifier.clickable {
-                                            initiatePhoneCall(ctx, it.value)
-                                        }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
+                        emailCard?.let {
+                            ContactInfoRow(
+                                icon = Icons.Filled.Email,
+                                text = it.value,
+                                modifier = Modifier.clickable {
+                                    openEmail(ctx, it.value)
                                 }
-                                emailCard?.let {
-                                    ContactInfoRow(
-                                        icon = Icons.Filled.Email,
-                                        text = it.value,
-                                        modifier = Modifier.clickable {
-                                            openEmail(ctx, it.value)
-                                        }
-
-
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                                addressCard?.let {
-                                    ContactInfoRow(
-                                        icon = Icons.Filled.LocationOn,
-                                        text = it.value
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        addressCard?.let {
+                            ContactInfoRow(
+                                icon = Icons.Filled.LocationOn,
+                                text = it.value
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
-
-                    UserCardsList(restOfTheCards, withLazyColumn = false)
                 }
             }
+            UserCardsList(restOfTheCards, withLazyColumn = false)
         }
     }
+
 }
 
 @Composable
@@ -375,7 +405,7 @@ fun ProfileScreenPreview() {
                     "Sebubebu",
                     "shayne@example.com",
                     "UX/UI Designer",
-                    null
+                    "https://users.metropolia.fi/~mohamas/person.jpg"
                 )
             )
         }
