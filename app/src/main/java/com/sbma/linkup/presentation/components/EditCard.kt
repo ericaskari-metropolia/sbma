@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,79 +32,12 @@ import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
 
-/*@Composable
-fun EditCards(
-    card: Card,
-    canEditTitle: Boolean,
-    onCardModified: (card: Card) -> Unit,
-    onDelete: (card: Card) -> Unit,
-    onPictureClick: (card: Card) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .padding(10.dp),
-        content = {
-            ListItem(
-                headlineContent = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        when (canEditTitle) {
-                            false -> Text(text = card.title, modifier = Modifier.weight(1f))
-                            else -> TextField(
-                                modifier = Modifier.weight(1f),
-                                value = card.title,
-                                onValueChange = {
-                                    onCardModified(card.copy(title = it))
-                                },
-                                label = { Text("Title") },
-                            )
-                        }
-                        IconButton(
-                            modifier = Modifier,
-                            onClick = { onDelete(card) },
-                            enabled = true
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete"
-                            )
-                        }
-                    }
-                },
-                supportingContent = {
-                    TextField(
-                        value = card.value,
-                        onValueChange = { onCardModified(card.copy(value = it)) },
-                        label = { Text("Value") },
-                    )
-                },
-                leadingContent = {
-                    Image(
-                        painterResource(card.picture.toPictureResource()),
-                        contentDescription = "Card Icon",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .padding(8.dp)
-                            .clickable { onPictureClick(card) }
-                    )
-                }
-            )
-
-        }
-    )
-
-}*/
-
-
 @Composable
 fun EditCard(
     card: Card,
     canEditTitle: Boolean,
     onCardModified: (card: Card) -> Unit,
     onDelete: (card: Card) -> Unit,
-    onPictureClick: (card: Card) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -132,7 +66,7 @@ fun EditCard(
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .size(46.dp)
-                            .clickable { onPictureClick(card) }
+//                            .clickable { onPictureClick(card) }
                     )
 
                     Column(
@@ -144,7 +78,6 @@ fun EditCard(
                         when (canEditTitle) {
                             false -> Text(text = card.title, modifier = Modifier.weight(1f))
                             else -> TextField(
-                                //modifier = Modifier.weight(1f),
                                 value = card.title,
                                 onValueChange = {
                                     onCardModified(card.copy(title = it))
@@ -158,7 +91,7 @@ fun EditCard(
                             )
                         }
 
-                        Divider(modifier = Modifier.fillMaxWidth())
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
                         TextField(
                             value = card.value,
@@ -206,7 +139,6 @@ fun CreateCardPreview() {
             ),
             canEditTitle = true,
             onCardModified = {},
-            onPictureClick = {},
             onDelete = {},
         )
     }
@@ -226,7 +158,6 @@ fun CreateCardWithoutTitlePreview() {
             ),
             canEditTitle = false,
             onCardModified = {},
-            onPictureClick = {},
             onDelete = {},
         )
     }

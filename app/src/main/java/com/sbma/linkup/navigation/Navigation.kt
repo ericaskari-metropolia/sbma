@@ -169,7 +169,10 @@ fun Navigation(
             ) { backStackEntry ->
             ConnectionUserProfileScreenProvider(
                 user,
-                backStackEntry.arguments?.getString("connectionId")
+                backStackEntry.arguments?.getString("connectionId"),
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
         /**
@@ -233,7 +236,9 @@ fun Navigation(
                 user,
                 userCards.value,
                 canEdit = true,
-                onEditClick = { navController.navigate("profile/edit") }
+                onEditClick = { navController.navigate("profile/edit") },
+                canGoBack = false,
+                onBackClick = null
             )
         }
         /**

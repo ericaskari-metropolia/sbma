@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -59,7 +60,11 @@ import com.sbma.linkup.util.openEmail
 import java.util.UUID
 
 @Composable
-fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) {
+fun ConnectionUserProfileScreenProvider(
+    user: User,
+    connectionIdParam: String?,
+    onBackClick: (() -> Unit)?
+) {
     val userConnectionViewModel: ConnectionViewModel =
         viewModel(factory = AppViewModelProvider.Factory)
     val userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -72,7 +77,14 @@ fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) 
     connection?.let {
         val userCards =
             userCardViewModel.allItemsStream(it.value.id).collectAsState(initial = listOf())
-        UserProfileScreen(it.value, userCards.value, canEdit = false, onEditClick = null)
+        UserProfileScreen(
+            it.value,
+            userCards.value,
+            canEdit = false,
+            onEditClick = null,
+            onBackClick = onBackClick,
+            canGoBack = true
+        )
     }
 }
 
@@ -81,6 +93,8 @@ fun ConnectionUserProfileScreenProvider(user: User, connectionIdParam: String?) 
 fun UserProfileScreenTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     canEdit: Boolean,
+    canGoBack: Boolean,
+    onBackClick: (() -> Unit)?,
     onEditClick: (() -> Unit)?
 ) {
     MediumTopAppBar(
@@ -95,6 +109,22 @@ fun UserProfileScreenTopBar(
                 fontSize = 20.sp
             )
         },
+        navigationIcon = {
+            if (canGoBack) {
+                IconButton(
+                    modifier = Modifier,
+                    onClick = { onBackClick?.let { it() } }
+                ) {
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                    )
+                }
+
+            }
+        },
         actions = {
             if (canEdit) {
                 IconButton(
@@ -106,7 +136,6 @@ fun UserProfileScreenTopBar(
                         contentDescription = "Edit",
                         modifier = Modifier
                             .padding(horizontal = 3.dp)
-//                            .fillMaxSize()
                     )
                 }
             }
@@ -121,7 +150,9 @@ fun UserProfileScreen(
     user: User,
     userCards: List<Card>,
     canEdit: Boolean,
-    onEditClick: (() -> Unit)? = null
+    onEditClick: (() -> Unit)? = null,
+    canGoBack: Boolean,
+    onBackClick: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -144,6 +175,8 @@ fun UserProfileScreen(
             UserProfileScreenTopBar(
                 canEdit = canEdit,
                 onEditClick = onEditClick,
+                canGoBack = canGoBack,
+                onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior
             )
         },
@@ -406,7 +439,9 @@ fun ProfileScreenPreview() {
         user.value,
         cards,
         canEdit = true,
-        onEditClick = {}
+        onEditClick = {},
+        canGoBack = false,
+        onBackClick = null
     )
 }
 
