@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
 
@@ -60,14 +61,19 @@ fun EditCard(
                         .padding(bottom = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
+                    /*Image(
                         painterResource(card.picture.toPictureResource()),
                         contentDescription = "Icon name",
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .size(46.dp)
 //                            .clickable { onPictureClick(card) }
-                    )
+                    )*/
+                    CardIcon(picture = card.picture,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(46.dp)
+                            )
 
                     Column(
                         modifier = Modifier
