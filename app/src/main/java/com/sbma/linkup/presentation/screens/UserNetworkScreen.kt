@@ -20,10 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -32,8 +32,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.R
+import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.Connection
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
@@ -83,36 +86,55 @@ fun UserNetworkScreen(
             verticalArrangement = Arrangement.spacedBy(1.dp),
         ) {
             items(state.connections.entries.toList()) { contact ->
-                ListItem(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                            onConnectionClick(contact.key)
-                        }
-                    ),
-                    headlineContent = { Text(contact.value.name) },
-                    supportingContent = { Text(contact.value.email) },
-                    trailingContent = {},
-                    leadingContent = {
-                        AsyncImage(
-                            model = contact.value.picture,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "User picture",
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .size(48.dp),
-                        )
-                    }
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .width(1.dp),
+                UserNetworkListItem(
+                    user = contact.value,
+                    connection = contact.key,
+                    onConnectionClick = onConnectionClick
                 )
             }
         }
     }
 }
+
+@Composable
+fun UserNetworkListItem(
+    user: User,
+    connection: Connection,
+    onConnectionClick: (connection: Connection) -> Unit,
+    userCardViewModel: CardViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val userCards by
+    userCardViewModel.allItemsStream(user.id).collectAsState(initial = listOf())
+    val titleCard = userCards.find { it.title == "Title" }
+
+    ListItem(
+        modifier = Modifier.clickable(
+            onClick = {
+                onConnectionClick(connection)
+            }
+        ),
+        headlineContent = { Text(user.name) },
+        supportingContent = { Text(titleCard?.value ?: "") },
+        leadingContent = {
+            AsyncImage(
+                model = user.picture,
+                contentScale = ContentScale.Crop,
+                contentDescription = "User picture",
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .size(48.dp),
+            )
+        }
+    )
+    HorizontalDivider(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .width(1.dp),
+    )
+
+}
+
 
 @Preview(showBackground = true)
 @Composable
