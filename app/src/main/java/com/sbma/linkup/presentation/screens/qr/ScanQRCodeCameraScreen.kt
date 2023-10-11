@@ -80,7 +80,7 @@ import java.nio.ByteBuffer
 fun ScanQRCodeCameraScreen(
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onBackClick: () -> Unit,
-    onSuccessScan: () -> Unit
+    onResultScan: (Boolean) -> Unit
 ) {
 
     val scope = rememberCoroutineScope()
@@ -119,7 +119,7 @@ fun ScanQRCodeCameraScreen(
                         println("Result: $result")
                         val id = code.split(MYAPI).last()
                         userViewModel.scanQRCode(id) {
-                            onSuccessScan()
+                           onResultScan(it)
                         }
 
                     }
@@ -131,7 +131,7 @@ fun ScanQRCodeCameraScreen(
                     .clip(RoundedCornerShape(70.dp))
             )
             Spacer(modifier = Modifier.height(50.dp))
-            Text(text = "Code: $code")
+            Text(text = "$code")
             /*  if (URLUtil.isValidUrl(code)) {
                   ResultLink(code)
               } else {

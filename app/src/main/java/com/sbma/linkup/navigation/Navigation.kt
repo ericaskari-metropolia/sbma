@@ -216,8 +216,8 @@ fun Navigation(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSuccessScan = {
-                    navController.navigate("scanSuccess")
+                onResultScan = {
+                    navController.navigate("scanResult/$it")
                 }
             )
         }
@@ -256,9 +256,10 @@ fun Navigation(
                     navController.navigate("profile")
                 })
         }
-        composable(route = "scanSuccess") {
+        composable(route = "scanResult/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.BoolType }),) {
             ScanResultScreen(
-
+                it.arguments?.getBoolean("id")?:false
             )
         }
     }

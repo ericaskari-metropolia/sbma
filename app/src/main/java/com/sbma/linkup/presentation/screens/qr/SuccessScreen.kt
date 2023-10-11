@@ -20,29 +20,52 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
 
 @Composable
-fun ScanResultScreen() {
+fun ScanResultScreen(scanResult:Boolean ) {
 
     val successQrScan by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success_qr))
     val failedQrScan by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.failed_qr_scan))
 
+    if (scanResult) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.success_qr_scan),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
 
-        LottieAnimation(
-            composition = successQrScan,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier.size(250.dp)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.success_qr_scan),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            LottieAnimation(
+                composition = successQrScan,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier.size(250.dp)
+            )
+        }
+    } else  {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Failed to scan QR code something went wrong",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            LottieAnimation(
+                composition = failedQrScan,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier.size(250.dp)
+            )
+        }
     }
 }
