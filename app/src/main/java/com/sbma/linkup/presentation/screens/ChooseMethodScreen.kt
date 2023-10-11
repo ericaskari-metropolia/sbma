@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -196,6 +197,11 @@ fun ChooseMethodScreen(
                 onClick = { onNfcClick() },
                 modifier = cardModifier
             ) {
+                Icon(
+                    imageVector = Icons.Filled.Nfc,
+                    contentDescription = "NFC Method",
+                    modifier = Modifier.size(16.dp).absoluteOffset(x = 5.dp, y = 5.dp)
+                )
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly,
@@ -208,6 +214,7 @@ fun ChooseMethodScreen(
                         contentDescription = "NFC Method",
                         modifier = Modifier.size(48.dp)
                     )
+
                     Text(
                         "Assign Card",
                         modifier = Modifier
