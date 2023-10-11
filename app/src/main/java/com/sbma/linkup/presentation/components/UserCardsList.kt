@@ -42,14 +42,6 @@ fun UserCardsListItem(userCard: Card) {
             overlineContent = { Text(userCard.title) },
             headlineContent = { Text(userCard.value) },
             leadingContent = {
-                /*Image(
-                    painter = painterResource(userCard.picture.toPictureResource()),
-                    contentDescription = "Card Icon",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(size.value)
-                        .height(size.value)
-                )*/
                 CardIcon(picture = userCard.picture, modifier = Modifier
                     .width(size.value)
                     .height(size.value))
