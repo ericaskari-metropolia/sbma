@@ -179,16 +179,17 @@ class UserViewModel(
         }
     }
 
-    suspend fun scanQRCode(id: String, onSuccessScan: () -> Unit) {
+    suspend fun scanQRCode(id: String, onScanResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             scanShareId(
                 UUID.fromString(id),
                 onSuccess = {
                     responseStatus.value = "Congratulations! Contact has been successfully added."
                     println("Scanning Qr code")
-                    onSuccessScan()
+                    onScanResult(true)
                 },
                 onFailure = {
+                    onScanResult(false)
                 }
             )
         }
