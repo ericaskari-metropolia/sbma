@@ -36,7 +36,7 @@
     <string name="share_option">How would you like to share?</string>
     <string name="qr_code">QR Code</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="nfc_card_assign_option">Or Would you like to assign a Card or Tag?</string>
+    <string name="nfc_card_assign_option">Or would you like to assign a NFC card or tag?</string>
     <string name="scan_and_add_to_contacts">Scan the Qr Code and add me in your Contacts</string>
     <string name="hover_nfc_card">Hover the back of your device over the NFC-enabled card</string>
 
@@ -47,7 +47,7 @@
     <!-- Receive Related String -->
     <string name="receive">Receive</string>
     <string name="receive_option">How would you like to receive?</string>
-    <string name="nfc_card_receive_option">Or Would you like to receive a Card or Tag?</string>
+    <string name="nfc_card_receive_option">Or would you like to read a NFC card or tag?</string>
     <string name="show_qr_code">Please show me your QR Code</string>
     <string name="success_qr_scan">You have been successfully added to my contact List.</string>
     <string name="failed_qr_scan">Oh no! Contact retrieval has failed</string>
