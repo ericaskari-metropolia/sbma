@@ -61,4 +61,9 @@
     <string name="username">Käyttäjänimi</string>
     <string name="email">Sähköposti</string>
     <string name="social_media_links">Sosiaalisen median linkit</string>
+    <!--Settings/logout -->
+    <string name="confirm_logout">Vahvista uloskirjautuminen</string>
+    <string name="are_you_sure">Oletko varma, että haluat kirjautua ulos?</string>
+    <string name="yes">KYLLÄ</string>
+    <string name="no">EI</string>
 </resources>
