@@ -26,12 +26,12 @@ import com.sbma.linkup.presentation.screens.bluetooth.ReceiveViaBluetoothScreenP
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
+import com.sbma.linkup.presentation.screens.qr.MyQrCode
 import com.sbma.linkup.presentation.screens.qr.ScanQRCodeCameraScreen
 import com.sbma.linkup.presentation.screens.qr.ScanResultScreen
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.util.MyQrCode
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
