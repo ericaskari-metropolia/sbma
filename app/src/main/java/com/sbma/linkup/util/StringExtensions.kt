@@ -11,6 +11,7 @@ fun String?.toPictureResource(): Int =
         "about" -> R.drawable.aboutme
         "address" -> R.drawable.location
         "email" -> R.drawable.mail
+        "website" -> R.drawable.website
         "facebook" -> R.drawable.facebook
         "instagram" -> R.drawable.instagram
         "linkedin" -> R.drawable.linkedin
