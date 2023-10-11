@@ -178,7 +178,10 @@ fun Navigation(
             ) { backStackEntry ->
             ConnectionUserProfileScreenProvider(
                 user,
-                backStackEntry.arguments?.getString("connectionId")
+                backStackEntry.arguments?.getString("connectionId"),
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
         /**
@@ -227,8 +230,8 @@ fun Navigation(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSuccessScan = {
-                    navController.navigate("scanSuccess")
+                onResultScan = {
+                    navController.navigate("scanResult/$it")
                 }
             )
         }
@@ -247,7 +250,9 @@ fun Navigation(
                 user,
                 userCards.value,
                 canEdit = true,
-                onEditClick = { navController.navigate("profile/edit") }
+                onEditClick = { navController.navigate("profile/edit") },
+                canGoBack = false,
+                onBackClick = null
             )
         }
         /**
@@ -265,9 +270,10 @@ fun Navigation(
                     navController.navigate("profile")
                 })
         }
-        composable(route = "scanSuccess") {
+        composable(route = "scanResult/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.BoolType }),) {
             ScanResultScreen(
-
+                it.arguments?.getBoolean("id")?:false
             )
         }
         composable(

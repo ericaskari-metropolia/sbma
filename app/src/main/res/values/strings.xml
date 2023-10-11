@@ -18,6 +18,7 @@
     <string name="address">Address</string>
     <string name="desc">Description</string>
     <string name="setting_screen">Setting Screen</string>
+    <string name="error_toast">Something went wrong. Cannot open the app</string>
 
 
     <!--Profile Page Related String -->
@@ -61,6 +62,12 @@
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="social_media_links">Social Media Links</string>
+
+    <!-- Logout/Settings Screen -->
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="are_you_sure">Are you sure you want to logout?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 
 
 </resources>
