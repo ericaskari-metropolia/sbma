@@ -256,8 +256,6 @@ fun EditProfileScreen(
             ) {
                 Text(text = user.name, fontSize = 30.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-//                Text(text = user.description, fontSize = 20.sp)
-//                Spacer(modifier = Modifier.height(8.dp))
             }
             Column {
                 userCards.forEachIndexed { index, card ->
@@ -281,9 +279,6 @@ fun EditProfileScreen(
                             cardsToDeleteMutable[it.id] = it
                             cardsToDelete = cardsToDeleteMutable.toMap()
                         },
-                        onPictureClick = {
-                            // TODO: Open Bottom sheet and choose new image
-                        }
                     )
                 }
             }
@@ -374,7 +369,6 @@ data class NewCardItem(
 @Composable
 fun CategoryHeader(
     text: String,
-    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -385,7 +379,6 @@ fun CategoryHeader(
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(16.dp)
     )
-
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -434,7 +427,6 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                        .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
@@ -452,21 +444,14 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 modifier = Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .size(48.dp),
-//                                    .padding(8.dp),
                                 contentScale = ContentScale.Crop,
                                 alignment = Alignment.Center
                             )
                             Text(
                                 text = rowItem.text,
-//                                modifier = Modifier.padding(start = 16.dp),
                                 fontSize = 12.sp,
-
                                 textAlign = TextAlign.Center,
 
-//                                    .align(alignment = Alignment.CenterHorizontally)
-
-
-//                                    modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         }
                     }
