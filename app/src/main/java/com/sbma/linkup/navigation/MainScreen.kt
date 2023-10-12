@@ -15,8 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.sbma.linkup.api.apimodels.ApiUser
 import com.sbma.linkup.api.apimodels.toUser
-import com.sbma.linkup.application.connectivity.InternetConnectionState
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
+import com.sbma.linkup.connectivity.InternetConnectionState
 import com.sbma.linkup.intents.login.LoginResponseToken
 import com.sbma.linkup.navigation.bottomnavigation.BottomNavigationBar
 import com.sbma.linkup.presentation.components.NoInternetConnectionBarComponent

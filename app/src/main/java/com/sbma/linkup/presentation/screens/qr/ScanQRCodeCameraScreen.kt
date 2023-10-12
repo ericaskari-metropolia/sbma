@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.qr.components.QrCodeReader
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel

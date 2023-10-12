@@ -22,7 +22,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.uuidOrNull

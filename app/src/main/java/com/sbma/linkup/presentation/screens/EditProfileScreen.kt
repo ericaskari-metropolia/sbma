@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.presentation.components.EditCard

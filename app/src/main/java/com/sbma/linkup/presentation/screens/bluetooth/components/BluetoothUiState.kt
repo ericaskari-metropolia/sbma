@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth
+package com.sbma.linkup.presentation.screens.bluetooth.components
 
 import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.BluetoothMessage

@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth
+package com.sbma.linkup.presentation.screens.bluetooth.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -54,7 +54,7 @@ import com.sbma.linkup.presentation.icons.Bluetooth
 
 @SuppressLint("MissingPermission")
 @Composable
-fun AppBluetoothDeviceListScreen(
+fun BluetoothDeviceList(
     data: List<BluetoothDeviceDomain>,
     modifier: Modifier = Modifier,
     onClick: (device: BluetoothDeviceDomain) -> Unit

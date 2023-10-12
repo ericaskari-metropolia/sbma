@@ -19,7 +19,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import timber.log.Timber

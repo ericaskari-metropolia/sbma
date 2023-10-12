@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.ConnectionResult
 import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
-import com.sbma.linkup.presentation.screens.bluetooth.BluetoothUiState
+import com.sbma.linkup.presentation.screens.bluetooth.components.BluetoothUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +32,7 @@ fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluet
         lastSeen = lastSeen
     )
 }
+
 @SuppressLint("MissingPermission")
 fun FoundedBluetoothDeviceDomain.toFoundedBluetoothDeviceDomain(): BluetoothDeviceDomain {
     return BluetoothDeviceDomain(
@@ -56,7 +57,7 @@ class AppBluetoothViewModel(
 
     val state = combine(foundedDevices, pairedDevices, _state) { scannedDevices, pairedDevices, state ->
         state.copy(
-            scannedDevices = scannedDevices,
+            scannedDevices = scannedDevices.map { it.toFoundedBluetoothDeviceDomain() },
             pairedDevices = pairedDevices,
             messages = if (state.isConnected) state.messages else emptyList()
         )
@@ -77,6 +78,7 @@ class AppBluetoothViewModel(
     fun askToTurnBluetoothOn() {
         appBroadcastReceiver.launchEnableBtAdapter()
     }
+
     fun launchMakeBluetoothDiscoverable() {
         appBroadcastReceiver.launchMakeBluetoothDiscoverable()
     }
@@ -145,10 +147,12 @@ class AppBluetoothViewModel(
     fun sendMessage(message: String) {
         viewModelScope.launch {
             val bluetoothMessage = appBluetoothManager.trySendMessage(message)
-            if(bluetoothMessage != null) {
-                _state.update { it.copy(
-                    messages = it.messages + bluetoothMessage
-                ) }
+            if (bluetoothMessage != null) {
+                _state.update {
+                    it.copy(
+                        messages = it.messages + bluetoothMessage
+                    )
+                }
             }
         }
     }

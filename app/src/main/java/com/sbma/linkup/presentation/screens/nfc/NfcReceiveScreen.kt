@@ -35,7 +35,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.nfc.NFCViewModel
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel

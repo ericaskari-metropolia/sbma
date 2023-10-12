@@ -5,12 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.nfc.NfcAdapter
 import androidx.activity.ComponentActivity
-import com.sbma.linkup.application.connectivity.AppConnectivityManager
-import com.sbma.linkup.application.connectivity.InternetConnectionState
-import com.sbma.linkup.application.data.AppContainer
-import com.sbma.linkup.application.data.AppDataContainer
 import com.sbma.linkup.bluetooth.AppBluetoothManager
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
+import com.sbma.linkup.connectivity.AppConnectivityManager
+import com.sbma.linkup.connectivity.InternetConnectionState
 import com.sbma.linkup.datasource.DataStore
 import com.sbma.linkup.nfc.AppNfcManager
 import kotlinx.coroutines.CoroutineScope

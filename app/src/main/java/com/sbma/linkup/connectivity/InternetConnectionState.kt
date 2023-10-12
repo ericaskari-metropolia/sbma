@@ -1,4 +1,4 @@
-package com.sbma.linkup.application.connectivity
+package com.sbma.linkup.connectivity
 
 
 enum class InternetConnectionState {

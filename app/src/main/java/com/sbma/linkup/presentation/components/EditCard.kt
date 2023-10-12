@@ -56,14 +56,6 @@ fun EditCard(
                         .padding(bottom = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    /*Image(
-                        painterResource(card.picture.toPictureResource()),
-                        contentDescription = "Icon name",
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(46.dp)
-//                            .clickable { onPictureClick(card) }
-                    )*/
                     CardIcon(picture = card.picture,
                         modifier = Modifier
                             .padding(start = 8.dp)
