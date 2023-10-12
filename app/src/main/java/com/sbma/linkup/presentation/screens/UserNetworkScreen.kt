@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,19 +50,16 @@ import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.Connection
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
-import com.sbma.linkup.presentation.ui.theme.LightGray
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
-import com.sbma.linkup.presentation.ui.theme.PurpleGrey80
-import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserNetworkScreenTopBar() {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
+fun UserNetworkScreenTopBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+) {
     MediumTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -124,6 +123,7 @@ fun UserNetworkScreen(
     modifier: Modifier = Modifier,
     onConnectionClick: (connection: Connection) -> Unit
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val contacts = state.connections.entries.toList()
     var searchQuery by remember { mutableStateOf("") }
 
@@ -137,52 +137,64 @@ fun UserNetworkScreen(
 
     Scaffold(
         topBar = {
-            UserNetworkScreenTopBar()
-        }
+            UserNetworkScreenTopBar(scrollBehavior = scrollBehavior)
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 110.dp),
-            content = {
-                // Search Bar
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { newValue ->
-                        searchQuery = newValue
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .background(
-                            color = PurpleGrey80,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    placeholder = { Text(text = "Search Contacts") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { newValue ->
+                    searchQuery = newValue
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                placeholder = {
+                    Text(
+                        text = "Search Contacts",
+                        color = MaterialTheme.colorScheme.primary
                     )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
                 )
-
-                LazyColumn(
-                    modifier
-                        .padding(16.dp)
-                        .padding(start = 20.dp, end = 20.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(1.dp),
-                ) {
-                    items(filteredContacts) { contact ->
-                        UserNetworkListItem(
-                            user = contact.value,
-                            connection = contact.key,
-                            onConnectionClick = onConnectionClick
-                        )
-                    }
+            )
+            LazyColumn(
+                modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
+            ) {
+                items(filteredContacts) { contact ->
+                    UserNetworkListItem(
+                        user = contact.value,
+                        connection = contact.key,
+                        onConnectionClick = onConnectionClick
+                    )
                 }
-            })
+            }
+        }
     }
 }
 
