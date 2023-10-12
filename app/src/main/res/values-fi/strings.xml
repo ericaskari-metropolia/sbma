@@ -39,6 +39,7 @@
     <string name="nfc_card_assign_option">Tai haluatko antaa kortin tai tagin?</string>
     <string name="scan_and_add_to_contacts">Skannaa QR-koodi ja lisää minut yhteystietoihisi</string>
     <string name="hover_nfc_card">Levitä laitteen takaosa NFC-kortin päälle</string>
+    <string name="scan_qr_code">Aseta QR-koodi tähän kehykseen</string>
 
     <!-- Contact List String -->
     <string name="my_contacts">Yhteystietoni</string>

@@ -31,6 +31,7 @@ fun initiatePhoneCall(context: Context, phoneNumber: String) {
 
 @SuppressLint("QueryPermissionsNeeded")
 fun openSocialMedia(context:Context, urlLink:String) {
+
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data=Uri.parse(urlLink)
     if (intent.resolveActivity(context.packageManager) != null) {

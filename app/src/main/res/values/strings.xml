@@ -39,6 +39,7 @@
     <string name="nfc_card_assign_option">Or would you like to assign a NFC card or tag?</string>
     <string name="scan_and_add_to_contacts">Scan the Qr Code and add me in your Contacts</string>
     <string name="hover_nfc_card">Hover the back of your device over the NFC-enabled card</string>
+    <string name="scan_qr_code">Place the QR code in this frame</string>
 
     <!-- Contact List String -->
     <string name="my_contacts">My Contacts</string>
