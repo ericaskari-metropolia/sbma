@@ -1,22 +1,6 @@
 package com.sbma.linkup.presentation.screens.qr
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.ImageFormat
-import android.net.Uri
-import android.util.Size
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,48 +9,30 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.DecodeHintType
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.common.HybridBinarizer
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
+import com.sbma.linkup.presentation.screens.qr.components.QrCodeReader
+import com.sbma.linkup.presentation.screens.qr.components.ScanQRCodeCameraScreenTopBar
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.launch
-import java.nio.ByteBuffer
+import timber.log.Timber
 
 @Composable
 fun ScanQRCodeCameraScreen(
@@ -81,7 +47,7 @@ fun ScanQRCodeCameraScreen(
     }
     Scaffold(
         topBar = {
-            CameraScreenTopBar {
+            ScanQRCodeCameraScreenTopBar {
                 onBackClick()
             }
         },
@@ -108,10 +74,10 @@ fun ScanQRCodeCameraScreen(
                 { result ->
                     scope.launch {
                         code = result
-                        println("Result: $result")
+                        Timber.d("Result: $result")
                         val id = code.split(MYAPI).last()
                         userViewModel.scanQRCode(id) {
-                           onResultScan(it)
+                            onResultScan(it)
                         }
 
                     }
@@ -128,173 +94,5 @@ fun ScanQRCodeCameraScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CameraScreenTopBar(
-    onBackClick: () -> Unit
-) {
-    MediumTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = {
-            Text(
-                text = "QR code transfer",
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = 20.sp
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                modifier = Modifier,
-                onClick = { onBackClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
-                )
-            }
-        },
-    )
-}
 
 
-private fun openUrl(url: String, ctx: Context) {
-
-    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    startActivity(ctx, webIntent, null)
-}
-
-class QrCodeAnalyzer(
-    private val onQrCodeScanned: (String) -> Unit
-) : ImageAnalysis.Analyzer {
-
-    private val supportedImageFormats = listOf(
-        ImageFormat.YUV_420_888,
-        ImageFormat.YUV_422_888,
-        ImageFormat.YUV_444_888,
-    )
-
-    override fun analyze(image: ImageProxy) {
-        if (image.format in supportedImageFormats) {
-            val bytes = image.planes.first().buffer.toByteArray()
-            val source = PlanarYUVLuminanceSource(
-                bytes,
-                image.width,
-                image.height,
-                0,
-                0,
-                image.width,
-                image.height,
-                false
-            )
-            val binaryBmp = BinaryBitmap(HybridBinarizer(source))
-            try {
-                val result = MultiFormatReader().apply {
-                    setHints(
-                        mapOf(
-                            DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
-                                BarcodeFormat.QR_CODE
-                            )
-                        )
-                    )
-                }.decode(binaryBmp)
-                onQrCodeScanned(result.text)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                image.close()
-            }
-        }
-    }
-
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()
-        return ByteArray(remaining()).also {
-            get(it)
-        }
-    }
-}
-
-@Composable
-fun QrCodeReader(
-    onSendCode: (code: String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember {
-        ProcessCameraProvider.getInstance(context)
-    }
-    var hasCamPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted ->
-            hasCamPermission = granted
-
-        })
-    LaunchedEffect(key1 = true) {
-        launcher.launch(Manifest.permission.CAMERA)
-    }
-
-    if (hasCamPermission) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(width = 265.dp, height = 265.dp)
-
-
-            ) {
-                AndroidView(
-                    factory = { context ->
-                        val previewView = PreviewView(context)
-                        val preview = Preview.Builder().build()
-                        val selector = CameraSelector.Builder()
-                            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                            .build()
-                        preview.setSurfaceProvider(previewView.surfaceProvider)
-                        val imageAnalysis = ImageAnalysis.Builder()
-                            .setTargetResolution(
-                                Size(
-                                    previewView.width,
-                                    previewView.height
-                                )
-                            )
-                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                            .build()
-                        imageAnalysis.setAnalyzer(
-                            ContextCompat.getMainExecutor(context),
-                            QrCodeAnalyzer { result ->
-                                onSendCode(result)
-                            }
-                        )
-                        try {
-                            cameraProviderFuture.get().bindToLifecycle(
-                                lifecycleOwner,
-                                selector,
-                                preview,
-                                imageAnalysis
-                            )
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                        previewView
-                    },
-                    modifier = modifier
-                )
-            }
-        }
-    }
-}

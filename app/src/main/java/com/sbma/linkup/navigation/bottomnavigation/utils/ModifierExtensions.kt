@@ -35,11 +35,3 @@ fun Modifier.ballTransform(ballAnimInfo: BallAnimInfo) = this
         transformOrigin = TransformOrigin(pivotFractionX = 0.5f, 0f)
     }
 
-fun Modifier.rotationWithTopCenterAnchor(degrees: Float) = this
-    .graphicsLayer(
-        transformOrigin = TransformOrigin(
-            pivotFractionX = 0.5f,
-            pivotFractionY = 0.1f,
-        ),
-        rotationZ = degrees
-    )

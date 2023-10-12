@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Nfc: ImageVector
+val Icons.Filled.Nfc: ImageVector
     get() {
         if (_nfc != null) {
             return _nfc!!

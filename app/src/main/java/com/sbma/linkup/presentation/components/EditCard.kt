@@ -1,7 +1,5 @@
 package com.sbma.linkup.presentation.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,13 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
-import com.sbma.linkup.util.CardIcon
-import com.sbma.linkup.util.toPictureResource
 import java.util.UUID
 
 @Composable
@@ -61,19 +55,12 @@ fun EditCard(
                         .padding(bottom = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    /*Image(
-                        painterResource(card.picture.toPictureResource()),
-                        contentDescription = "Icon name",
+                    CardIcon(
+                        picture = card.picture,
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .size(46.dp)
-//                            .clickable { onPictureClick(card) }
-                    )*/
-                    CardIcon(picture = card.picture,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(46.dp)
-                            )
+                    )
 
                     Column(
                         modifier = Modifier
@@ -89,11 +76,13 @@ fun EditCard(
                                     onCardModified(card.copy(title = it))
                                 },
                                 label = { Text("") },
-                                colors = TextFieldDefaults.colors( focusedTextColor = Color.Black,
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.Black,
                                     disabledTextColor = Color.Transparent,
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent)
+                                    disabledIndicatorColor = Color.Transparent
+                                )
                             )
                         }
 
@@ -103,11 +92,13 @@ fun EditCard(
                             value = card.value,
                             onValueChange = { onCardModified(card.copy(value = it)) },
                             label = { Text("Value") },
-                            colors = TextFieldDefaults.colors( focusedTextColor = Color.Black,
+                            colors = TextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
                                 disabledTextColor = Color.Transparent,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent)
+                                disabledIndicatorColor = Color.Transparent
+                            )
                         )
                     }
                     Box {

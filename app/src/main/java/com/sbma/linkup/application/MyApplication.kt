@@ -7,8 +7,6 @@ import android.nfc.NfcAdapter
 import androidx.activity.ComponentActivity
 import com.sbma.linkup.application.connectivity.AppConnectivityManager
 import com.sbma.linkup.application.connectivity.InternetConnectionState
-import com.sbma.linkup.application.data.AppContainer
-import com.sbma.linkup.application.data.AppDataContainer
 import com.sbma.linkup.bluetooth.AppBluetoothManager
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.datasource.DataStore
@@ -22,8 +20,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MyApplication : Application() {
-    val TAG = "[MyApplication]"
-
     companion object {
         private val parentJob = Job()
         private val coroutineScope = CoroutineScope(Dispatchers.Default + parentJob)
@@ -40,14 +36,14 @@ class MyApplication : Application() {
     lateinit var dataStore: DataStore
 
     // Service to check internet connection
-    lateinit var appConnectivityManager: AppConnectivityManager
+    private lateinit var appConnectivityManager: AppConnectivityManager
 
-    lateinit var bluetoothManager: BluetoothManager
-    lateinit var bluetoothAdapter: BluetoothAdapter
+    private lateinit var bluetoothManager: BluetoothManager
+    private lateinit var bluetoothAdapter: BluetoothAdapter
     lateinit var appBluetoothManager: AppBluetoothManager
-    lateinit var appBroadcastReceiver: AppBroadcastReceiver;
+    lateinit var appBroadcastReceiver: AppBroadcastReceiver
     lateinit var appNfcManager: AppNfcManager
-    var nfcAdapter: NfcAdapter? = null
+    private var nfcAdapter: NfcAdapter? = null
 
 
     // Container of repositories
@@ -61,7 +57,7 @@ class MyApplication : Application() {
         dataStore = DataStore(this)
 
         appConnectivityManager = AppConnectivityManager(this) {
-            println("$TAG[AppConnectivityManager] ${it.toTitle()}")
+            Timber.d("[AppConnectivityManager] ${it.toTitle()}")
             internetConnectionState.value = it
         }
 
@@ -80,7 +76,7 @@ class MyApplication : Application() {
             if (state.isConnected()) {
                 // Call Apis when app launches.
             } else {
-                println("Skipping api calls since there is no internet")
+                Timber.d("Skipping api calls since there is no internet")
             }
         }
 
@@ -88,9 +84,10 @@ class MyApplication : Application() {
     }
 
     fun initAppNfcManager(activity: ComponentActivity): AppNfcManager {
-        appNfcManager = AppNfcManager(this, activity, nfcAdapter)
+        appNfcManager = AppNfcManager(activity, nfcAdapter)
         return appNfcManager
     }
+
     fun initAppBroadcastReceiver(activity: ComponentActivity): AppBroadcastReceiver {
         appBroadcastReceiver = AppBroadcastReceiver(
             activity = activity,

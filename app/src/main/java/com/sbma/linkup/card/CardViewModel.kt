@@ -9,6 +9,7 @@ import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.UUID
 
 class CardViewModel(
@@ -16,11 +17,10 @@ class CardViewModel(
     private val dataStore: DataStore,
     private val apiService: ApiService
 ) : ViewModel() {
-    var phoneNumber: String = ""
     fun allItemsStream(userId: UUID) = repository.getUserItemsStream(userId)
     fun getItemStream(id: UUID) = repository.getItemStream(id)
     suspend fun insertItem(item: Card) = repository.insertItem(item)
-    suspend fun deleteFromLocalDatabase(item: Card) = repository.deleteItem(item)
+    private suspend fun deleteFromLocalDatabase(item: Card) = repository.deleteItem(item)
 
     suspend fun saveItem(card: Card): Job {
         // Example code of how Api works.
@@ -32,15 +32,16 @@ class CardViewModel(
                     card.toApiCard()
                 )
                     .onSuccess { response ->
-                        println("create new Card")
-                        println(response)
+                        Timber.d("create new Card")
+                        Timber.d(response.toString())
                         insertItem(response.toCard())
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }
     }
+
     suspend fun updateItem(card: Card): Job {
         // Example code of how Api works.
         return viewModelScope.launch {
@@ -48,15 +49,16 @@ class CardViewModel(
             authorization?.let {
                 apiService.updateCard(authorization, card.id.toString(), card.toApiCard())
                     .onSuccess { response ->
-                        println("update new Card")
-                        println(response)
+                        Timber.d("update new Card")
+                        Timber.d(response.toString())
                         insertItem(response.toCard())
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }
     }
+
     suspend fun deleteItem(card: Card): Job {
         // Example code of how Api works.
         return viewModelScope.launch {
@@ -64,11 +66,11 @@ class CardViewModel(
             authorization?.let {
                 apiService.deleteCard(authorization, card.id.toString())
                     .onSuccess { response ->
-                        println("delete new Card")
-                        println(response)
+                        Timber.d("delete new Card")
+                        Timber.d(response.toString())
                         deleteFromLocalDatabase(card)
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }

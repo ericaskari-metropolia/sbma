@@ -1,7 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
@@ -48,8 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,19 +55,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.sbma.linkup.R
-import com.sbma.linkup.application.data.AppViewModelProvider
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.presentation.components.CardIcon
 import com.sbma.linkup.presentation.components.EditCard
+import com.sbma.linkup.presentation.components.NewCardItem
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.util.CardIcon
-import com.sbma.linkup.util.toPictureResource
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.UUID
 
+/**
+ * [EditProfileScreen] Wrapper to provide viewmodels and logic that does not blong to UI
+ */
 @Composable
 fun EditProfileScreenProvider(
     user: User,
@@ -88,9 +88,9 @@ fun EditProfileScreenProvider(
         cards,
         onBackClick = { onBackClick() }
     ) { cardsToInsert, cardsToUpdate, cardsToDelete ->
-        println("cardsToInsert: $cardsToInsert")
-        println("cardsToUpdate: $cardsToInsert")
-        println("cardsToDelete: $cardsToDelete")
+        Timber.d("cardsToInsert: $cardsToInsert")
+        Timber.d("cardsToUpdate: $cardsToUpdate")
+        Timber.d("cardsToDelete: $cardsToDelete")
         composableScope.launch {
             cardsToInsert
                 .forEach {
@@ -110,6 +110,10 @@ fun EditProfileScreenProvider(
     }
 }
 
+
+/**
+ * [EditProfileScreen] Top Bar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreenTopBar(
@@ -135,7 +139,7 @@ fun EditProfileScreenTopBar(
                 onClick = { onBackClick() }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back"
                 )
             }
@@ -205,8 +209,8 @@ fun EditProfileScreen(
             )
         },
         bottomBar = {
-            BottomSheet { text, picture ->
-                println("Clicked $text $picture")
+            EditProfileScreenBottomSheet { text, picture ->
+                Timber.d("Clicked $text $picture")
                 val copy = userCards.toMutableList()
                 val id = UUID.randomUUID()
                 copy.add(
@@ -222,7 +226,7 @@ fun EditProfileScreen(
                 val cardsToInsertMutable = cardsToInsert.toMutableMap()
                 cardsToInsertMutable[id] = true
                 cardsToInsert = cardsToInsertMutable.toMap()
-                println("CreateCard")
+                Timber.d("CreateCard")
             }
         },
         modifier = Modifier
@@ -296,9 +300,13 @@ fun EditProfileScreen(
     }
 }
 
+
+/**
+ * [EditProfileScreen] Bottom sheet containing Card Icons
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
+fun EditProfileScreenBottomSheet(onClick: (text: String, picture: String) -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -323,8 +331,8 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList { text, picture ->
-                println("Clicked! $text  $picture")
+            EditProfileScreenBottomSheetItemsList { text, picture ->
+                Timber.d("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
 
@@ -335,40 +343,11 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
 
 }
 
+/**
+ * [EditProfileScreenBottomSheetItemsList] Bottom sheet Category Header
+ */
 @Composable
-fun ProfileCardListItem(
-    iconRes: Int,
-    text: String
-) {
-    Column {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = text
-                )
-            },
-            leadingContent = {
-                Image(
-                    painter = painterResource(iconRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        )
-    }
-}
-
-data class NewCardItem(
-    var category: String,
-    var picture: String,
-    var text: String
-)
-
-@Composable
-fun CategoryHeader(
+fun EditProfileScreenBottomSheetCategoryHeader(
     text: String,
 ) {
     Text(
@@ -384,7 +363,7 @@ fun CategoryHeader(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
+fun EditProfileScreenBottomSheetItemsList(onClick: (text: String, picture: String) -> Unit) {
 
     val newCardList = listOf(
 
@@ -422,7 +401,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
     ) {
         categories.forEach { category ->
             stickyHeader {
-                CategoryHeader(category.key)
+                EditProfileScreenBottomSheetCategoryHeader(category.key)
             }
             items(category.value.toList().chunked(3)) { rowItems ->
                 Row(
@@ -439,10 +418,11 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 .clickable { onClick(rowItem.text, rowItem.picture) }
                         ) {
 
-                            CardIcon(picture = rowItem.picture, modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .size(48.dp))
-
+                            CardIcon(
+                                picture = rowItem.picture, modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .size(48.dp)
+                            )
                             Text(
                                 text = rowItem.text,
                                 fontSize = 12.sp,
@@ -461,7 +441,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun EditProfileScreenPreview() {
     val cards = remember {
         mutableListOf(
             Card(
@@ -511,7 +491,7 @@ fun DefaultPreview() {
             user.value,
             cards,
             onBackClick = {}
-        ) { x, y, z ->
+        ) { _, _, _ ->
 
         }
     }

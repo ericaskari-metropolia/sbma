@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
 
 @Composable
-fun ScanResultScreen(scanResult:Boolean ) {
+fun QrCodeScanViaCameraResultScreen(scanResult:Boolean ) {
 
     val successQrScan by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success_qr))
     val failedQrScan by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.failed_qr_scan))

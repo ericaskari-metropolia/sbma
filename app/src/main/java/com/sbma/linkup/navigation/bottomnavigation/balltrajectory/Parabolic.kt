@@ -77,7 +77,7 @@ class Parabolic(
             path.createParabolaTrajectory(from = from, to = to, height = height)
 
             pathMeasurer.setPath(path, false)
-            pathLength.value = pathMeasurer.length
+            pathLength.floatValue = pathMeasurer.length
 
             fraction.snapTo(0f)
             fraction.animateTo(1f, animationSpec)

@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth
+package com.sbma.linkup.presentation.screens.bluetooth.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Card
@@ -24,14 +21,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -45,22 +40,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.icons.Bluetooth
 
 
 @SuppressLint("MissingPermission")
 @Composable
-fun AppBluetoothDeviceListScreen(
+fun BluetoothDeviceList(
     data: List<BluetoothDeviceDomain>,
     modifier: Modifier = Modifier,
     onClick: (device: BluetoothDeviceDomain) -> Unit
 ) {
-    var deviceName = rememberSaveable{ mutableStateOf("") }
+    var deviceName = rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -103,46 +97,45 @@ fun AppBluetoothDeviceListScreen(
                     ) {
                         Row(){
 
-                            Icon(
-                                Icons.Filled.Bluetooth,
-                                contentDescription = "AccountCircle",
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .padding(8.dp, top = 14.dp)
+                                Icon(
+                                    Icons.Filled.Bluetooth,
+                                    contentDescription = "AccountCircle",
+                                    modifier = Modifier
+                                        .size(46.dp)
+                                        .padding(8.dp, top = 14.dp)
 
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = scanResult.address,
-                                    fontWeight = FontWeight.Bold
                                 )
-
-                                scanResult.name?.let {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp)
+                                ) {
                                     Text(
-                                        text = it,
-                                        fontWeight = FontWeight.Normal
+                                        text = scanResult.address,
+                                        fontWeight = FontWeight.Bold
                                     )
+
+                                    scanResult.name?.let {
+                                        Text(
+                                            text = it,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    }
                                 }
                             }
+
+
                         }
-
-
-
                     }
                 }
             }
         }
     }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeviceSearch(onValueChange:(String) -> Unit){
+fun DeviceSearch(onValueChange: (String) -> Unit) {
     var searchText by rememberSaveable { mutableStateOf("") }
     var showClearIcon by rememberSaveable { mutableStateOf(false) }
 
@@ -154,8 +147,10 @@ fun DeviceSearch(onValueChange:(String) -> Unit){
 
     OutlinedTextField(
         value = searchText,
-        onValueChange = { searchText = it
-            onValueChange(it)},
+        onValueChange = {
+            searchText = it
+            onValueChange(it)
+        },
         placeholder = { Text("Search Devices") },
         singleLine = true,
         leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "searchIcon") },
@@ -208,34 +203,3 @@ fun BluetoothListScreenTopBar() {
 }
 
 
-//TO implement the back button from list of bluetooth screen
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BluetoothScreenTopBar(
-    onBackClick: () -> Unit
-) {
-    MediumTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = {
-            Text(
-                text = "Bluetooth Lists",
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = 20.sp
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                modifier = Modifier,
-                onClick = { onBackClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
-                )
-            }
-        },
-    )
-}

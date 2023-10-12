@@ -1,8 +1,5 @@
 package com.sbma.linkup.navigation.bottomnavigation.indentshape
 
-import com.sbma.linkup.navigation.bottomnavigation.indentshape.ShapeCornerRadius
-import com.sbma.linkup.navigation.bottomnavigation.indentshape.shapeCornerRadius
-
 data class IndentShapeData(
     val xIndent: Float = 0f,
     val height: Float = 0f,

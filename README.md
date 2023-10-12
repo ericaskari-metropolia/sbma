@@ -1,4 +1,28 @@
+![GitHub contributors](https://img.shields.io/github/contributors/ericaskari-metropolia/sbma)
+![GitHub repo size](https://img.shields.io/github/repo-size/ericaskari-metropolia/sbma?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/ericaskari-metropolia/sbma?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/ericaskari-metropolia/sbma)
+![GitHub MIT](https://img.shields.io/badge/license-MIT-blue)
+
+<br />
+<div align="center">
+  <a href="https://github.com/ericaskari-metropolia/sbma">
+    <img src="https://github.com/ericaskari-metropolia/sbma/blob/f833e61b7876e6a92b4269e34e377ba9c2b1df06/app/src/main/ic_launcher-playstore.png" alt="Logo" width="200" height="200">
+  </a>
+  <h1 align="center">LinkUp</h1>
+  <p align="center">
+    Your digital business card app
+  </p>
+</div>
+
+
+
+
+
 # LinkUp: Digital Business Card App
+
+
+
 
 LinkUp is a versatile digital business card application that allows users to create, share, and manage their professional profiles seamlessly. Whether you want to exchange contact information via Bluetooth, QR code scanning, or NFC tags, LinkUp has got you covered.
 This app is developed with focus upon sustainability and green energy that replaces the classical card to exchange/share personal or professional information.
@@ -36,7 +60,14 @@ the task was conducted based upon the study requirement of the course Android Je
 
 ### Built With
 
-[![Next][Next.js]][Next-url]
+[![Android][Android.js]][Android-url]
+[![Kotlin][Kotlin.js]][Kotlin-url]
+[![TypeScript][TypeScript.js]][TypeScript-url]
+[![HTML][HTML.js]][HTML-url]
+[![Tailwind][Tailwind.js]][Tailwind-url]
+[![Docker][Docker.js]][Docker-url]
+
+
 
 ## Installation
 
@@ -84,6 +115,24 @@ the task was conducted based upon the study requirement of the course Android Je
 This project is licensed under the MIT License.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+[Android.js]: https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white
+[Android-url]: https://www.android.com
+
+[Kotlin.js]: https://img.shields.io/badge/Kotlin-0095D5?&style=for-the-badge&logo=kotlin&logoColor=white
+[Kotlin-url]: https://kotlinlang.org
+
+[TypeScript.js]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org
+
+[HTML.js]: https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white
+[HTML-url]: https://html.com
+
+[Tailwind.js]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://tailwindcss.com
+
+[Docker.js]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com
 
 
 

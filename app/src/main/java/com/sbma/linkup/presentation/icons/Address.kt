@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Address: ImageVector
+val Icons.Filled.Address: ImageVector
     get() {
         if (_address != null) {
             return _address!!

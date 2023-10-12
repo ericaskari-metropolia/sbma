@@ -1,4 +1,4 @@
-package com.sbma.linkup.application.data
+package com.sbma.linkup.application
 
 import android.content.Context
 import com.sbma.linkup.api.ApiService

@@ -84,9 +84,3 @@ data class AssignTagRequest (
     val shareId: String,
     val tagId: String
 )
-
-
-data class NewCardRequest(
-    val title: String,
-    val value: String
-)
