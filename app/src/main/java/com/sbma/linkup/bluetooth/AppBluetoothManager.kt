@@ -5,10 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import com.sbma.linkup.bluetooth.connect.BluetoothDataTransferService
+import com.sbma.linkup.bluetooth.extensions.toBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.models.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.models.BluetoothMessage
 import com.sbma.linkup.bluetooth.models.ConnectionResult
-import com.sbma.linkup.bluetooth.models.toBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.models.toByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

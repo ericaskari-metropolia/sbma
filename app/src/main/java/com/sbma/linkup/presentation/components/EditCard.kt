@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
-import com.sbma.linkup.util.CardIcon
 import java.util.UUID
 
 @Composable
@@ -56,11 +55,12 @@ fun EditCard(
                         .padding(bottom = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CardIcon(picture = card.picture,
+                    CardIcon(
+                        picture = card.picture,
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .size(46.dp)
-                            )
+                    )
 
                     Column(
                         modifier = Modifier
@@ -76,11 +76,13 @@ fun EditCard(
                                     onCardModified(card.copy(title = it))
                                 },
                                 label = { Text("") },
-                                colors = TextFieldDefaults.colors( focusedTextColor = Color.Black,
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.Black,
                                     disabledTextColor = Color.Transparent,
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent)
+                                    disabledIndicatorColor = Color.Transparent
+                                )
                             )
                         }
 
@@ -90,11 +92,13 @@ fun EditCard(
                             value = card.value,
                             onValueChange = { onCardModified(card.copy(value = it)) },
                             label = { Text("Value") },
-                            colors = TextFieldDefaults.colors( focusedTextColor = Color.Black,
+                            colors = TextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
                                 disabledTextColor = Color.Transparent,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent)
+                                disabledIndicatorColor = Color.Transparent
+                            )
                         )
                     }
                     Box {

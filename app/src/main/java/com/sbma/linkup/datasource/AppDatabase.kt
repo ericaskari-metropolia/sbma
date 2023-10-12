@@ -21,6 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * Room Database
+ */
 @Database(
     entities = [User::class, Card::class, Connection::class, Tag::class, ConnectionCard::class],
     version = 9,

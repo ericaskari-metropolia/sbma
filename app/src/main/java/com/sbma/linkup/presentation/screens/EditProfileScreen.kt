@@ -58,17 +58,20 @@ import com.sbma.linkup.R
 import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
+import com.sbma.linkup.presentation.components.CardIcon
 import com.sbma.linkup.presentation.components.EditCard
 import com.sbma.linkup.presentation.components.NewCardItem
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.util.CardIcon
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.UUID
 
+/**
+ * [EditProfileScreen] Wrapper to provide viewmodels and logic that does not blong to UI
+ */
 @Composable
 fun EditProfileScreenProvider(
     user: User,
@@ -107,6 +110,10 @@ fun EditProfileScreenProvider(
     }
 }
 
+
+/**
+ * [EditProfileScreen] Top Bar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreenTopBar(
@@ -202,7 +209,7 @@ fun EditProfileScreen(
             )
         },
         bottomBar = {
-            BottomSheet { text, picture ->
+            EditProfileScreenBottomSheet { text, picture ->
                 Timber.d("Clicked $text $picture")
                 val copy = userCards.toMutableList()
                 val id = UUID.randomUUID()
@@ -293,9 +300,13 @@ fun EditProfileScreen(
     }
 }
 
+
+/**
+ * [EditProfileScreen] Bottom sheet
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
+fun EditProfileScreenBottomSheet(onClick: (text: String, picture: String) -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -320,7 +331,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
-            SocialMediaList { text, picture ->
+            EditProfileScreenBottomSheetItemsList { text, picture ->
                 Timber.d("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
@@ -333,7 +344,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
 }
 
 @Composable
-fun CategoryHeader(
+fun EditProfileScreenBottomSheetCategoryHeader(
     text: String,
 ) {
     Text(
@@ -349,7 +360,7 @@ fun CategoryHeader(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
+fun EditProfileScreenBottomSheetItemsList(onClick: (text: String, picture: String) -> Unit) {
 
     val newCardList = listOf(
 
@@ -387,7 +398,7 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
     ) {
         categories.forEach { category ->
             stickyHeader {
-                CategoryHeader(category.key)
+                EditProfileScreenBottomSheetCategoryHeader(category.key)
             }
             items(category.value.toList().chunked(3)) { rowItems ->
                 Row(
@@ -409,16 +420,6 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                     .align(Alignment.CenterHorizontally)
                                     .size(48.dp)
                             )
-
-                            /*Image(
-                                painter = painterResource(rowItem.picture.toPictureResource()),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .size(48.dp),
-                                contentScale = ContentScale.Crop,
-                                alignment = Alignment.Center
-                            )*/
                             Text(
                                 text = rowItem.text,
                                 fontSize = 12.sp,

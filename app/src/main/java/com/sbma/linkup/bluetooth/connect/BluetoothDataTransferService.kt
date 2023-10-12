@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
+/**
+ * Responsible for incoming messages and sending message to and from socket
+ */
 class BluetoothDataTransferService(
     private val socket: BluetoothSocket
 ) {

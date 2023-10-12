@@ -12,8 +12,7 @@ import java.util.UUID
 
 /**
  * key value database
- * Currently used for userId of logged in user.
- * And also json string of contacts that user wants to share.
+ * Currently used for userId and accesstoken of logged in user.
  */
 class DataStore(private val context: Context) {
 
@@ -34,7 +33,7 @@ class DataStore(private val context: Context) {
      * Getter for access token but with prepended "Bearer $token"
      */
     val getAuthorizationHeaderValue: Flow<String?> = getAccessToken.map {
-        if(it != null) "Bearer $it" else null
+        if (it != null) "Bearer $it" else null
     }
 
     /**

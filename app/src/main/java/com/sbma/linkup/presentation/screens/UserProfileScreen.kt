@@ -53,9 +53,9 @@ import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
+import com.sbma.linkup.presentation.components.CardIcon
 import com.sbma.linkup.presentation.components.UserCardsList
 import com.sbma.linkup.user.User
-import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.initiatePhoneCall
 import com.sbma.linkup.util.openEmail
 import com.sbma.linkup.util.openSocialMedia
@@ -348,51 +348,6 @@ fun ContactInfoRow(icon: ImageVector, text: String, modifier: Modifier = Modifie
         )
     }
 }
-
-//@Composable
-//fun ScreenTitle(canEdit: Boolean, onEditClick: (() -> Unit)?) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.Top,
-//    ) {
-//        Text(
-//            text = stringResource(R.string.profile),
-//            fontSize = 25.sp,
-//            style = MaterialTheme.typography.labelLarge,
-//            modifier = Modifier
-//
-//        )
-//        Row {
-//            if (canEdit) {
-//                Box(
-//                    modifier = Modifier
-//                        .padding(horizontal = 5.dp)
-//                        .size(36.dp)
-//                        .background(
-//                            MaterialTheme.colorScheme.primaryContainer,
-//                            shape = RoundedCornerShape(10.dp)
-//                        )
-//                ) {
-//                    Icon(
-//                        Icons.Filled.Edit,
-//                        contentDescription = "Edit",
-//                        modifier = Modifier
-//                            .padding(horizontal = 3.dp)
-//                            .fillMaxSize()
-//                            .clickable {
-//                                onEditClick?.let { it() }
-//                            }
-//                    )
-//
-//                }
-//
-//            }
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable

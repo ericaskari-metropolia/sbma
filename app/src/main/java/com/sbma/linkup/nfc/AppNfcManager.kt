@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
-import com.sbma.linkup.util.toHex
+import com.sbma.linkup.nfc.extensions.toHex
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
