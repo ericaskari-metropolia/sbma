@@ -302,7 +302,7 @@ fun EditProfileScreen(
 
 
 /**
- * [EditProfileScreen] Bottom sheet
+ * [EditProfileScreen] Bottom sheet containing Card Icons
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -343,6 +343,9 @@ fun EditProfileScreenBottomSheet(onClick: (text: String, picture: String) -> Uni
 
 }
 
+/**
+ * [EditProfileScreenBottomSheetItemsList] Bottom sheet Category Header
+ */
 @Composable
 fun EditProfileScreenBottomSheetCategoryHeader(
     text: String,
@@ -438,7 +441,7 @@ fun EditProfileScreenBottomSheetItemsList(onClick: (text: String, picture: Strin
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun EditProfileScreenPreview() {
     val cards = remember {
         mutableListOf(
             Card(
