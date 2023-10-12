@@ -35,12 +35,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sbma.linkup.presentation.icons.Bluetooth
-import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 
 
 @SuppressLint("MissingPermission")
 @Composable
-fun AppBluetoothDeviceList(
+fun AppBluetoothDeviceListScreen(
     data: List<IBluetoothDeviceDomain>,
     modifier: Modifier = Modifier,
     onClick: (device: IBluetoothDeviceDomain) -> Unit

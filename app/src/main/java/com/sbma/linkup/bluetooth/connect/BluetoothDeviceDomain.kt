@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth.connect
+package com.sbma.linkup.bluetooth.connect
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
