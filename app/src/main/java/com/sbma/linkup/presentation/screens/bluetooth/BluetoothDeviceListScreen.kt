@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,7 +67,9 @@ fun AppBluetoothDeviceListScreen(
             Column {
                 BluetoothListScreenTopBar()
             }
-        }
+        },
+        modifier = Modifier
+            .fillMaxSize()
     ) {padding ->
 
     Surface(
@@ -85,7 +88,8 @@ fun AppBluetoothDeviceListScreen(
             })
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(1.dp),
             ) {
                 items(data.filter { (it.name ?: "").contains(deviceName.value, ignoreCase = true) }) { scanResult ->

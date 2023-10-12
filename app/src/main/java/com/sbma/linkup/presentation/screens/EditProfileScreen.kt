@@ -259,7 +259,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Column {
-                userCards.forEachIndexed { index, card ->
+                userCards.reversed().forEachIndexed { index, card ->
                     EditCard(
                         card = card,
                         canEditTitle = card.title != "About me",
@@ -443,15 +443,6 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 .align(Alignment.CenterHorizontally)
                                 .size(48.dp))
 
-                            /*Image(
-                                painter = painterResource(rowItem.picture.toPictureResource()),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .size(48.dp),
-                                contentScale = ContentScale.Crop,
-                                alignment = Alignment.Center
-                            )*/
                             Text(
                                 text = rowItem.text,
                                 fontSize = 12.sp,
