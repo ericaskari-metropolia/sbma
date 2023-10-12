@@ -77,7 +77,7 @@ abstract class AppDatabase : RoomDatabase() {
     /**
      * Database initializer
      */
-    suspend fun populateDatabase() {
+    fun populateDatabase() {
         println("one time populating the database")
     }
 

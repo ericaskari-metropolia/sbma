@@ -26,7 +26,7 @@ import com.sbma.linkup.presentation.screens.bluetooth.ReceiveViaBluetoothScreenP
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
-import com.sbma.linkup.presentation.screens.qr.MyQrCode
+import com.sbma.linkup.presentation.screens.qr.ShareQrScreen
 import com.sbma.linkup.presentation.screens.qr.ScanQRCodeCameraScreen
 import com.sbma.linkup.presentation.screens.qr.ScanResultScreen
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
@@ -150,7 +150,7 @@ fun Navigation(
         ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
-                MyQrCode(
+                ShareQrScreen(
                     shareId = it,
                     onBackClick = {
                         navController.popBackStack()

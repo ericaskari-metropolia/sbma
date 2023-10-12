@@ -48,6 +48,7 @@ fun shapeCornerRadius(cornerRadius: Dp) =
         bottomLeft = cornerRadius.toPxf()
     )
 
+@Suppress("unused")
 @Composable
 fun shapeCornerRadius(
     topLeft: Dp,

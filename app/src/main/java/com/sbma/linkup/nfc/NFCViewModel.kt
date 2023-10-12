@@ -2,7 +2,6 @@ package com.sbma.linkup.nfc
 
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,19 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
-    companion object {
-        private val TAG = NFCViewModel::class.java.simpleName
-        private const val prefix = "android.nfc.tech."
-    }
-
+class NFCViewModel(private val appNfcManager: AppNfcManager) : ViewModel() {
     private val liveNFC: MutableStateFlow<NFCStatus?> = MutableStateFlow(null)
     private val liveToast: MutableSharedFlow<String?> = MutableSharedFlow()
 
 
     private suspend fun postToast(message: String) {
-        Log.d(TAG, "postToast(${message})")
+        Timber.d("postToast(${message})")
         liveToast.emit(message)
     }
 
@@ -33,7 +28,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     }
 
     //endregion
-    fun getNFCFlags(): Int {
+    private fun getNFCFlags(): Int {
         return NfcAdapter.FLAG_READER_NFC_A or
                 NfcAdapter.FLAG_READER_NFC_B or
                 NfcAdapter.FLAG_READER_NFC_F or
@@ -41,8 +36,8 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
                 NfcAdapter.FLAG_READER_NFC_BARCODE //or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
     }
 
-    fun getExtras(): Bundle {
-        val options: Bundle = Bundle()
+    private fun getExtras(): Bundle {
+        val options = Bundle()
         options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 30000)
         return options
     }
@@ -50,7 +45,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     //region NFC Methods
     fun onCheckNFC(isChecked: Boolean) {
         viewModelScope.launch {
-            Log.d(TAG, "onCheckNFC(${isChecked})")
+            Timber.d("onCheckNFC(${isChecked})")
             if (isChecked) {
                 postNFCStatus(NFCStatus.Tap)
                 appNfcManager.enableReaderMode(getNFCFlags(), getExtras())
@@ -63,7 +58,7 @@ class NFCViewModel(val appNfcManager: AppNfcManager) : ViewModel() {
     }
 
     private suspend fun postNFCStatus(status: NFCStatus) {
-        Log.d(TAG, "postNFCStatus(${status})")
+        Timber.d("postNFCStatus(${status})")
         if (appNfcManager.isSupported()) {
             liveNFC.emit(status)
         } else if (!appNfcManager.isEnabled()) {

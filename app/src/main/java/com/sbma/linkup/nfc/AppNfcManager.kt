@@ -1,25 +1,22 @@
 package com.sbma.linkup.nfc
 
 import android.app.Activity
-import android.content.Context
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.sbma.linkup.util.toHex
 import kotlinx.coroutines.flow.MutableStateFlow
+import timber.log.Timber
 
 class AppNfcManager(
-    val context: Context,
-    val activity: Activity,
-    val nfcAdapter: NfcAdapter?
+    private val activity: Activity,
+    private val nfcAdapter: NfcAdapter?
 ) :
     DefaultLifecycleObserver, NfcAdapter.ReaderCallback {
 
-    private val TAG = AppNfcManager::class.java.simpleName
     val liveTag: MutableStateFlow<String?> = MutableStateFlow(null)
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
@@ -31,7 +28,7 @@ class AppNfcManager(
             try {
                 it.enableReaderMode(activity, this, flags, extras)
             } catch (ex: UnsupportedOperationException) {
-                Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+                Timber.d( "UnsupportedOperationException ${ex.message}", ex)
             }
         }
     }
@@ -42,7 +39,7 @@ class AppNfcManager(
             try {
                 nfcAdapter.disableReaderMode(activity)
             } catch (ex: UnsupportedOperationException) {
-                Log.e(TAG, "UnsupportedOperationException ${ex.message}", ex)
+                Timber.d("UnsupportedOperationException ${ex.message}", ex)
             }
         }
     }
@@ -53,10 +50,6 @@ class AppNfcManager(
 
     fun isEnabled(): Boolean {
         return nfcAdapter?.isEnabled ?: false
-    }
-
-    fun isSupportedAndEnabled(): Boolean {
-        return isSupported() && isEnabled()
     }
 
     override fun onTagDiscovered(tag: Tag?) {

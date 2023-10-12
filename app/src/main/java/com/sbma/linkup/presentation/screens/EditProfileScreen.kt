@@ -1,7 +1,6 @@
 package com.sbma.linkup.presentation.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
@@ -48,8 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,12 +59,12 @@ import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.presentation.components.EditCard
+import com.sbma.linkup.presentation.components.NewCardItem
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.CardIcon
-import com.sbma.linkup.util.toPictureResource
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -135,7 +131,7 @@ fun EditProfileScreenTopBar(
                 onClick = { onBackClick() }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back"
                 )
             }
@@ -334,38 +330,6 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
 
 
 }
-
-@Composable
-fun ProfileCardListItem(
-    iconRes: Int,
-    text: String
-) {
-    Column {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = text
-                )
-            },
-            leadingContent = {
-                Image(
-                    painter = painterResource(iconRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        )
-    }
-}
-
-data class NewCardItem(
-    var category: String,
-    var picture: String,
-    var text: String
-)
 
 @Composable
 fun CategoryHeader(

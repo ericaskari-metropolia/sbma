@@ -1,4 +1,4 @@
-package com.exyte.animatednavbar.items.dropletbutton
+package com.sbma.linkup.navigation.bottomnavigation.dropletbutton
 
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.AnimationSpec

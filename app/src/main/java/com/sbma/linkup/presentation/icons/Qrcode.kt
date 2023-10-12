@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Qrcode: ImageVector
+val Icons.Filled.Qrcode: ImageVector
     get() {
         if (_qrcode != null) {
             return _qrcode!!

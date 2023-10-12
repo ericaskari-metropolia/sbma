@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.AddCard: ImageVector
+val Icons.Filled.AddCard: ImageVector
     get() {
         if (_addcard != null) {
             return _addcard!!

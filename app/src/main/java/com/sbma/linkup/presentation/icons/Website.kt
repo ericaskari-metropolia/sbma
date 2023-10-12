@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Website: ImageVector
+val Icons.Filled.Website: ImageVector
     get() {
         if (_website != null) {
             return _website!!

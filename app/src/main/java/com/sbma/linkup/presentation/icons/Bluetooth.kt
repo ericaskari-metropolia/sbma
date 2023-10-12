@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Bluetooth: ImageVector
+val Icons.Filled.Bluetooth: ImageVector
     get() {
         if (_bluetooth != null) {
             return _bluetooth!!

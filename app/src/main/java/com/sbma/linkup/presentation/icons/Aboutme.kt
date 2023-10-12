@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Aboutme: ImageVector
+val Icons.Filled.Aboutme: ImageVector
     get() {
         if (_aboutme != null) {
             return _aboutme!!

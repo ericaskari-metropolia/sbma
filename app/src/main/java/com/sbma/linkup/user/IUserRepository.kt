@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 /**
- * Repository that provides insert, update, delete, and retrieve of [Item] from a given data source.
+ * Repository that provides insert, update, delete, and retrieve of Item from a given data source.
  */
 interface IUserRepository {
     fun getAllItemsStream(): Flow<List<User>>

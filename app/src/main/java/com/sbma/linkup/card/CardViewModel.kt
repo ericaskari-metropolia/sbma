@@ -17,11 +17,10 @@ class CardViewModel(
     private val dataStore: DataStore,
     private val apiService: ApiService
 ) : ViewModel() {
-    var phoneNumber: String = ""
     fun allItemsStream(userId: UUID) = repository.getUserItemsStream(userId)
     fun getItemStream(id: UUID) = repository.getItemStream(id)
     suspend fun insertItem(item: Card) = repository.insertItem(item)
-    suspend fun deleteFromLocalDatabase(item: Card) = repository.deleteItem(item)
+    private suspend fun deleteFromLocalDatabase(item: Card) = repository.deleteItem(item)
 
     suspend fun saveItem(card: Card): Job {
         // Example code of how Api works.

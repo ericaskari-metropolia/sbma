@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
+import timber.log.Timber
 
 @SuppressLint("QueryPermissionsNeeded")
 
@@ -18,7 +18,7 @@ fun openEmail(context: Context, emailAddress: String) {
     if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
     } else {
-        Log.d("DBG", "No Email related app to open")
+        Timber.d("No Email related app to open")
         Toast.makeText(context, "Something went wrong, could not open app", Toast.LENGTH_SHORT).show()
     }
 }

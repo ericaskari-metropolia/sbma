@@ -31,13 +31,13 @@ class AppBroadcastReceiver(
     private val appBluetoothManager: AppBluetoothManager,
     private val bluetoothAdapter: BluetoothAdapter
 ) : DefaultLifecycleObserver {
-     private val _bluetoothEnabled: MutableStateFlow<Boolean> = MutableStateFlow(bluetoothAdapter.isEnabled);
+     private val _bluetoothEnabled: MutableStateFlow<Boolean> = MutableStateFlow(bluetoothAdapter.isEnabled)
      val bluetoothEnabled: StateFlow<Boolean> get() = _bluetoothEnabled.asStateFlow()
 
-     private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf());
+     private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf())
      val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
 
-     private val _foundedDevices: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
+     private val _foundedDevices: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf())
      val foundedDevices get() = _foundedDevices.map { it.values.toList() }
 
     // broadcastReceiver reference. It still should be registered in onResume and unregistered on onPause lifecycle.
@@ -130,7 +130,6 @@ class AppBroadcastReceiver(
 
 
     companion object {
-        const val TAG = "[AppBroadcastReceiver]"
         private fun broadcastReceiverFactory(
             onBluetoothStateChange: () -> Unit,
             onDeviceFound: (bluetoothDevice: BluetoothDevice) -> Unit,

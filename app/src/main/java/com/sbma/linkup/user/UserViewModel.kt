@@ -30,14 +30,9 @@ class UserViewModel(
     private val apiService: ApiService,
     private val dataStore: DataStore,
     ) : ViewModel() {
-    val loggedInUserId = dataStore.getUserId
-    val getAccessToken = dataStore.getAccessToken
-    val getAccessTokenExpiresAt = dataStore.getAccessTokenExpiresAt
-
-    val allItemsStream = userRepository.getAllItemsStream()
     fun getItemStream(id: UUID) = userRepository.getItemStream(id)
-    val responseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
-    val assignTagResponseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val responseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val assignTagResponseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
 
 
     /**
@@ -52,11 +47,11 @@ class UserViewModel(
             userId?.let { id ->
                 val user = users.find { it.id == id }
                 if (user == null) {
-                    listOf<User>()
+                    listOf()
                 } else {
-                    listOf<User>(user)
+                    listOf(user)
                 }
-            } ?: listOf<User>()
+            } ?: listOf()
         }
 
     suspend fun syncRoomDatabase() {
@@ -210,6 +205,7 @@ class UserViewModel(
                         onSuccess(response)
 
                     }.onFailure {
+                        onFailure()
                         println("scanShareId -> onFailure")
                         println(it)
                     }
