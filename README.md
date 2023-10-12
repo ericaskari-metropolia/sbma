@@ -36,7 +36,6 @@ the task was conducted based upon the study requirement of the course Android Je
 
 ### Built With
 
-[![Next][Next.js]][Next-url]
 
 ## Installation
 
