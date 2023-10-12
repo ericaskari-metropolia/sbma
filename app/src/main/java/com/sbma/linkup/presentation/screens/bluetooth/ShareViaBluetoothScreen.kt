@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.bluetooth.AppBluetoothViewModel
+import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
@@ -71,7 +72,7 @@ fun ShareViaBluetoothScreen(
     val pairedDevices = appBluetoothViewModel.pairedDevices.collectAsState(initial = listOf())
 
     Column {
-        AppBluetoothDeviceListScreen(data = bluetoothDevicesFound.value + pairedDevices.value) {
+        AppBluetoothDeviceListScreen(data = bluetoothDevicesFound.value.map { it.toFoundedBluetoothDeviceDomain() } + pairedDevices.value) {
             appBluetoothViewModel.connectToDevice(it)
         }
     }
