@@ -1,4 +1,4 @@
-package com.sbma.linkup.bluetooth.connect
+package com.sbma.linkup.bluetooth.models
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -6,12 +6,6 @@ import android.bluetooth.BluetoothDevice
 data class BluetoothDeviceDomain(
     val address: String,
     val name: String?,
-)
-
-data class FoundedBluetoothDeviceDomain(
-    val address: String,
-    val name: String?,
-    val lastSeen: Long
 )
 
 @SuppressLint("MissingPermission")

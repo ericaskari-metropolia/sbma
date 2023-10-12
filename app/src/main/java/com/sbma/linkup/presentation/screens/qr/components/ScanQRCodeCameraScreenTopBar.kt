@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.qr
+package com.sbma.linkup.presentation.screens.qr.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack

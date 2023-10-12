@@ -1,4 +1,4 @@
-package com.sbma.linkup.connectivity
+package com.sbma.linkup.application.connectivity
 
 import android.annotation.SuppressLint
 import android.app.Application

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.UUID
 
 class UserViewModel(
@@ -29,7 +30,7 @@ class UserViewModel(
     private val userConnectionRepository: IConnectionRepository,
     private val apiService: ApiService,
     private val dataStore: DataStore,
-    ) : ViewModel() {
+) : ViewModel() {
     fun getItemStream(id: UUID) = userRepository.getItemStream(id)
     private val responseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
     private val assignTagResponseStatus: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -73,13 +74,13 @@ class UserViewModel(
                         connections.asSequence().mapNotNull { it.connectionCards }.flatten().mapNotNull { it.card }.groupBy { it.ownerId }
                             .toList()
 
-                    println("Sync User Profile")
-                    println("Sync User Cards")
-                    println("Sync Connection Items.          count: ${connections.count()}")
-                    println("Sync Connection User Items.     count: ${connectionsUsers.count()}")
-                    println("Sync ConnectionCard Items.      count: ${connectionsCards.count()}")
-                    println("Sync ConnectionCard Card Items. count: ${connectionsCardsCards.count()}")
-                    println("Sync Started.")
+                    Timber.d("Sync User Profile")
+                    Timber.d("Sync User Cards")
+                    Timber.d("Sync Connection Items.          count: ${connections.count()}")
+                    Timber.d("Sync Connection User Items.     count: ${connectionsUsers.count()}")
+                    Timber.d("Sync ConnectionCard Items.      count: ${connectionsCards.count()}")
+                    Timber.d("Sync ConnectionCard Card Items. count: ${connectionsCardsCards.count()}")
+                    Timber.d("Sync Started.")
                     cardRepository.syncUserItems(user.id, cards)
                     userRepository.insertItem(user)
                     userConnectionRepository.syncUserConnections(user.id, connections.toConnectionList())
@@ -95,9 +96,9 @@ class UserViewModel(
                     connectionsCardsCards.forEach {
                         cardRepository.syncUserItems(UUID.fromString(it.first), it.second.toCardList())
                     }
-                    println("Sync Completed.")
+                    Timber.d("Sync Completed.")
                 }.onFailure {
-                    println(it)
+                    Timber.d(it)
                 }
 
         }
@@ -120,11 +121,11 @@ class UserViewModel(
                     cardIDs
                 )
                     .onSuccess { response ->
-                        println("share new Card")
-                        println(response)
+                        Timber.d("share new Card")
+                        Timber.d(response.toString())
                         onSuccessResponse(response.id)
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }
@@ -139,12 +140,12 @@ class UserViewModel(
                     AssignTagRequest(shareId, id)
                 )
                     .onSuccess { response ->
-                        println("assignTag")
-                        println(response)
+                        Timber.d("assignTag")
+                        Timber.d(response.toString())
                         assignTagResponseStatus.value =
                             "Congratulations! You successfully added your details on the NFC-enabled card."
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                         assignTagResponseStatus.value = "Oh no! Something went wrong."
                     }
             }
@@ -160,14 +161,14 @@ class UserViewModel(
                     id
                 )
                     .onSuccess { response ->
-                        println("receiveTag")
-                        println(response)
+                        Timber.d("receiveTag")
+                        Timber.d(response.toString())
                         syncRoomDatabase()
                         responseStatus.value =
                             "Congratulations! Contact has been successfully added."
 
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                         responseStatus.value = "Oh no! Contact retrieval has failed"
                     }
             }
@@ -180,7 +181,7 @@ class UserViewModel(
                 UUID.fromString(id),
                 onSuccess = {
                     responseStatus.value = "Congratulations! Contact has been successfully added."
-                    println("Scanning Qr code")
+                    Timber.d("Scanning Qr code")
                     onScanResult(true)
                 },
                 onFailure = {
@@ -199,15 +200,15 @@ class UserViewModel(
                     id.toString()
                 )
                     .onSuccess { response ->
-                        println("scanShareId -> onSuccess")
+                        Timber.d("scanShareId -> onSuccess")
                         syncRoomDatabase()
-                        println(response)
+                        Timber.d(response.toString())
                         onSuccess(response)
 
                     }.onFailure {
                         onFailure()
-                        println("scanShareId -> onFailure")
-                        println(it)
+                        Timber.d("scanShareId -> onFailure")
+                        Timber.d(it)
                     }
             }
         }

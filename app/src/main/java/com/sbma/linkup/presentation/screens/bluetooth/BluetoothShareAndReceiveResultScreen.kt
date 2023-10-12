@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screenstates
+package com.sbma.linkup.presentation.screens.bluetooth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

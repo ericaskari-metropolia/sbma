@@ -1,12 +1,10 @@
 package com.sbma.linkup.bluetooth
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.ConnectionResult
-import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.BluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.ConnectionResult
+import com.sbma.linkup.bluetooth.models.toFoundedBluetoothDeviceDomain
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.presentation.screens.bluetooth.components.BluetoothUiState
 import kotlinx.coroutines.Job
@@ -24,23 +22,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-@SuppressLint("MissingPermission")
-fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluetoothDeviceDomain {
-    return FoundedBluetoothDeviceDomain(
-        name = name,
-        address = address,
-        lastSeen = lastSeen
-    )
-}
-
-@SuppressLint("MissingPermission")
-fun FoundedBluetoothDeviceDomain.toFoundedBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = name,
-        address = address,
-    )
-}
-
+/**
+ * ViewModel for using AppBluetoothManager and AppBroadcastReceiver
+ */
 class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
     private val appBroadcastReceiver: AppBroadcastReceiver,

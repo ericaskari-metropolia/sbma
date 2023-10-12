@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Clear
@@ -43,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +55,7 @@ import com.sbma.linkup.connection.Connection
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
+import timber.log.Timber
 import java.util.UUID
 
 
@@ -287,7 +286,7 @@ fun ScreenPreview() {
         UserNetworkScreen(
             UserConnectionsScreenState(users)
         ) {
-            println(it)
+            Timber.d(it.toString())
         }
     }
 }

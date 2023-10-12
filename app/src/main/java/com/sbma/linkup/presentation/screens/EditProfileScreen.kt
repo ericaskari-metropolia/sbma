@@ -66,6 +66,7 @@ import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.CardIcon
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.UUID
 
 @Composable
@@ -84,9 +85,9 @@ fun EditProfileScreenProvider(
         cards,
         onBackClick = { onBackClick() }
     ) { cardsToInsert, cardsToUpdate, cardsToDelete ->
-        println("cardsToInsert: $cardsToInsert")
-        println("cardsToUpdate: $cardsToUpdate")
-        println("cardsToDelete: $cardsToDelete")
+        Timber.d("cardsToInsert: $cardsToInsert")
+        Timber.d("cardsToUpdate: $cardsToUpdate")
+        Timber.d("cardsToDelete: $cardsToDelete")
         composableScope.launch {
             cardsToInsert
                 .forEach {
@@ -202,7 +203,7 @@ fun EditProfileScreen(
         },
         bottomBar = {
             BottomSheet { text, picture ->
-                println("Clicked $text $picture")
+                Timber.d("Clicked $text $picture")
                 val copy = userCards.toMutableList()
                 val id = UUID.randomUUID()
                 copy.add(
@@ -218,7 +219,7 @@ fun EditProfileScreen(
                 val cardsToInsertMutable = cardsToInsert.toMutableMap()
                 cardsToInsertMutable[id] = true
                 cardsToInsert = cardsToInsertMutable.toMap()
-                println("CreateCard")
+                Timber.d("CreateCard")
             }
         },
         modifier = Modifier
@@ -320,7 +321,7 @@ fun BottomSheet(onClick: (text: String, picture: String) -> Unit) {
             sheetState = sheetState,
             onDismissRequest = { isSheetOpen = false }) {
             SocialMediaList { text, picture ->
-                println("Clicked! $text  $picture")
+                Timber.d("Clicked! $text  $picture")
                 onClick(text, picture)
                 isSheetOpen = false
 
@@ -403,9 +404,11 @@ fun SocialMediaList(onClick: (text: String, picture: String) -> Unit) {
                                 .clickable { onClick(rowItem.text, rowItem.picture) }
                         ) {
 
-                            CardIcon(picture = rowItem.picture, modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .size(48.dp))
+                            CardIcon(
+                                picture = rowItem.picture, modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .size(48.dp)
+                            )
 
                             /*Image(
                                 painter = painterResource(rowItem.picture.toPictureResource()),
@@ -484,7 +487,7 @@ fun DefaultPreview() {
             user.value,
             cards,
             onBackClick = {}
-        ) { x, y, z ->
+        ) { _, _, _ ->
 
         }
     }

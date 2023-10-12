@@ -5,10 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.nfc.NfcAdapter
 import androidx.activity.ComponentActivity
+import com.sbma.linkup.application.connectivity.AppConnectivityManager
+import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.bluetooth.AppBluetoothManager
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
-import com.sbma.linkup.connectivity.AppConnectivityManager
-import com.sbma.linkup.connectivity.InternetConnectionState
 import com.sbma.linkup.datasource.DataStore
 import com.sbma.linkup.nfc.AppNfcManager
 import kotlinx.coroutines.CoroutineScope
@@ -76,7 +76,7 @@ class MyApplication : Application() {
             if (state.isConnected()) {
                 // Call Apis when app launches.
             } else {
-                println("Skipping api calls since there is no internet")
+                Timber.d("Skipping api calls since there is no internet")
             }
         }
 
@@ -87,6 +87,7 @@ class MyApplication : Application() {
         appNfcManager = AppNfcManager(activity, nfcAdapter)
         return appNfcManager
     }
+
     fun initAppBroadcastReceiver(activity: ComponentActivity): AppBroadcastReceiver {
         appBroadcastReceiver = AppBroadcastReceiver(
             activity = activity,

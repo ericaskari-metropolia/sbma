@@ -28,7 +28,7 @@ class AppNfcManager(
             try {
                 it.enableReaderMode(activity, this, flags, extras)
             } catch (ex: UnsupportedOperationException) {
-                Timber.d( "UnsupportedOperationException ${ex.message}", ex)
+                Timber.d("UnsupportedOperationException ${ex.message}", ex)
             }
         }
     }
@@ -54,7 +54,7 @@ class AppNfcManager(
 
     override fun onTagDiscovered(tag: Tag?) {
         if (tag != null) {
-            println("OnTagDiscovered: ${tag.id.toHex()}")
+            Timber.d("OnTagDiscovered: ${tag.id.toHex()}")
             liveTag.value = tag.id.toHex()
         }
     }

@@ -32,15 +32,16 @@ class CardViewModel(
                     card.toApiCard()
                 )
                     .onSuccess { response ->
-                        println("create new Card")
-                        println(response)
+                        Timber.d("create new Card")
+                        Timber.d(response.toString())
                         insertItem(response.toCard())
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }
     }
+
     suspend fun updateItem(card: Card): Job {
         // Example code of how Api works.
         return viewModelScope.launch {
@@ -57,6 +58,7 @@ class CardViewModel(
             }
         }
     }
+
     suspend fun deleteItem(card: Card): Job {
         // Example code of how Api works.
         return viewModelScope.launch {
@@ -64,11 +66,11 @@ class CardViewModel(
             authorization?.let {
                 apiService.deleteCard(authorization, card.id.toString())
                     .onSuccess { response ->
-                        println("delete new Card")
-                        println(response)
+                        Timber.d("delete new Card")
+                        Timber.d(response.toString())
                         deleteFromLocalDatabase(card)
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }

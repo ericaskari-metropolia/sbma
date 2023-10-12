@@ -1,4 +1,4 @@
-package com.sbma.linkup.bluetooth.connect
+package com.sbma.linkup.bluetooth.models
 
 data class BluetoothMessage(
     val message: String,

@@ -81,7 +81,6 @@ fun NfcReceiveScreen(
 
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_nfc))
-    val toastMessage = nfcViewModel.observeToast().collectAsState(initial = "loading")
     val responseStatus = userViewModel.observeNfcStatus().collectAsState(initial = null)
 
     LaunchedEffect(true) {

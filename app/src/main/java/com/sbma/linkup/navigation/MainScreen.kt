@@ -16,7 +16,7 @@ import com.google.gson.Gson
 import com.sbma.linkup.api.apimodels.ApiUser
 import com.sbma.linkup.api.apimodels.toUser
 import com.sbma.linkup.application.AppViewModelProvider
-import com.sbma.linkup.connectivity.InternetConnectionState
+import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.intents.login.LoginResponseToken
 import com.sbma.linkup.navigation.bottomnavigation.BottomNavigationBar
 import com.sbma.linkup.presentation.components.NoInternetConnectionBarComponent
@@ -25,6 +25,7 @@ import com.sbma.linkup.presentation.screens.LoginScreen
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -49,9 +50,9 @@ fun MainScreen(
 
                 val path = data.path ?: ""
 
-                println("intent.action: $action")
-                println("intent.data: $data")
-                println("intent.path: $path")
+                Timber.d("intent.action: $action")
+                Timber.d("intent.data: $data")
+                Timber.d("intent.path: $path")
 
                 // Check if it is a login intent
                 if (path == "/android/auth/login") {

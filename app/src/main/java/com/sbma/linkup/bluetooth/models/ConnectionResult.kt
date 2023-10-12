@@ -1,4 +1,4 @@
-package com.sbma.linkup.bluetooth.connect
+package com.sbma.linkup.bluetooth.models
 
 sealed interface ConnectionResult {
     object ConnectionEstablished : ConnectionResult

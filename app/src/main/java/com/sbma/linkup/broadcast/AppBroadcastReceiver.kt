@@ -15,8 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.sbma.linkup.bluetooth.AppBluetoothManager
-import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.extensions.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.FoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +25,7 @@ import timber.log.Timber
 
 /**
  * Main responsibility of this class is to observe Bluetooth status stop scan if it turned off.
+ * And it is the only place to access broadcasts in app.
  */
 class AppBroadcastReceiver(
     private val activity: ComponentActivity,

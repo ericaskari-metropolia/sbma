@@ -28,9 +28,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.R
 import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.presentation.screens.qr.components.QrCodeReader
+import com.sbma.linkup.presentation.screens.qr.components.ScanQRCodeCameraScreenTopBar
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun ScanQRCodeCameraScreen(
@@ -72,10 +74,10 @@ fun ScanQRCodeCameraScreen(
                 { result ->
                     scope.launch {
                         code = result
-                        println("Result: $result")
+                        Timber.d("Result: $result")
                         val id = code.split(MYAPI).last()
                         userViewModel.scanQRCode(id) {
-                           onResultScan(it)
+                            onResultScan(it)
                         }
 
                     }

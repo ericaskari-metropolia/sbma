@@ -11,7 +11,7 @@ const val MYAPI = "https://sbma.ericaskari.com/android/qr/scan?id="
 
 
 @Composable
-fun ShareQrScreen(shareId: String, onBackClick: () -> Unit) {
+fun ShareQrCodeScreen(shareId: String, onBackClick: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         GenerateQRCode(MYAPI + shareId, onBackClick)
     }

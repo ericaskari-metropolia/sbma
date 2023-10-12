@@ -19,6 +19,7 @@ import com.sbma.linkup.user.UserDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Database(
     entities = [User::class, Card::class, Connection::class, Tag::class, ConnectionCard::class],
@@ -78,7 +79,7 @@ abstract class AppDatabase : RoomDatabase() {
      * Database initializer
      */
     fun populateDatabase() {
-        println("one time populating the database")
+        Timber.d("one time populating the database")
     }
 
 }

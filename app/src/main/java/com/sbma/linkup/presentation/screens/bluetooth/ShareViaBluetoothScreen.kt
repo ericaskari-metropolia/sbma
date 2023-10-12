@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.bluetooth.AppBluetoothViewModel
-import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.toFoundedBluetoothDeviceDomain
 import com.sbma.linkup.presentation.screens.bluetooth.components.BluetoothDeviceList
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
