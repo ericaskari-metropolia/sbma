@@ -37,6 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -59,38 +61,41 @@ fun BluetoothDeviceList(
             Column {
                 BluetoothListScreenTopBar()
             }
-        }
-    ) { padding ->
+        },
+        modifier = Modifier
+            .fillMaxSize()
+    ) {padding ->
 
-        Surface(
-            modifier = modifier,
-            shadowElevation = 4.dp,
-            tonalElevation = 4.dp,
-            shape = RoundedCornerShape(16.dp)
+    Surface(
+        modifier = modifier,
+        shadowElevation = 4.dp,
+        tonalElevation = 4.dp,
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
         ) {
-            Column(
+            DeviceSearch(onValueChange = {
+                deviceName.value = it
+            })
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
             ) {
-                DeviceSearch(onValueChange = {
-                    deviceName.value = it
-                })
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(1.dp),
-                ) {
-                    items(data.filter { (it.name ?: "").contains(deviceName.value, ignoreCase = true) }) { scanResult ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onClick(scanResult) }
-                                .padding(6.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            elevation = CardDefaults.cardElevation(4.dp)
-                        ) {
-                            Row() {
+                items(data.filter { (it.name ?: "").contains(deviceName.value, ignoreCase = true) }) { scanResult ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onClick(scanResult) }
+                            .padding(6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Row(){
 
                                 Icon(
                                     Icons.Filled.Bluetooth,
