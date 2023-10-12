@@ -1,7 +1,7 @@
 package com.sbma.linkup.presentation.screens.bluetooth
 
-import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothMessage
-import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.BluetoothMessage
+import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 
 
 data class BluetoothUiState(

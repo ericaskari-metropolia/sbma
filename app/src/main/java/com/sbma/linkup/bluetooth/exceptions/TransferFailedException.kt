@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth.exceptions
+package com.sbma.linkup.bluetooth.exceptions
 
 import java.io.IOException
 

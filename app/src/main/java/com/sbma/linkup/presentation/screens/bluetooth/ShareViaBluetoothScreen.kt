@@ -10,8 +10,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetAllBluetoothPermissionsProvider
+import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @Composable()
 fun ShareViaBluetoothScreenProvider(
@@ -26,7 +27,7 @@ fun ShareViaBluetoothScreenProvider(
     Column {
         if (!permissionsAllowed) {
             GetAllBluetoothPermissionsProvider {
-                println("All permissions are good now")
+                Timber.d("All permissions are good now")
                 permissionsAllowed = true
             }
         } else {
@@ -38,7 +39,7 @@ fun ShareViaBluetoothScreenProvider(
                 appBluetoothViewModel.updatePaired()
             }
             LaunchedEffect(true) {
-                println("Collecting  state now!")
+                Timber.d("Collecting  state now!")
 
                 appBluetoothViewModel.state.collectLatest {state ->
                     if (idSent) {
@@ -48,11 +49,11 @@ fun ShareViaBluetoothScreenProvider(
                         onFailure()
                         return@collectLatest
                     }
-                    println("Collect state")
+                    Timber.d("Collect state")
                     if (state.isConnected) {
                         appBluetoothViewModel.sendMessage(shareId)
                         idSent = true
-                        println("ShareId sent!")
+                        Timber.d("ShareId sent!")
                         onSuccess()
                     }
                 }
@@ -66,11 +67,11 @@ fun ShareViaBluetoothScreenProvider(
 fun ShareViaBluetoothScreen(
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
     ) {
-    val bluetoothDevicesFound = appBluetoothViewModel.bluetoothDevicesFound.collectAsState(initial = listOf())
+    val bluetoothDevicesFound = appBluetoothViewModel.foundedDevices.collectAsState(initial = listOf())
     val pairedDevices = appBluetoothViewModel.pairedDevices.collectAsState(initial = listOf())
 
     Column {
-        AppBluetoothDeviceList(data = bluetoothDevicesFound.value + pairedDevices.value) {
+        AppBluetoothDeviceListScreen(data = bluetoothDevicesFound.value + pairedDevices.value) {
             appBluetoothViewModel.connectToDevice(it)
         }
     }

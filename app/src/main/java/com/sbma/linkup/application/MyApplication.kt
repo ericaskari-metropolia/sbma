@@ -5,21 +5,21 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.nfc.NfcAdapter
 import androidx.activity.ComponentActivity
-import com.sbma.linkup.application.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.application.connectivity.AppConnectivityManager
 import com.sbma.linkup.application.connectivity.InternetConnectionState
 import com.sbma.linkup.application.data.AppContainer
 import com.sbma.linkup.application.data.AppDataContainer
+import com.sbma.linkup.bluetooth.AppBluetoothManager
+import com.sbma.linkup.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.datasource.DataStore
 import com.sbma.linkup.nfc.AppNfcManager
-import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-
+import timber.log.Timber
 
 class MyApplication : Application() {
     val TAG = "[MyApplication]"
@@ -55,6 +55,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Timber.plant(Timber.DebugTree())
 
         dataStore = DataStore(this)
 

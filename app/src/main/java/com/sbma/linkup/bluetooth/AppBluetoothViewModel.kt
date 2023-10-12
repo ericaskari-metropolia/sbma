@@ -1,15 +1,16 @@
-package com.sbma.linkup.presentation.screens.bluetooth
+package com.sbma.linkup.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sbma.linkup.application.broadcast.AppBroadcastReceiver
-import com.sbma.linkup.presentation.screens.bluetooth.connect.BluetoothDeviceDomain
-import com.sbma.linkup.presentation.screens.bluetooth.connect.ConnectionResult
-import com.sbma.linkup.presentation.screens.bluetooth.connect.FoundedBluetoothDeviceDomain
-import com.sbma.linkup.presentation.screens.bluetooth.connect.IBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.ConnectionResult
+import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
+import com.sbma.linkup.broadcast.AppBroadcastReceiver
+import com.sbma.linkup.presentation.screens.bluetooth.BluetoothUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @SuppressLint("MissingPermission")
@@ -57,13 +59,13 @@ class AppBluetoothViewModel(
 
     val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val pairedDevices = appBluetoothManager.pairedDevices
-    val bluetoothDevicesFound = appBroadcastReceiver.bluetoothDevicesFound
+    val foundedDevices = appBroadcastReceiver.foundedDevices
 
     private var deviceConnectionJob: Job? = null
 
     private val _state = MutableStateFlow(BluetoothUiState())
 
-    val state = combine(bluetoothDevicesFound, pairedDevices, _state) { scannedDevices, pairedDevices, state ->
+    val state = combine(foundedDevices, pairedDevices, _state) { scannedDevices, pairedDevices, state ->
         state.copy(
             scannedDevices = scannedDevices,
             pairedDevices = pairedDevices,
@@ -91,7 +93,7 @@ class AppBluetoothViewModel(
     }
 
     fun connectToDevice(device: IBluetoothDeviceDomain) {
-        println("connectToDevice: ${device}")
+        Timber.d("connectToDevice: ${device}")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
             .connectToDevice(device)
@@ -101,7 +103,7 @@ class AppBluetoothViewModel(
 
     private fun Flow<ConnectionResult>.listen(): Job {
         return onEach { result ->
-            println("Flow listen: ${result}")
+            Timber.d("Flow listen: ${result}")
 
             when (result) {
                 ConnectionResult.ConnectionEstablished -> {
@@ -134,8 +136,8 @@ class AppBluetoothViewModel(
             }
         }
             .catch { throwable ->
-                println("Flow listen catch")
-                println(throwable)
+                Timber.d("Flow listen catch")
+                Timber.d(throwable)
                 appBluetoothManager.closeConnection()
                 _state.update {
                     it.copy(
