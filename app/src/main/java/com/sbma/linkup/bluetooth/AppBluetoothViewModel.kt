@@ -2,10 +2,8 @@ package com.sbma.linkup.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.ConnectionResult
 import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
@@ -27,13 +25,6 @@ import timber.log.Timber
 
 
 @SuppressLint("MissingPermission")
-fun BluetoothDevice.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = name,
-        address = address
-    )
-}
-@SuppressLint("MissingPermission")
 fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluetoothDeviceDomain {
     return FoundedBluetoothDeviceDomain(
         name = name,
@@ -42,22 +33,13 @@ fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluet
     )
 }
 
-@SuppressLint("MissingPermission")
-fun ScanResult.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = device.name,
-        address = device.address
-    )
-}
-
 class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
     private val appBroadcastReceiver: AppBroadcastReceiver,
 ) : ViewModel() {
     val isBluetoothEnabled = appBroadcastReceiver.bluetoothEnabled
-    val isScanning = appBluetoothManager.isScanning
+    private val isScanning = appBluetoothManager.isScanning
 
-    val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val pairedDevices = appBluetoothManager.pairedDevices
     val foundedDevices = appBroadcastReceiver.foundedDevices
 
@@ -93,7 +75,7 @@ class AppBluetoothViewModel(
     }
 
     fun connectToDevice(device: IBluetoothDeviceDomain) {
-        Timber.d("connectToDevice: ${device}")
+        Timber.d("connectToDevice: $device")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
             .connectToDevice(device)
@@ -103,7 +85,7 @@ class AppBluetoothViewModel(
 
     private fun Flow<ConnectionResult>.listen(): Job {
         return onEach { result ->
-            Timber.d("Flow listen: ${result}")
+            Timber.d("Flow listen: $result")
 
             when (result) {
                 ConnectionResult.ConnectionEstablished -> {

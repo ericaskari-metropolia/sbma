@@ -43,11 +43,11 @@ fun GetAllBluetoothPermissionsProvider(
     }
     val bluetoothScanPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         rememberPermissionState(
-            android.Manifest.permission.BLUETOOTH_SCAN
+            Manifest.permission.BLUETOOTH_SCAN
         )
     } else {
         rememberPermissionState(
-            android.Manifest.permission.BLUETOOTH
+            Manifest.permission.BLUETOOTH
         )
     }
     val fineLocationPermissionState = rememberPermissionState(
@@ -84,7 +84,7 @@ fun GetAllBluetoothPermissions(
     getFineLocationPermission: () -> Unit,
     done: () -> Unit
 ) {
-    var permissions by rememberSaveable { mutableStateOf(mapOf<String, Boolean>(
+    var permissions by rememberSaveable { mutableStateOf(mapOf(
         "bluetoothEnabled" to false,
         "bluetoothConnect" to false,
         "bluetoothScan" to false,

@@ -29,7 +29,7 @@ import com.sbma.linkup.util.uuidOrNull
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
-@Composable()
+@Composable
 fun ReceiveViaBluetoothScreenProvider(
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
     userViewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -86,7 +86,7 @@ fun ReceiveViaBluetoothScreenProvider(
     }
 }
 
-@Composable()
+@Composable
 fun ReceiveViaBluetoothScreen(
     startServer: () -> Unit
 ) {

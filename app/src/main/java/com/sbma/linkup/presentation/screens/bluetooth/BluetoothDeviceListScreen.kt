@@ -13,14 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -34,8 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sbma.linkup.presentation.icons.Bluetooth
 import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
+import com.sbma.linkup.presentation.icons.Bluetooth
 
 
 @SuppressLint("MissingPermission")
@@ -52,7 +48,7 @@ fun AppBluetoothDeviceListScreen(
     ) {padding ->
 
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(padding),
         shadowElevation = 4.dp,
         tonalElevation = 4.dp,
         shape = RoundedCornerShape(16.dp)
@@ -70,7 +66,7 @@ fun AppBluetoothDeviceListScreen(
                     shape = RoundedCornerShape(8.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(){
+                    Row {
 
                         Icon(
                             Icons.Filled.Bluetooth,
@@ -130,34 +126,3 @@ fun BluetoothListScreenTopBar() {
 }
 
 
-//TO implement the back button from list of bluetooth screen
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BluetoothScreenTopBar(
-    onBackClick: () -> Unit
-) {
-    MediumTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = {
-            Text(
-                text = "Bluetooth Lists",
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = 20.sp
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                modifier = Modifier,
-                onClick = { onBackClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
-                )
-            }
-        },
-    )
-}

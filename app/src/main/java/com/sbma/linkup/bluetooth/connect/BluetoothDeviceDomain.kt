@@ -2,12 +2,6 @@ package com.sbma.linkup.bluetooth.connect
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.ScanResult
-
-interface IdentifiableAppBluetoothDevice {
-    val address: String
-}
-
 
 interface IBluetoothDeviceDomain {
     val address: String
@@ -34,13 +28,5 @@ fun BluetoothDevice.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
     return BluetoothDeviceDomain(
         name = name,
         address = address
-    )
-}
-
-@SuppressLint("MissingPermission")
-fun ScanResult.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = device.name,
-        address = device.address
     )
 }

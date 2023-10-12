@@ -89,7 +89,7 @@ fun EditProfileScreenProvider(
         onBackClick = { onBackClick() }
     ) { cardsToInsert, cardsToUpdate, cardsToDelete ->
         println("cardsToInsert: $cardsToInsert")
-        println("cardsToUpdate: $cardsToInsert")
+        println("cardsToUpdate: $cardsToUpdate")
         println("cardsToDelete: $cardsToDelete")
         composableScope.launch {
             cardsToInsert

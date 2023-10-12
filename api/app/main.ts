@@ -153,7 +153,7 @@ app.put('/card/:id', requiresAccessToken, async (req: Request, res: Response): P
         data: {
             title: body.title ?? card.title,
             value: body.value ?? card.value,
-            picture: body.value ?? card.picture,
+            picture: body.picture ?? card.picture,
         },
     });
     res.status(200).send(response);

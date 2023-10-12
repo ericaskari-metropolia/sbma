@@ -14,7 +14,7 @@ import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
-@Composable()
+@Composable
 fun ShareViaBluetoothScreenProvider(
     shareId: String,
     onSuccess: () -> Unit,
@@ -63,7 +63,7 @@ fun ShareViaBluetoothScreenProvider(
     }
 }
 
-@Composable()
+@Composable
 fun ShareViaBluetoothScreen(
     appBluetoothViewModel: AppBluetoothViewModel = viewModel(factory = AppViewModelProvider.Factory),
     ) {

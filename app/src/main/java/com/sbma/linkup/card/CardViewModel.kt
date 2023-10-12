@@ -9,6 +9,7 @@ import com.sbma.linkup.datasource.DataStore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.UUID
 
 class CardViewModel(
@@ -48,11 +49,11 @@ class CardViewModel(
             authorization?.let {
                 apiService.updateCard(authorization, card.id.toString(), card.toApiCard())
                     .onSuccess { response ->
-                        println("update new Card")
-                        println(response)
+                        Timber.d("update new Card")
+                        Timber.d(response.toString())
                         insertItem(response.toCard())
                     }.onFailure {
-                        println(it)
+                        Timber.d(it)
                     }
             }
         }

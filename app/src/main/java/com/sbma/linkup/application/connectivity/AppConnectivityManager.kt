@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
@@ -58,29 +57,10 @@ class AppConnectivityManager(
             override fun onLost(network: Network) {
                 this@AppConnectivityManager.onChange(InternetConnectionState.DISCONNECTED)
             }
-
-            override fun onLosing(network: Network, maxMsToLive: Int) {
-                super.onLosing(network, maxMsToLive)
-            }
-
-            override fun onUnavailable() {
-                super.onUnavailable()
-            }
-
-            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-                super.onCapabilitiesChanged(network, networkCapabilities)
-            }
-
-            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-                super.onLinkPropertiesChanged(network, linkProperties)
-            }
-
-            override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
-                super.onBlockedStatusChanged(network, blocked)
-            }
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun checkConnection(context: Context): InternetConnectionState {
         val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connMgr.activeNetworkInfo
