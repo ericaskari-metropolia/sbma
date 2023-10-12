@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.sbma.linkup.bluetooth.AppBluetoothManager
-import com.sbma.linkup.bluetooth.connect.IFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +37,7 @@ class AppBroadcastReceiver(
      private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf());
      val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
 
-     private val _foundedDevices: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
+     private val _foundedDevices: MutableStateFlow<Map<String, FoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
      val foundedDevices get() = _foundedDevices.map { it.values.toList() }
 
     // broadcastReceiver reference. It still should be registered in onResume and unregistered on onPause lifecycle.

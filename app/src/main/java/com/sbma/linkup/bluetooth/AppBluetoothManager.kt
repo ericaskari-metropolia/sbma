@@ -8,7 +8,6 @@ import com.sbma.linkup.bluetooth.connect.BluetoothDataTransferService
 import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.BluetoothMessage
 import com.sbma.linkup.bluetooth.connect.ConnectionResult
-import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.toBluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.toByteArray
 import kotlinx.coroutines.Dispatchers
@@ -158,7 +157,7 @@ class AppBluetoothManager(
     }
 
     @SuppressLint("MissingPermission")
-    fun connectToDevice(device: IBluetoothDeviceDomain): Flow<ConnectionResult> {
+    fun connectToDevice(device: BluetoothDeviceDomain): Flow<ConnectionResult> {
         Timber.d("[connectToDevice]")
         return flow {
 

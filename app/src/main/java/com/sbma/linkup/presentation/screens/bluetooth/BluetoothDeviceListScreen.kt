@@ -1,6 +1,7 @@
 package com.sbma.linkup.presentation.screens.bluetooth
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,31 +27,45 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.presentation.icons.Bluetooth
-import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 
 
 @SuppressLint("MissingPermission")
 @Composable
 fun AppBluetoothDeviceListScreen(
-    data: List<IBluetoothDeviceDomain>,
+    data: List<BluetoothDeviceDomain>,
     modifier: Modifier = Modifier,
-    onClick: (device: IBluetoothDeviceDomain) -> Unit
+    onClick: (device: BluetoothDeviceDomain) -> Unit
 ) {
+    var deviceName = rememberSaveable{ mutableStateOf("") }
+
     Scaffold(
         topBar = {
-            BluetoothListScreenTopBar()
+            Column {
+                BluetoothListScreenTopBar()
+            }
         }
     ) {padding ->
 
@@ -57,56 +75,112 @@ fun AppBluetoothDeviceListScreen(
         tonalElevation = 4.dp,
         shape = RoundedCornerShape(16.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(top = 36.dp),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
         ) {
-            items(data) { scanResult ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onClick(scanResult) }
-                        .padding(6.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Row(){
+            DeviceSearch(onValueChange = {
+                deviceName.value = it
+            })
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
+            ) {
+                items(data.filter { (it.name ?: "").contains(deviceName.value, ignoreCase = true) }) { scanResult ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onClick(scanResult) }
+                            .padding(6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Row(){
 
-                        Icon(
-                            Icons.Filled.Bluetooth,
-                            contentDescription = "AccountCircle",
-                            modifier = Modifier
-                                .size(46.dp)
-                                .padding(8.dp, top = 14.dp)
+                            Icon(
+                                Icons.Filled.Bluetooth,
+                                contentDescription = "AccountCircle",
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .padding(8.dp, top = 14.dp)
 
-                        )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = scanResult.address,
-                                fontWeight = FontWeight.Bold
                             )
-
-                            scanResult.name?.let {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                            ) {
                                 Text(
-                                    text = it,
-                                    fontWeight = FontWeight.Normal
+                                    text = scanResult.address,
+                                    fontWeight = FontWeight.Bold
                                 )
+
+                                scanResult.name?.let {
+                                    Text(
+                                        text = it,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                }
                             }
                         }
+
+
+
                     }
-
-
-
                 }
             }
         }
     }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeviceSearch(onValueChange:(String) -> Unit){
+    var searchText by rememberSaveable { mutableStateOf("") }
+    var showClearIcon by rememberSaveable { mutableStateOf(false) }
+
+    if (searchText.isEmpty()) {
+        showClearIcon = false
+    } else if (searchText.isNotEmpty()) {
+        showClearIcon = true
+    }
+
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = { searchText = it
+            onValueChange(it)},
+        placeholder = { Text("Search Devices") },
+        singleLine = true,
+        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "searchIcon") },
+        trailingIcon = {
+            if (showClearIcon) {
+                IconButton(onClick = { searchText = "" }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Clear,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = "Clear Icon"
+                    )
+                }
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BluetoothListScreenTopBar() {

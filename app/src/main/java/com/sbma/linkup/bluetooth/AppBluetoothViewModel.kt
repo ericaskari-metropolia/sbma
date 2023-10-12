@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
 import com.sbma.linkup.bluetooth.connect.ConnectionResult
 import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.IBluetoothDeviceDomain
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
 import com.sbma.linkup.presentation.screens.bluetooth.BluetoothUiState
 import kotlinx.coroutines.Job
@@ -41,6 +40,13 @@ fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluet
         lastSeen = lastSeen
     )
 }
+@SuppressLint("MissingPermission")
+fun FoundedBluetoothDeviceDomain.toFoundedBluetoothDeviceDomain(): BluetoothDeviceDomain {
+    return BluetoothDeviceDomain(
+        name = name,
+        address = address,
+    )
+}
 
 @SuppressLint("MissingPermission")
 fun ScanResult.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
@@ -67,7 +73,7 @@ class AppBluetoothViewModel(
 
     val state = combine(foundedDevices, pairedDevices, _state) { scannedDevices, pairedDevices, state ->
         state.copy(
-            scannedDevices = scannedDevices,
+            scannedDevices = scannedDevices.map { it.toFoundedBluetoothDeviceDomain() },
             pairedDevices = pairedDevices,
             messages = if (state.isConnected) state.messages else emptyList()
         )
@@ -92,7 +98,7 @@ class AppBluetoothViewModel(
         appBroadcastReceiver.launchMakeBluetoothDiscoverable()
     }
 
-    fun connectToDevice(device: IBluetoothDeviceDomain) {
+    fun connectToDevice(device: BluetoothDeviceDomain) {
         Timber.d("connectToDevice: ${device}")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
