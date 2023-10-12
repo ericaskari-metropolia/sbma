@@ -1,7 +1,10 @@
 package com.sbma.linkup.presentation.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,13 +13,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -24,16 +34,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.CardViewModel
@@ -41,6 +56,8 @@ import com.sbma.linkup.connection.Connection
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
 import com.sbma.linkup.user.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 
@@ -73,9 +90,19 @@ fun UserNetworkScreen(
     onConnectionClick: (connection: Connection) -> Unit
 ) {
 
+    var searchValue by rememberSaveable { mutableStateOf("") }
+
+
     Scaffold(
         topBar = {
-            UserNetworkScreenTopBar()
+            Column {
+                UserNetworkScreenTopBar()
+                ContactSearch(
+                    onValueChange = {
+                        searchValue = it
+                    }
+                )
+            }
         }
     ) { padding ->
         LazyColumn(
@@ -85,7 +112,9 @@ fun UserNetworkScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(1.dp),
         ) {
-            items(state.connections.entries.toList()) { contact ->
+            items(state.connections.entries.toList().filter {
+                it.value.name.contains(searchValue, ignoreCase = true)
+            }) { contact ->
                 UserNetworkListItem(
                     user = contact.value,
                     connection = contact.key,
@@ -94,6 +123,44 @@ fun UserNetworkScreen(
             }
         }
     }
+}
+
+@Composable
+fun ContactSearch(onValueChange:(String) -> Unit){
+    var searchText by rememberSaveable { mutableStateOf("") }
+    var showClearIcon by rememberSaveable { mutableStateOf(false) }
+
+    if (searchText.isEmpty()) {
+        showClearIcon = false
+    } else if (searchText.isNotEmpty()) {
+        showClearIcon = true
+    }
+
+
+    TextField(
+        value = searchText,
+        onValueChange = { searchText = it
+                        onValueChange(it)},
+        placeholder = { Text("Search for Connections") },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "searchIcon") },
+        trailingIcon = {
+            if (showClearIcon) {
+                IconButton(onClick = { searchText = "" }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Clear,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = "Clear Icon"
+                    )
+                }
+            }
+        },
+        modifier = Modifier
+            .padding(25.dp)
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.background, shape = RectangleShape)
+    )
 }
 
 @Composable
@@ -167,9 +234,7 @@ fun ScreenPreview() {
                 description = "Mobile developer",
                 email = "",
                 picture = null
-
             ),
-
             Connection(
                 id = UUID.randomUUID(),
                 userId = userId,

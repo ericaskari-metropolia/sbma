@@ -67,7 +67,7 @@ fun CardIcon(picture: String?, modifier: Modifier = Modifier){
             ?: it.toImageVector()?.let {imageVector ->
                 Icon(
                     imageVector = imageVector,
-                    contentDescription = "Delete",
+                    contentDescription = "icon",
                     modifier = modifier
                 )
 
