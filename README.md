@@ -4,11 +4,10 @@
 ![GitHub issues](https://img.shields.io/github/issues/ericaskari-metropolia/sbma)
 ![GitHub MIT](https://img.shields.io/badge/license-MIT-blue)
 
+![Web Application logo](https://github.com/ericaskari-metropolia/sbma/blob/main/screenshots/background.png 'Logo Title Text')
+
 <br />
 <div align="center">
-  <a href="https://github.com/ericaskari-metropolia/sbma">
-    <img src="https://github.com/ericaskari-metropolia/sbma/blob/f833e61b7876e6a92b4269e34e377ba9c2b1df06/app/src/main/ic_launcher-playstore.png" alt="Logo" width="200" height="200">
-  </a>
   <h1 align="center">LinkUp</h1>
   <p align="center">
     Your digital business card app
@@ -19,10 +18,9 @@
 
 
 
-# LinkUp: Digital Business Card App
+# About the project
 
-
-
+![Screenshots](https://github.com/ericaskari-metropolia/sbma/blob/main/screenshots/screenshots.png 'Logo Title Text')
 
 LinkUp is a versatile digital business card application that allows users to create, share, and
 manage their professional profiles seamlessly. Whether you want to exchange contact information via
