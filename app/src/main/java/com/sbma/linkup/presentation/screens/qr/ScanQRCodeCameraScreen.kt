@@ -16,10 +16,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,10 +25,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,14 +45,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -69,10 +61,10 @@ import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.presentation.ui.theme.YellowApp
 import com.sbma.linkup.user.UserViewModel
-import com.sbma.linkup.util.MYAPI
 import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
@@ -104,7 +96,7 @@ fun ScanQRCodeCameraScreen(
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                text = "Place the QR code in this frame",
+                text = stringResource(R.string.scan_qr_code),
                 style = MaterialTheme.typography.labelLarge,
                 fontSize = 20.sp,
                 modifier = Modifier
@@ -131,12 +123,7 @@ fun ScanQRCodeCameraScreen(
                     .clip(RoundedCornerShape(70.dp))
             )
             Spacer(modifier = Modifier.height(50.dp))
-            Text(text = "$code")
-            /*  if (URLUtil.isValidUrl(code)) {
-                  ResultLink(code)
-              } else {
-                  ResultText(code)
-              }*/
+            Text(text = code)
         }
     }
 }
@@ -172,69 +159,6 @@ fun CameraScreenTopBar(
     )
 }
 
-@Composable
-private fun Header(modifier: Modifier = Modifier, onBackClicked: () -> Unit) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp, top = 10.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                Icons.Rounded.KeyboardArrowLeft,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickable { onBackClicked() }
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Show me your QR code", modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            fontSize = 20.sp
-        )
-    }
-}
-
-
-@Composable
-private fun ResultText(code: String, modifier: Modifier = Modifier) {
-    Text(
-        text = code,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(32.dp)
-    )
-}
-
-@Composable
-fun ResultLink(code: String, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val annotatedLinkString = buildAnnotatedString {
-        append(code)
-        addStyle(
-            style = SpanStyle(
-                color = Color(0xff64B5F6),
-                textDecoration = TextDecoration.Underline,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            ), start = 0, end = code.length
-        )
-    }
-    ClickableText(
-        text = annotatedLinkString,
-        onClick = { openUrl(code, context) },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(32.dp)
-    )
-}
 
 private fun openUrl(url: String, ctx: Context) {
 

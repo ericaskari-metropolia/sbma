@@ -1,4 +1,4 @@
-package com.sbma.linkup.util
+package com.sbma.linkup.presentation.screens.qr
 
 import android.graphics.Bitmap
 import android.graphics.Color
