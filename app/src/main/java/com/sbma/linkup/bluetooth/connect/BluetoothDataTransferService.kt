@@ -1,7 +1,7 @@
-package com.sbma.linkup.presentation.screens.bluetooth.connect
+package com.sbma.linkup.bluetooth.connect
 
 import android.bluetooth.BluetoothSocket
-import com.sbma.linkup.presentation.screens.bluetooth.exceptions.TransferFailedException
+import com.sbma.linkup.bluetooth.exceptions.TransferFailedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -25,13 +25,8 @@ class BluetoothDataTransferService(
                     throw TransferFailedException()
                 }
 
-                emit(
-                    buffer.decodeToString(
-                        endIndex = byteCount
-                    ).toBluetoothMessage(
-                        isFromLocalUser = false
-                    )
-                )
+                val decoded = buffer.decodeToString(endIndex = byteCount)
+                emit(decoded.toBluetoothMessage())
             }
         }.flowOn(Dispatchers.IO)
     }

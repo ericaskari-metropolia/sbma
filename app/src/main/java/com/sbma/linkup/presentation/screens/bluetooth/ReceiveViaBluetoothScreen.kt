@@ -23,10 +23,11 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sbma.linkup.R
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.screens.bluetooth.permissions.GetAllBluetoothPermissionsProvider
+import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.user.UserViewModel
 import com.sbma.linkup.util.uuidOrNull
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @Composable()
 fun ReceiveViaBluetoothScreenProvider(
@@ -35,7 +36,7 @@ fun ReceiveViaBluetoothScreenProvider(
     onSuccess: () -> Unit,
     onFailure: () -> Unit,
 
-) {
+    ) {
     var permissionsAllowed by rememberSaveable {
         mutableStateOf(false)
     }
@@ -43,7 +44,7 @@ fun ReceiveViaBluetoothScreenProvider(
     Column {
         if (!permissionsAllowed) {
             GetAllBluetoothPermissionsProvider {
-                println("All permissions are good now")
+                Timber.d("All permissions are good now")
                 permissionsAllowed = true
             }
         } else {
@@ -51,17 +52,17 @@ fun ReceiveViaBluetoothScreenProvider(
                 mutableStateOf(false)
             }
             LaunchedEffect(true) {
-                println("Collecting  state now!")
+                Timber.d("Collecting  state now!")
 
                 appBluetoothViewModel.state.collectLatest {state ->
                     if (idReceived) {
                         return@collectLatest
                     }
-                    println("Collect state")
+                    Timber.d("Collect state")
                     state.messages.lastOrNull()?.let { message ->
-                    println("Collect message")
+                    Timber.d("Collect message")
                         message.message.uuidOrNull()?.let { shareId ->
-                            println("ShareId received:")
+                            Timber.d("ShareId received:")
                             idReceived = true
                             userViewModel.scanShareId(
                                 id = shareId,

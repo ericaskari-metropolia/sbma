@@ -1,4 +1,4 @@
-package com.sbma.linkup.presentation.screens.bluetooth.permissions
+package com.sbma.linkup.presentation.screens.bluetooth
 
 import android.Manifest
 import android.os.Build
@@ -20,8 +20,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.sbma.linkup.application.data.AppViewModelProvider
-import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothViewModel
+import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
+import timber.log.Timber
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -91,7 +92,7 @@ fun GetAllBluetoothPermissions(
     )) }
 
     LaunchedEffect(permissions) {
-        println("permissions changed. Checking now.")
+        Timber.d("permissions changed. Checking now.")
         if (permissions.values.all { it }) {
             done()
         }
@@ -99,7 +100,7 @@ fun GetAllBluetoothPermissions(
 
     LaunchedEffect(isBluetoothEnabled) {
         if (isBluetoothEnabled) {
-            println("GetEnableBluetoothPermission is good.")
+            Timber.d("GetEnableBluetoothPermission is good.")
             val mutable = permissions.toMutableMap()
             mutable["bluetoothEnabled"] = true
             permissions = mutable.toMap()
@@ -107,7 +108,7 @@ fun GetAllBluetoothPermissions(
     }
     LaunchedEffect(hasBluetoothConnectPermission) {
         if (hasBluetoothConnectPermission) {
-            println("GetBluetoothConnectPermission is good.")
+            Timber.d("GetBluetoothConnectPermission is good.")
             val mutable = permissions.toMutableMap()
             mutable["bluetoothConnect"] = true
             permissions = mutable.toMap()
@@ -115,7 +116,7 @@ fun GetAllBluetoothPermissions(
     }
     LaunchedEffect(hasBluetoothScanPermission) {
         if (hasBluetoothScanPermission) {
-            println("GetBluetoothScanPermission is good.")
+            Timber.d("GetBluetoothScanPermission is good.")
             val mutable = permissions.toMutableMap()
             mutable["bluetoothScan"] = true
             permissions = mutable.toMap()
@@ -123,7 +124,7 @@ fun GetAllBluetoothPermissions(
     }
     LaunchedEffect(hasFineLocationPermission) {
         if (hasFineLocationPermission) {
-            println("FineLocationPermission is good.")
+            Timber.d("FineLocationPermission is good.")
             val mutable = permissions.toMutableMap()
             mutable["location"] = true
             permissions = mutable.toMap()

@@ -1,4 +1,4 @@
-package com.sbma.linkup.application.broadcast
+package com.sbma.linkup.broadcast
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -14,13 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.sbma.linkup.presentation.screens.bluetooth.AppBluetoothManager
-import com.sbma.linkup.presentation.screens.bluetooth.connect.IFoundedBluetoothDeviceDomain
-import com.sbma.linkup.presentation.screens.bluetooth.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.AppBluetoothManager
+import com.sbma.linkup.bluetooth.connect.IFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 /**
  * Main responsibility of this class is to observe Bluetooth status stop scan if it turned off.
@@ -36,8 +37,8 @@ class AppBroadcastReceiver(
      private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf());
      val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
 
-     private val _bluetoothDevicesFound: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
-     val bluetoothDevicesFound get() = _bluetoothDevicesFound.map { it.values.toList() }
+     private val _foundedDevices: MutableStateFlow<Map<String, IFoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
+     val foundedDevices get() = _foundedDevices.map { it.values.toList() }
 
     // broadcastReceiver reference. It still should be registered in onResume and unregistered on onPause lifecycle.
     private lateinit var broadcastReceiver: BroadcastReceiver
@@ -49,7 +50,7 @@ class AppBroadcastReceiver(
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        println("$TAG onCreate")
+        Timber.d("onCreate")
 
         // Initialization
         broadcastReceiver = broadcastReceiverFactory(
@@ -62,9 +63,9 @@ class AppBroadcastReceiver(
                 _bluetoothDeviceConnectionStatus.value = copy
             },
             onDeviceFound = {
-                val copy = _bluetoothDevicesFound.value.toMutableMap()
+                val copy = _foundedDevices.value.toMutableMap()
                 copy[it.address] = it.toFoundedBluetoothDeviceDomain(System.currentTimeMillis())
-                _bluetoothDevicesFound.value = copy
+                _foundedDevices.value = copy
             }
         )
 
@@ -76,12 +77,12 @@ class AppBroadcastReceiver(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        println("$TAG onPause called")
+        Timber.d("onPause called")
 
         try {
             unregisterReceiver()
         } catch (e: Exception) {
-            println(e)
+            Timber.d(e)
         } finally {
             appBluetoothManager.stopScan()
         }
@@ -89,8 +90,8 @@ class AppBroadcastReceiver(
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        println("$TAG onResume called")
-        println("$TAG registerReceiver")
+        Timber.d("onResume called")
+        Timber.d("registerReceiver")
         registerReceiver()
     }
 
@@ -114,7 +115,7 @@ class AppBroadcastReceiver(
         try {
             intentActivityResultLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         } catch (e: Exception) {
-            println(e)
+            Timber.d(e)
         }
     }
     fun launchMakeBluetoothDiscoverable() {
@@ -123,7 +124,7 @@ class AppBroadcastReceiver(
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300) // 300 seconds (5 minutes)
             intentActivityResultLauncher.launch(discoverableIntent)
         } catch (e: Exception) {
-            println(e)
+            Timber.d(e)
         }
     }
 
@@ -136,10 +137,10 @@ class AppBroadcastReceiver(
             onBluetoothDeviceStateChange: (isConnected: Boolean, bluetoothDevice: BluetoothDevice) -> Unit
 
         ): BroadcastReceiver {
-            println("$TAG broadcastReceiverFactory")
+            Timber.d("broadcastReceiverFactory")
             return object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent) {
-                    println("$TAG broadcastReceiver onReceive ${intent.action}")
+                    Timber.d("broadcastReceiver onReceive ${intent.action}")
 
                     // It means the user has changed their bluetooth state.
                     if (intent.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
@@ -192,13 +193,13 @@ class AppBroadcastReceiver(
 
     private fun onBluetoothAdapterStateChange(state: Int) {
         _bluetoothEnabled.value = state == BluetoothAdapter.STATE_ON
-        println("$TAG onBluetoothAdapterStateChange $state")
+        Timber.d("onBluetoothAdapterStateChange $state")
 //
 //        if (state == BluetoothAdapter.STATE_OFF) {
 //            appBluetoothManager.stopScan()
 //        }
 //        if (state == BluetoothAdapter.STATE_ON) {
-//            println("$TAG btadapter back on...")
+//            Timber.d("btadapter back on...")
 //        }
     }
 }

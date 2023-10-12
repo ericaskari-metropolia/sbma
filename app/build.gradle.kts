@@ -112,4 +112,8 @@ dependencies {
     // Image
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    // Logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
+
 }
