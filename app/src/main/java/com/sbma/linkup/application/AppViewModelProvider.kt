@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.sbma.linkup.application.data
+package com.sbma.linkup.application
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.sbma.linkup.application.MyApplication
+import com.sbma.linkup.bluetooth.AppBluetoothViewModel
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.nfc.NFCViewModel
-import com.sbma.linkup.bluetooth.AppBluetoothViewModel
-import com.sbma.linkup.tag.TagViewModel
 import com.sbma.linkup.user.UserViewModel
 
 /**
@@ -58,11 +56,6 @@ object AppViewModelProvider {
         addInitializer(ConnectionViewModel::class) {
             ConnectionViewModel(
                 MyApplication().container.userConnectionRepository
-            )
-        }
-        addInitializer(TagViewModel::class) {
-            TagViewModel(
-                repository = MyApplication().container.tagRepository,
             )
         }
         addInitializer(AppBluetoothViewModel::class) {

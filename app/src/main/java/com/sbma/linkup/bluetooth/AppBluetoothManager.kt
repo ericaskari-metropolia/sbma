@@ -5,11 +5,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import com.sbma.linkup.bluetooth.connect.BluetoothDataTransferService
-import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.BluetoothMessage
-import com.sbma.linkup.bluetooth.connect.ConnectionResult
-import com.sbma.linkup.bluetooth.connect.toBluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.toByteArray
+import com.sbma.linkup.bluetooth.extensions.toBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.BluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.BluetoothMessage
+import com.sbma.linkup.bluetooth.models.ConnectionResult
+import com.sbma.linkup.bluetooth.models.toByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +25,10 @@ import timber.log.Timber
 import java.io.IOException
 import java.util.UUID
 
+
+/**
+ * Responsible for using bluetooth adapter in application
+ */
 class AppBluetoothManager(
     val bluetoothAdapter: BluetoothAdapter?,
 ) {
@@ -81,7 +85,6 @@ class AppBluetoothManager(
 
         try {
             bluetoothAdapter.cancelDiscovery()
-//            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
             _isScanning.value = false
         } catch (e: Exception) {
             Timber.d(e.message)
@@ -124,7 +127,7 @@ class AppBluetoothManager(
                     emitAll(
                         service
                             .listenForIncomingMessages()
-                            .map {message -> 
+                            .map { message ->
                                 ConnectionResult.TransferSucceeded(message)
                             }
                     )
@@ -134,10 +137,11 @@ class AppBluetoothManager(
             closeConnection()
         }.flowOn(Dispatchers.IO)
     }
+
     @SuppressLint("MissingPermission")
     suspend fun trySendMessage(message: String): BluetoothMessage? {
 
-        if(dataTransferService == null) {
+        if (dataTransferService == null) {
             return null
         }
 
@@ -178,7 +182,7 @@ class AppBluetoothManager(
                         dataTransferService = it
                         emitAll(
                             it.listenForIncomingMessages()
-                                .map {message ->
+                                .map { message ->
                                     ConnectionResult.TransferSucceeded(message)
                                 }
                         )

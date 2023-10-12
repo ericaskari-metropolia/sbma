@@ -1,15 +1,12 @@
 package com.sbma.linkup.bluetooth
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sbma.linkup.bluetooth.connect.BluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.connect.ConnectionResult
-import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.BluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.ConnectionResult
+import com.sbma.linkup.bluetooth.models.toFoundedBluetoothDeviceDomain
 import com.sbma.linkup.broadcast.AppBroadcastReceiver
-import com.sbma.linkup.presentation.screens.bluetooth.BluetoothUiState
+import com.sbma.linkup.presentation.screens.bluetooth.components.BluetoothUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,45 +22,16 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-@SuppressLint("MissingPermission")
-fun BluetoothDevice.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = name,
-        address = address
-    )
-}
-@SuppressLint("MissingPermission")
-fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluetoothDeviceDomain {
-    return FoundedBluetoothDeviceDomain(
-        name = name,
-        address = address,
-        lastSeen = lastSeen
-    )
-}
-@SuppressLint("MissingPermission")
-fun FoundedBluetoothDeviceDomain.toFoundedBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = name,
-        address = address,
-    )
-}
-
-@SuppressLint("MissingPermission")
-fun ScanResult.toBluetoothDeviceDomain(): BluetoothDeviceDomain {
-    return BluetoothDeviceDomain(
-        name = device.name,
-        address = device.address
-    )
-}
-
+/**
+ * ViewModel for using AppBluetoothManager and AppBroadcastReceiver
+ */
 class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
     private val appBroadcastReceiver: AppBroadcastReceiver,
 ) : ViewModel() {
     val isBluetoothEnabled = appBroadcastReceiver.bluetoothEnabled
-    val isScanning = appBluetoothManager.isScanning
+    private val isScanning = appBluetoothManager.isScanning
 
-    val bluetoothDeviceConnectionStatus = appBroadcastReceiver.bluetoothDeviceConnectionStatus
     val pairedDevices = appBluetoothManager.pairedDevices
     val foundedDevices = appBroadcastReceiver.foundedDevices
 
@@ -94,12 +62,13 @@ class AppBluetoothViewModel(
     fun askToTurnBluetoothOn() {
         appBroadcastReceiver.launchEnableBtAdapter()
     }
+
     fun launchMakeBluetoothDiscoverable() {
         appBroadcastReceiver.launchMakeBluetoothDiscoverable()
     }
 
     fun connectToDevice(device: BluetoothDeviceDomain) {
-        Timber.d("connectToDevice: ${device}")
+        Timber.d("connectToDevice: $device")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
             .connectToDevice(device)
@@ -109,7 +78,7 @@ class AppBluetoothViewModel(
 
     private fun Flow<ConnectionResult>.listen(): Job {
         return onEach { result ->
-            Timber.d("Flow listen: ${result}")
+            Timber.d("Flow listen: $result")
 
             when (result) {
                 ConnectionResult.ConnectionEstablished -> {
@@ -162,10 +131,12 @@ class AppBluetoothViewModel(
     fun sendMessage(message: String) {
         viewModelScope.launch {
             val bluetoothMessage = appBluetoothManager.trySendMessage(message)
-            if(bluetoothMessage != null) {
-                _state.update { it.copy(
-                    messages = it.messages + bluetoothMessage
-                ) }
+            if (bluetoothMessage != null) {
+                _state.update {
+                    it.copy(
+                        messages = it.messages + bluetoothMessage
+                    )
+                }
             }
         }
     }

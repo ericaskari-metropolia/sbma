@@ -6,13 +6,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
+import timber.log.Timber
 import java.io.IOException
 
 
 /**
  * https://blog.canopas.com/retrofit-effective-error-handling-with-kotlin-coroutine-and-result-api-405217e9a73d
  */
-class ResultCall<T>(val delegate: Call<T>) :
+class ResultCall<T>(private val delegate: Call<T>) :
     Call<Result<T>> {
 
     override fun enqueue(callback: Callback<Result<T>>) {
@@ -28,8 +29,8 @@ class ResultCall<T>(val delegate: Call<T>) :
                             )
                         )
                     } else {
-                        println(response.message())
-                        println(response.body())
+                        Timber.d(response.message().toString())
+                        Timber.d(response.body().toString())
                         callback.onResponse(
                             this@ResultCall,
                             Response.success(

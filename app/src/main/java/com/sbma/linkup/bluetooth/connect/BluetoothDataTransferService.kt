@@ -2,6 +2,8 @@ package com.sbma.linkup.bluetooth.connect
 
 import android.bluetooth.BluetoothSocket
 import com.sbma.linkup.bluetooth.exceptions.TransferFailedException
+import com.sbma.linkup.bluetooth.models.BluetoothMessage
+import com.sbma.linkup.bluetooth.models.toBluetoothMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -9,6 +11,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
+/**
+ * Responsible for incoming messages and sending message to and from socket
+ */
 class BluetoothDataTransferService(
     private val socket: BluetoothSocket
 ) {

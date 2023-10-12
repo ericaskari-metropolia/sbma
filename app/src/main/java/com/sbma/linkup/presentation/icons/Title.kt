@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val Icons.Filled.Title: ImageVector
+val Icons.Filled.Title: ImageVector
     get() {
         if (_title != null) {
             return _title!!

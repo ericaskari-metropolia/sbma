@@ -10,8 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sbma.linkup.application.AppViewModelProvider
 import com.sbma.linkup.application.connectivity.InternetConnectionState
-import com.sbma.linkup.application.data.AppViewModelProvider
 import com.sbma.linkup.card.CardViewModel
 import com.sbma.linkup.connection.ConnectionViewModel
 import com.sbma.linkup.presentation.screens.ChooseCardsToShareScreen
@@ -21,14 +21,14 @@ import com.sbma.linkup.presentation.screens.EditProfileScreenProvider
 import com.sbma.linkup.presentation.screens.SettingsScreen
 import com.sbma.linkup.presentation.screens.UserNetworkScreen
 import com.sbma.linkup.presentation.screens.UserProfileScreen
-import com.sbma.linkup.presentation.screenstates.BluetoothShareAndReceiveResultScreen
+import com.sbma.linkup.presentation.screens.bluetooth.BluetoothShareAndReceiveResultScreen
 import com.sbma.linkup.presentation.screens.bluetooth.ReceiveViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.bluetooth.ShareViaBluetoothScreenProvider
 import com.sbma.linkup.presentation.screens.nfc.NfcReceiveScreen
 import com.sbma.linkup.presentation.screens.nfc.NfcScanScreen
-import com.sbma.linkup.presentation.screens.qr.MyQrCode
 import com.sbma.linkup.presentation.screens.qr.ScanQRCodeCameraScreen
-import com.sbma.linkup.presentation.screens.qr.ScanResultScreen
+import com.sbma.linkup.presentation.screens.qr.QrCodeScanViaCameraResultScreen
+import com.sbma.linkup.presentation.screens.qr.ShareQrCodeScreen
 import com.sbma.linkup.presentation.screenstates.UserConnectionsScreenState
 import com.sbma.linkup.user.User
 import com.sbma.linkup.user.UserViewModel
@@ -150,7 +150,7 @@ fun Navigation(
         ) { backStackEntry ->
             val shareId = backStackEntry.arguments?.getString("shareId")
             shareId?.let {
-                MyQrCode(
+                ShareQrCodeScreen(
                     shareId = it,
                     onBackClick = {
                         navController.popBackStack()
@@ -231,7 +231,7 @@ fun Navigation(
                     navController.popBackStack()
                 },
                 onResultScan = {
-                    navController.navigate("scanResult/$it")
+                    navController.navigate("scan-result/qr/receive/$it")
                 }
             )
         }
@@ -270,10 +270,12 @@ fun Navigation(
                     navController.navigate("profile")
                 })
         }
-        composable(route = "scanResult/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.BoolType }),) {
-            ScanResultScreen(
-                it.arguments?.getBoolean("id")?:false
+        composable(
+            route = "scan-result/qr/receive/{status}",
+            arguments = listOf(navArgument("status") { type = NavType.BoolType }),
+        ) {
+            QrCodeScanViaCameraResultScreen(
+                it.arguments?.getBoolean("status") ?: false
             )
         }
         composable(
@@ -282,7 +284,7 @@ fun Navigation(
                 navArgument("mode") { type = NavType.StringType },
                 navArgument("status") { type = NavType.StringType }
             )
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val succeeded = (backStackEntry.arguments?.getString("status") ?: "") == "succeeded"
             val isReceiveMode = (backStackEntry.arguments?.getString("mode") ?: "") == "receive"
             BluetoothShareAndReceiveResultScreen(isReceiveMode, succeeded)

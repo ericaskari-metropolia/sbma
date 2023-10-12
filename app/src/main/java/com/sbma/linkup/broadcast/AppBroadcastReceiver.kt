@@ -15,8 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.sbma.linkup.bluetooth.AppBluetoothManager
-import com.sbma.linkup.bluetooth.connect.FoundedBluetoothDeviceDomain
-import com.sbma.linkup.bluetooth.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.extensions.toFoundedBluetoothDeviceDomain
+import com.sbma.linkup.bluetooth.models.FoundedBluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,27 +25,27 @@ import timber.log.Timber
 
 /**
  * Main responsibility of this class is to observe Bluetooth status stop scan if it turned off.
+ * And it is the only place to access broadcasts in app.
  */
 class AppBroadcastReceiver(
     private val activity: ComponentActivity,
     private val appBluetoothManager: AppBluetoothManager,
     private val bluetoothAdapter: BluetoothAdapter
 ) : DefaultLifecycleObserver {
-     private val _bluetoothEnabled: MutableStateFlow<Boolean> = MutableStateFlow(bluetoothAdapter.isEnabled);
-     val bluetoothEnabled: StateFlow<Boolean> get() = _bluetoothEnabled.asStateFlow()
+    private val _bluetoothEnabled: MutableStateFlow<Boolean> = MutableStateFlow(bluetoothAdapter.isEnabled)
+    val bluetoothEnabled: StateFlow<Boolean> get() = _bluetoothEnabled.asStateFlow()
 
-     private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf());
-     val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
+    private val _bluetoothDeviceConnectionStatus: MutableStateFlow<Map<String, Boolean>> = MutableStateFlow(mutableMapOf())
+    val bluetoothDeviceConnectionStatus get() = _bluetoothDeviceConnectionStatus.asStateFlow()
 
-     private val _foundedDevices: MutableStateFlow<Map<String, FoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf());
-     val foundedDevices get() = _foundedDevices.map { it.values.toList() }
+    private val _foundedDevices: MutableStateFlow<Map<String, FoundedBluetoothDeviceDomain>> = MutableStateFlow(mutableMapOf())
+    val foundedDevices get() = _foundedDevices.map { it.values.toList() }
 
     // broadcastReceiver reference. It still should be registered in onResume and unregistered on onPause lifecycle.
     private lateinit var broadcastReceiver: BroadcastReceiver
 
     // Intent Launcher. We use it show a popup to user to turn the bluetooth on.
     private lateinit var intentActivityResultLauncher: ActivityResultLauncher<Intent>
-
 
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -96,7 +96,8 @@ class AppBroadcastReceiver(
     }
 
     private fun registerReceiver() {
-        ContextCompat.registerReceiver(activity, broadcastReceiver,
+        ContextCompat.registerReceiver(
+            activity, broadcastReceiver,
             IntentFilter().apply {
                 addAction(BluetoothDevice.ACTION_FOUND)
                 addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
@@ -104,8 +105,10 @@ class AppBroadcastReceiver(
                 addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
                 addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
             },
-            ContextCompat.RECEIVER_EXPORTED)
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
+
     private fun unregisterReceiver() {
         activity.unregisterReceiver(broadcastReceiver)
     }
@@ -118,6 +121,7 @@ class AppBroadcastReceiver(
             Timber.d(e)
         }
     }
+
     fun launchMakeBluetoothDiscoverable() {
         try {
             val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
@@ -130,7 +134,6 @@ class AppBroadcastReceiver(
 
 
     companion object {
-        const val TAG = "[AppBroadcastReceiver]"
         private fun broadcastReceiverFactory(
             onBluetoothStateChange: () -> Unit,
             onDeviceFound: (bluetoothDevice: BluetoothDevice) -> Unit,
@@ -151,13 +154,15 @@ class AppBroadcastReceiver(
                     val device = getDeviceFromIntent(intent)
 
                     device?.let {
-                        when(intent.action) {
+                        when (intent.action) {
                             BluetoothDevice.ACTION_FOUND -> {
                                 onDeviceFound(it)
                             }
+
                             BluetoothDevice.ACTION_ACL_CONNECTED -> {
                                 onBluetoothDeviceStateChange(true, it)
                             }
+
                             BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
                                 onBluetoothDeviceStateChange(false, it)
                             }

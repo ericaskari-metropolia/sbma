@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sbma.linkup.card.Card
 import com.sbma.linkup.presentation.ui.theme.LinkUpTheme
-import com.sbma.linkup.util.CardIcon
 import com.sbma.linkup.util.openSocialMedia
 import java.util.UUID
 
