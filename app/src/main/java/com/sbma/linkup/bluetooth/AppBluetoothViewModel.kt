@@ -32,6 +32,13 @@ fun BluetoothDevice.toFoundedBluetoothDeviceDomain(lastSeen: Long): FoundedBluet
         lastSeen = lastSeen
     )
 }
+@SuppressLint("MissingPermission")
+fun FoundedBluetoothDeviceDomain.toFoundedBluetoothDeviceDomain(): BluetoothDeviceDomain {
+    return BluetoothDeviceDomain(
+        name = name,
+        address = address,
+    )
+}
 
 class AppBluetoothViewModel(
     private val appBluetoothManager: AppBluetoothManager,
@@ -74,7 +81,7 @@ class AppBluetoothViewModel(
         appBroadcastReceiver.launchMakeBluetoothDiscoverable()
     }
 
-    fun connectToDevice(device: IBluetoothDeviceDomain) {
+    fun connectToDevice(device: BluetoothDeviceDomain) {
         Timber.d("connectToDevice: $device")
         _state.update { it.copy(isConnecting = true) }
         deviceConnectionJob = appBluetoothManager
