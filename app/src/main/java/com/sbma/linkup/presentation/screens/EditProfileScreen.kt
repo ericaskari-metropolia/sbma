@@ -263,7 +263,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Column {
-                userCards.reversed().forEachIndexed { index, card ->
+                userCards.forEachIndexed { index, card ->
                     EditCard(
                         card = card,
                         canEditTitle = card.title != "About me",
